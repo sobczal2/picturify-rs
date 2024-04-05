@@ -1,25 +1,27 @@
 extern crate picturify_core;
 extern crate picturify_processing;
+extern crate image;
 
-use picturify_core::io::image::{read_image_from_file, write_image_to_file};
-use picturify_core::pixel::color::ColorSpace;
+use image::io::Reader;
 use picturify_processing::core::processor::Processor;
 use picturify_processing::noise_reduction::kuwahara_filter::{KuwaharaFilter, KuwaharaFilterOptions};
 
 fn main() -> Result<(), String> {
-    let mut image = read_image_from_file(std::path::Path::new("/home/sobczal/Downloads/ryan.jpg")).unwrap();
+    let image = Reader::open("/home/sobczal/Downloads/bambi.jpg").unwrap()
+        .decode().unwrap();
 
 
     
     let processor = KuwaharaFilter::new(KuwaharaFilterOptions{
-        window_size: 10,
+        window_size: 5,
     });
     let start_time = std::time::Instant::now();
     let new_image = processor.process(image);
     let duration = start_time.elapsed();
 
     println!("Time taken to process: {:?}", duration);
-    write_image_to_file(&new_image, std::path::Path::new("/home/sobczal/Downloads/test2_copy.png")).unwrap();
+    
+    new_image.save("/home/sobczal/Downloads/processed.png").map_err(|e| e.to_string())?;
     
     Ok(())
 }

@@ -539,6 +539,7 @@ checksum = "de3145af08024dea9fa9914f381a17b8fc6034dfb00f3a84013f7ff43f29ed4c"
 name = "picturify-cli"
 version = "0.1.0"
 dependencies = [
+ "image",
  "picturify-core",
  "picturify-processing",
 ]
@@ -554,6 +555,7 @@ dependencies = [
 name = "picturify-processing"
 version = "0.1.0"
 dependencies = [
+ "image",
  "picturify-core",
  "rayon",
 ]

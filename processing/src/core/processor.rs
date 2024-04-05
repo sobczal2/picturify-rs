@@ -1,7 +1,7 @@
-use picturify_core::image::image::Image;
+use image::DynamicImage;
 
 pub trait Processor {
-    fn process(&self, image: Image) -> Image;
+    fn process(&self, image: DynamicImage) -> DynamicImage;
 }
 
 pub struct ThreadingOptions {

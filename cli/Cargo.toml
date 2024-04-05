@@ -7,3 +7,4 @@ version = "0.1.0"
 [dependencies]
 picturify-core = { path = "../core" }
 picturify-processing = { path = "../processing" }
+image = "0.25.1"

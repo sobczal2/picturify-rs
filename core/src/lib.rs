@@ -1,4 +1,5 @@
-pub mod image;
-pub mod pixel;
+extern crate image;
+
 pub mod common;
-pub mod io;
+pub mod images;
+pub mod colors;
