@@ -1,11 +1,11 @@
 [package]
-name = "picturify-cli"
+name = "picturify-movie"
 version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-picturify-core = { path = "../core" }
 picturify-processing = { path = "../processing" }
-picturify-movie = { path = "../movie" }
+video-rs = { version = "0.7.2", features = ["ndarray"] }
 image = "0.25.1"
+ndarray = "0.15.3"

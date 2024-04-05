@@ -1,2 +1,3 @@
-pub mod noise_reduction;
+pub mod noise;
 pub mod core;
+pub mod color;
