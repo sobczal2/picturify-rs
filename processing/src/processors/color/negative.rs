@@ -19,7 +19,7 @@ impl NegativeProcessor {
 
     fn run_cpu(&self, fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
         let layer_pipe = LayerPipe::new();
-        let layer_pipe = layer_pipe.prepare_layers(fast_image, self.channel_selector.clone());
+        let layer_pipe = layer_pipe.prepare_layers(&fast_image, self.channel_selector);
         let mut layer_pipe_runner = LayerPipeRunner::new(layer_pipe, self.execution_plan);
         
         

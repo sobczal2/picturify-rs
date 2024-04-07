@@ -5,10 +5,7 @@ use crate::color::hsl_conversions::{hsl_to_rgb, rgb_to_hsl};
 use crate::color::hsv_conversions::{hsv_to_rgb, rgb_to_hsv};
 use crate::error::{PicturifyError, PicturifyResult};
 use crate::image::io::{ReadFromFile, WriteToFile};
-use crate::image::layer::{
-    HslaLayered, HslaLayers, HsvaLayered, HsvaLayers, LaLayered, LaLayers, LightnessLayer,
-    RgbaLayered, RgbaLayers,
-};
+use crate::image::layer::{HslaLayered, HslaLayers, HsvaLayered, HsvaLayers, LaLayered, LaLayers, LayerType, LightnessLayer, RgbaLayered, RgbaLayers};
 use crate::image::pixel::{HslaPixel, HsvaPixel, RgbaPixel};
 use crate::image::virtual_image::{
     VirtualHslImage, VirtualHsvaImage, VirtualImage, VirtualRgbaImage,
@@ -37,6 +34,32 @@ impl FastImage {
     pub fn empty(width: usize, height: usize) -> FastImage {
         FastImage {
             dynamic_image: DynamicImage::new_rgba8(width as u32, height as u32),
+        }
+    }
+
+    pub fn get_value(&self, layer_type: &LayerType, x: usize, y: usize) -> f32 {
+        match layer_type {
+            LayerType::Red => self.get_rgba(x, y).red as f32,
+            LayerType::Green => self.get_rgba(x, y).green as f32,
+            LayerType::Blue => self.get_rgba(x, y).blue as f32,
+            LayerType::Alpha => self.get_rgba(x, y).alpha as f32,
+            LayerType::Hue => self.get_hsva(x, y).hue,
+            LayerType::Saturation => self.get_hsva(x, y).saturation,
+            LayerType::Value => self.get_hsva(x, y).value,
+            LayerType::Lightness => self.get_hsla(x, y).lightness,
+        }
+    }
+
+    pub fn get_normalized_value(&self, layer_type: &LayerType, x: usize, y: usize) -> f32 {
+        match layer_type {
+            LayerType::Red => self.get_rgba(x, y).red as f32 / 255.0,
+            LayerType::Green => self.get_rgba(x, y).green as f32 / 255.0,
+            LayerType::Blue => self.get_rgba(x, y).blue as f32 / 255.0,
+            LayerType::Alpha => self.get_rgba(x, y).alpha as f32 / 255.0,
+            LayerType::Hue => self.get_hsva(x, y).hue / 360.0,
+            LayerType::Saturation => self.get_hsva(x, y).saturation,
+            LayerType::Value => self.get_hsva(x, y).value,
+            LayerType::Lightness => self.get_hsla(x, y).lightness,
         }
     }
 }

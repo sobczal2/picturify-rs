@@ -1,8 +1,18 @@
 use rayon::prelude::*;
-use rayon::slice::ChunksExactMut;
 
 use crate::error::PicturifyResult;
 use crate::image::pixel::{HslaPixel, HsvaPixel, RgbaPixel};
+
+pub enum LayerType {
+    Red,
+    Green,
+    Blue,
+    Alpha,
+    Hue,
+    Saturation,
+    Value,
+    Lightness,
+}
 
 pub struct Layer<T: Sized + Clone + Copy + Send + Sync> {
     pub data: Vec<T>,
@@ -33,11 +43,17 @@ impl<T: Sized + Clone + Copy + Send + Sync> Layer<T> {
     pub fn iter_mut(&mut self) -> std::slice::IterMut<T> {
         self.data.iter_mut()
     }
-    
-    pub fn chunk_exact_mut(&mut self, chunk_size: usize) -> core::slice::ChunksExactMut<T> {
+    pub fn chunks_exact(&self, chunk_size: usize) -> core::slice::ChunksExact<T> {
+        self.data.chunks_exact(chunk_size)
+    }
+
+    pub fn chunks_exact_mut(&mut self, chunk_size: usize) -> core::slice::ChunksExactMut<T> {
         self.data.chunks_exact_mut(chunk_size)
     }
-    pub fn par_chunk_exact_mut(&mut self, chunk_size: usize) -> rayon::slice::ChunksExactMut<T> {
+    pub fn par_chunks_exact(&self, chunk_size: usize) -> rayon::slice::ChunksExact<T> {
+        self.data.par_chunks_exact(chunk_size)
+    }
+    pub fn par_chunks_exact_mut(&mut self, chunk_size: usize) -> rayon::slice::ChunksExactMut<T> {
         self.data.par_chunks_exact_mut(chunk_size)
     }
 }

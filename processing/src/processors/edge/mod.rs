@@ -1,1 +1,1 @@
-mod sobel;
+pub mod sobel;

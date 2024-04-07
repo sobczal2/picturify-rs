@@ -1,3 +1,3 @@
 pub mod color;
 pub mod noise;
-mod edge;
+pub mod edge;
