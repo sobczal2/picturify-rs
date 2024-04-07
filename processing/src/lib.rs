@@ -1,3 +1,2 @@
-pub mod noise;
-pub mod core;
-pub mod color;
+pub mod common;
+pub mod processors;

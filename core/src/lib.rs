@@ -1,5 +1,3 @@
-extern crate image;
-
-pub mod common;
-pub mod images;
-pub mod colors;
+pub mod color;
+pub mod error;
+pub mod image;

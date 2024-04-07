@@ -7,5 +7,5 @@ edition = "2021"
 
 [dependencies]
 picturify-core = { path = "../core" }
-image = "0.25.1"
+thiserror = "1.0.58"
 rayon = "1.10.0"
