@@ -5,7 +5,7 @@ use picturify_core::image::pixel::RgbaPixel;
 use picturify_core::image::virtual_image::VirtualRgbaImage;
 
 use crate::common::channel::ChannelSelector;
-use crate::common::execution::{ExecutionPlan, MultiThreadCpuOptions};
+use crate::common::execution::{CpuOptions, ExecutionPlan};
 use crate::common::process::Processor;
 
 pub struct SepiaProcessor {
@@ -15,7 +15,7 @@ pub struct SepiaProcessor {
 impl SepiaProcessor {
     pub fn new() -> SepiaProcessor {
         SepiaProcessor {
-            execution_plan: ExecutionPlan::SingleThreadCpu,
+            execution_plan: ExecutionPlan::Cpu(Default::default()),
         }
     }
 
@@ -34,20 +34,12 @@ impl SepiaProcessor {
         pixel.blue = new_b;
     }
 
-    fn run_single_thread_cpu(&self, mut fast_image: FastImage) -> FastImage {
-        fast_image.iterate_rgba(|pixel, x, y| {
-            self.calculate_pixel(pixel);
-        });
-
-        fast_image
-    }
-
     fn run_multi_thread_cpu(
         &self,
         mut fast_image: FastImage,
-        multi_thread_cpu_options: MultiThreadCpuOptions,
+        cpu_options: CpuOptions,
     ) -> FastImage {
-        multi_thread_cpu_options.build_thread_pool().install(|| {
+        cpu_options.build_thread_pool().install(|| {
             fast_image.iterate_par_rgba(|pixel, x, y| {
                 self.calculate_pixel(pixel);
             });
@@ -73,10 +65,7 @@ impl Processor for SepiaProcessor {
 
     fn process(&self, fast_image: FastImage) -> FastImage {
         match self.execution_plan {
-            ExecutionPlan::SingleThreadCpu => self.run_single_thread_cpu(fast_image),
-            ExecutionPlan::MultiThreadCpu(multi_thread_cpu_options) => {
-                self.run_multi_thread_cpu(fast_image, multi_thread_cpu_options)
-            }
+            ExecutionPlan::Cpu(options) => self.run_multi_thread_cpu(fast_image, options),
             ExecutionPlan::Gpu => self.run_gpu(fast_image),
         }
     }

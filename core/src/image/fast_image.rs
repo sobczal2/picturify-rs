@@ -33,6 +33,12 @@ impl FastImage {
             _ => self.dynamic_image = DynamicImage::ImageRgba8(self.dynamic_image.to_rgba8()),
         }
     }
+
+    pub fn empty(width: usize, height: usize) -> FastImage {
+        FastImage {
+            dynamic_image: DynamicImage::new_rgba8(width as u32, height as u32),
+        }
+    }
 }
 
 impl VirtualImage for FastImage {
@@ -61,13 +67,14 @@ impl VirtualRgbaImage for FastImage {
         existing_pixel.0[0] = pixel.red;
         existing_pixel.0[1] = pixel.green;
         existing_pixel.0[2] = pixel.blue;
+        existing_pixel.0[3] = pixel.alpha;
         self.dynamic_image
             .put_pixel(x as u32, y as u32, existing_pixel);
     }
 
     fn iterate_rgba<F>(&mut self, f: F)
-    where
-        F: Fn(&mut RgbaPixel, usize, usize),
+        where
+            F: Fn(&mut RgbaPixel, usize, usize),
     {
         self.to_color();
         self.dynamic_image
@@ -82,8 +89,8 @@ impl VirtualRgbaImage for FastImage {
     }
 
     fn iterate_par_rgba<F>(&mut self, f: F)
-    where
-        F: Fn(&mut RgbaPixel, usize, usize) + Sync + Send,
+        where
+            F: Fn(&mut RgbaPixel, usize, usize) + Sync + Send,
     {
         self.to_color();
         self.dynamic_image
@@ -92,9 +99,9 @@ impl VirtualRgbaImage for FastImage {
             .enumerate_rows_mut()
             .par_bridge()
             .for_each(|(_, row)| {
-                for (_, (x, y, mut rgba)) in row.enumerate() {
+                row.enumerate().for_each(|(_, (x, y, mut rgba))| {
                     Self::invoke_func_on_rgba_pixel(x as usize, y as usize, &mut rgba, &f);
-                }
+                });
             });
     }
 }
@@ -102,8 +109,8 @@ impl VirtualRgbaImage for FastImage {
 impl FastImage {
     #[inline(always)]
     fn invoke_func_on_rgba_pixel<F>(x: usize, y: usize, rgba: &mut Rgba<u8>, f: &F)
-    where
-        F: Fn(&mut RgbaPixel, usize, usize),
+        where
+            F: Fn(&mut RgbaPixel, usize, usize),
     {
         let mut rgba_pixel = RgbaPixel {
             red: rgba[0],
@@ -146,8 +153,8 @@ impl VirtualHsvaImage for FastImage {
     }
 
     fn iterate_hsva<F>(&mut self, f: F)
-    where
-        F: Fn(&mut HsvaPixel, usize, usize),
+        where
+            F: Fn(&mut HsvaPixel, usize, usize),
     {
         self.to_color();
         self.dynamic_image
@@ -162,8 +169,8 @@ impl VirtualHsvaImage for FastImage {
     }
 
     fn iterate_par_hsva<F>(&mut self, f: F)
-    where
-        F: Fn(&mut HsvaPixel, usize, usize) + Sync + Send,
+        where
+            F: Fn(&mut HsvaPixel, usize, usize) + Sync + Send,
     {
         self.to_color();
         self.dynamic_image
@@ -182,8 +189,8 @@ impl VirtualHsvaImage for FastImage {
 impl FastImage {
     #[inline(always)]
     fn invoke_func_on_hsva_pixel<F>(x: usize, y: usize, rgba: &mut Rgba<u8>, f: &F)
-    where
-        F: Fn(&mut HsvaPixel, usize, usize),
+        where
+            F: Fn(&mut HsvaPixel, usize, usize),
     {
         let mut hsva_pixel = HsvaPixel {
             hue: 0.0,
@@ -233,8 +240,8 @@ impl VirtualHslImage for FastImage {
     }
 
     fn iterate_hsla<F>(&mut self, f: F)
-    where
-        F: Fn(&mut HslaPixel, usize, usize),
+        where
+            F: Fn(&mut HslaPixel, usize, usize),
     {
         self.to_color();
         self.dynamic_image
@@ -249,8 +256,8 @@ impl VirtualHslImage for FastImage {
     }
 
     fn iterate_par_hsla<F>(&mut self, f: F)
-    where
-        F: Fn(&mut HslaPixel, usize, usize) + Sync + Send,
+        where
+            F: Fn(&mut HslaPixel, usize, usize) + Sync + Send,
     {
         self.to_color();
         self.dynamic_image
@@ -269,8 +276,8 @@ impl VirtualHslImage for FastImage {
 impl FastImage {
     #[inline(always)]
     fn invoke_func_on_hsla_pixel<F>(x: usize, y: usize, rgba: &mut Rgba<u8>, f: &F)
-    where
-        F: Fn(&mut HslaPixel, usize, usize),
+        where
+            F: Fn(&mut HslaPixel, usize, usize),
     {
         let mut hsla_pixel = HslaPixel {
             hue: 0.0,

@@ -1,11 +1,11 @@
 use picturify_core::image::fast_image::FastImage;
 
 #[derive(Copy, Clone)]
-pub struct MultiThreadCpuOptions {
+pub struct CpuOptions {
     pub num_threads: Option<usize>,
 }
 
-impl MultiThreadCpuOptions {
+impl CpuOptions {
     pub fn get_num_threads(&self) -> usize {
         self.num_threads.unwrap_or(rayon::current_num_threads())
     }
@@ -18,14 +18,14 @@ impl MultiThreadCpuOptions {
     }
 }
 
-impl Default for MultiThreadCpuOptions {
+impl Default for CpuOptions {
     fn default() -> Self {
-        MultiThreadCpuOptions { num_threads: None }
+        CpuOptions { num_threads: None }
     }
 }
 
+#[derive(Copy, Clone)]
 pub enum ExecutionPlan {
-    SingleThreadCpu,
-    MultiThreadCpu(MultiThreadCpuOptions),
+    Cpu(CpuOptions),
     Gpu,
 }

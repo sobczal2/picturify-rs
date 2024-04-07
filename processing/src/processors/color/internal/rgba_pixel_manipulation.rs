@@ -1,5 +1,5 @@
 use crate::common::channel::ChannelSelector;
-use crate::common::execution::{ExecutionPlan, MultiThreadCpuOptions};
+use crate::common::execution::{CpuOptions, ExecutionPlan};
 use crate::common::process::Processor;
 use picturify_core::error::processing::ProcessingError;
 use picturify_core::error::PicturifyResult;
@@ -25,7 +25,7 @@ impl RgbaPixelManipulationProcessor {
         alpha_function: fn(rgb_pixel: RgbaPixel, x: usize, y: usize) -> u8,
     ) -> RgbaPixelManipulationProcessor {
         RgbaPixelManipulationProcessor {
-            execution_plan: ExecutionPlan::SingleThreadCpu,
+            execution_plan: ExecutionPlan::Cpu(Default::default()),
             channel_selector: ChannelSelector::Rgba(Default::default()),
             red_function,
             green_function,
@@ -34,44 +34,10 @@ impl RgbaPixelManipulationProcessor {
         }
     }
 
-    fn run_single_thread_cpu(&self, mut fast_image: FastImage) -> FastImage {
-        let width = fast_image.get_width();
-        let height = fast_image.get_height();
-
-        let run_red = self.channel_selector.red_enabled();
-        let run_green = self.channel_selector.green_enabled();
-        let run_blue = self.channel_selector.blue_enabled();
-        let run_alpha = self.channel_selector.alpha_enabled();
-
-        for y in 0..height {
-            for x in 0..width {
-                let pixel = fast_image.get_rgba(x, y);
-                let mut new_pixel = pixel.clone();
-
-                if run_red {
-                    new_pixel.red = (self.red_function)(pixel, x, y);
-                }
-                if run_green {
-                    new_pixel.green = (self.green_function)(pixel, x, y);
-                }
-                if run_blue {
-                    new_pixel.blue = (self.blue_function)(pixel, x, y);
-                }
-                if run_alpha {
-                    new_pixel.alpha = (self.alpha_function)(pixel, x, y);
-                }
-
-                fast_image.set_rgba(x, y, new_pixel);
-            }
-        }
-
-        fast_image
-    }
-
     fn run_multi_thread_cpu(
         &self,
         mut fast_image: FastImage,
-        multi_thread_cpu_options: MultiThreadCpuOptions,
+        cpu_options: CpuOptions,
     ) -> FastImage {
         let run_red = self.channel_selector.red_enabled();
         let run_green = self.channel_selector.green_enabled();
@@ -83,7 +49,7 @@ impl RgbaPixelManipulationProcessor {
         let blue_function = &self.blue_function;
         let alpha_function = &self.alpha_function;
 
-        multi_thread_cpu_options.build_thread_pool().install(|| {
+        cpu_options.build_thread_pool().install(|| {
             fast_image.iterate_par_rgba(|pixel, x, y| {
                 let mut new_pixel = pixel.clone();
 
@@ -129,8 +95,7 @@ impl Processor for RgbaPixelManipulationProcessor {
 
     fn process(&self, fast_image: FastImage) -> FastImage {
         match self.execution_plan {
-            ExecutionPlan::SingleThreadCpu => self.run_single_thread_cpu(fast_image),
-            ExecutionPlan::MultiThreadCpu(options) => {
+            ExecutionPlan::Cpu(options) => {
                 self.run_multi_thread_cpu(fast_image, options)
             }
             ExecutionPlan::Gpu => self.run_gpu(fast_image),

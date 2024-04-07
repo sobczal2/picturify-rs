@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/core/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/processing/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/movie/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/playground/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.idea/copilot/chatSessions" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>

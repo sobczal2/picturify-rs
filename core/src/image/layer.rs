@@ -1,13 +1,16 @@
+use rayon::prelude::*;
+use rayon::slice::ChunksExactMut;
+
 use crate::error::PicturifyResult;
 use crate::image::pixel::{HslaPixel, HsvaPixel, RgbaPixel};
 
-pub struct Layer<T: Sized + Clone + Copy> {
+pub struct Layer<T: Sized + Clone + Copy + Send + Sync> {
     pub data: Vec<T>,
     pub width: usize,
     pub height: usize,
 }
 
-impl<T: Sized + Clone + Copy> Layer<T> {
+impl<T: Sized + Clone + Copy + Send + Sync> Layer<T> {
     pub fn new(width: usize, height: usize, default: T) -> Layer<T> {
         Layer {
             data: vec![default; width * height],
@@ -22,6 +25,20 @@ impl<T: Sized + Clone + Copy> Layer<T> {
 
     pub fn set(&mut self, x: usize, y: usize, value: T) {
         self.data[y * self.width + x] = value;
+    }
+    pub fn iter(&self) -> std::slice::Iter<T> {
+        self.data.iter()
+    }
+
+    pub fn iter_mut(&mut self) -> std::slice::IterMut<T> {
+        self.data.iter_mut()
+    }
+    
+    pub fn chunk_exact_mut(&mut self, chunk_size: usize) -> core::slice::ChunksExactMut<T> {
+        self.data.chunks_exact_mut(chunk_size)
+    }
+    pub fn par_chunk_exact_mut(&mut self, chunk_size: usize) -> rayon::slice::ChunksExactMut<T> {
+        self.data.par_chunks_exact_mut(chunk_size)
     }
 }
 
