@@ -17,14 +17,14 @@ pub struct FastImage {
 }
 
 impl FastImage {
-    pub fn as_grayscale(&mut self) {
+    pub fn change_to_grayscale(&mut self) {
         match &self.dynamic_image {
             DynamicImage::ImageLuma8(_) => {}
             _ => self.dynamic_image = DynamicImage::ImageLuma8(self.dynamic_image.to_luma8()),
         }
     }
 
-    pub fn as_color(&mut self) {
+    pub fn change_to_color(&mut self) {
         match &self.dynamic_image {
             DynamicImage::ImageRgba8(_) => {}
             _ => self.dynamic_image = DynamicImage::ImageRgba8(self.dynamic_image.to_rgba8()),
@@ -103,7 +103,7 @@ impl VirtualRgbaImage for FastImage {
         where
             F: Fn(&mut RgbaPixel, usize, usize),
     {
-        self.to_color();
+        self.change_to_color();
         self.dynamic_image
             .as_mut_rgba8()
             .unwrap()
@@ -119,7 +119,7 @@ impl VirtualRgbaImage for FastImage {
         where
             F: Fn(&mut RgbaPixel, usize, usize) + Sync + Send,
     {
-        self.to_color();
+        self.change_to_color();
         self.dynamic_image
             .as_mut_rgba8()
             .unwrap()
@@ -183,7 +183,7 @@ impl VirtualHsvaImage for FastImage {
         where
             F: Fn(&mut HsvaPixel, usize, usize),
     {
-        self.to_color();
+        self.change_to_color();
         self.dynamic_image
             .as_mut_rgba8()
             .unwrap()
@@ -199,7 +199,7 @@ impl VirtualHsvaImage for FastImage {
         where
             F: Fn(&mut HsvaPixel, usize, usize) + Sync + Send,
     {
-        self.to_color();
+        self.change_to_color();
         self.dynamic_image
             .as_mut_rgba8()
             .unwrap()
@@ -270,7 +270,7 @@ impl VirtualHslImage for FastImage {
         where
             F: Fn(&mut HslaPixel, usize, usize),
     {
-        self.to_color();
+        self.change_to_color();
         self.dynamic_image
             .as_mut_rgba8()
             .unwrap()
@@ -286,7 +286,7 @@ impl VirtualHslImage for FastImage {
         where
             F: Fn(&mut HslaPixel, usize, usize) + Sync + Send,
     {
-        self.to_color();
+        self.change_to_color();
         self.dynamic_image
             .as_mut_rgba8()
             .unwrap()
