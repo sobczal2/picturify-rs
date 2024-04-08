@@ -1,7 +1,7 @@
-use crate::commands::common::image::ImageCommand;
-use crate::commands::common::movie::MovieCommand;
 use crate::metadata::get_metadata;
 use clap::Command;
+use crate::commands::common::common::image::ImageCommand;
+use crate::commands::common::common::movie::MovieCommand;
 
 pub struct PicturifyCommand;
 

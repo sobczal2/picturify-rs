@@ -1,6 +1,7 @@
 use crate::handlers::color::sepia::SepiaCommandHandler;
 use clap::ArgMatches;
 use log::{info};
+use crate::handlers::common::none::NoneCommandHandler;
 
 pub struct ImageCommandHandler;
 
@@ -11,11 +12,14 @@ impl ImageCommandHandler {
             Some(("sepia", args)) => {
                 SepiaCommandHandler::handle(args.clone());
             }
+            Some(("none", args)) => {
+                NoneCommandHandler::handle(args.clone());
+            }
             _ => {
-                println!("No subcommand provided");
+                panic!("Unknown subcommand");
             }
         }
         let elapsed_ms = now.elapsed().as_millis();
-        info!("Image command handled in {elapsed_ms}ms");
+        info!("Command {} took {}ms", arg_matches.subcommand_name().unwrap(), elapsed_ms);
     }
 }
