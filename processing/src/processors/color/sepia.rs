@@ -19,7 +19,6 @@ impl SepiaProcessor {
         }
     }
 
-    #[inline(always)]
     fn calculate_pixel(&self, pixel: &mut RgbaPixel) {
         let r = pixel.red as f32;
         let g = pixel.green as f32;
