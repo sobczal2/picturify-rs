@@ -1,3 +1,3 @@
 mod internal;
-pub mod sepia;
 pub mod negative;
+pub mod sepia;

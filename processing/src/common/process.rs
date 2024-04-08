@@ -1,6 +1,6 @@
 use picturify_core::error::PicturifyResult;
-use std::marker::PhantomData;
 use rayon::prelude::*;
+use std::marker::PhantomData;
 
 use picturify_core::image::fast_image::FastImage;
 use picturify_core::image::layer::{
@@ -218,9 +218,7 @@ pub struct LayerPipeRunner {
 
 impl LayerPipeRunner {
     pub fn new(layer_pipe: LayerPipe<LayersPrepared>) -> LayerPipeRunner {
-        LayerPipeRunner {
-            layer_pipe,
-        }
+        LayerPipeRunner { layer_pipe }
     }
 
     pub fn get_final_image(self) -> FastImage {
@@ -228,122 +226,172 @@ impl LayerPipeRunner {
     }
 
     pub fn run_red_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(u8, usize, usize) -> u8,
+    where
+        F: Fn(u8, usize, usize) -> u8,
     {
-        if !self.layer_pipe.channel_selector.unwrap().red_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().red_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.red_layer.as_mut() {
             let width = layer.width;
-            layer.chunks_exact_mut(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
-                    *pixel = f(*pixel, x, y);
+            layer
+                .chunks_exact_mut(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
+                        *pixel = f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn run_green_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(u8, usize, usize) -> u8,
+    where
+        F: Fn(u8, usize, usize) -> u8,
     {
-        if !self.layer_pipe.channel_selector.unwrap().green_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().green_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.green_layer.as_mut() {
             let width = layer.width;
-            layer.chunks_exact_mut(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
-                    *pixel = f(*pixel, x, y);
+            layer
+                .chunks_exact_mut(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
+                        *pixel = f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn run_blue_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(u8, usize, usize) -> u8,
+    where
+        F: Fn(u8, usize, usize) -> u8,
     {
-        if !self.layer_pipe.channel_selector.unwrap().blue_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().blue_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.blue_layer.as_mut() {
             let width = layer.width;
-            layer.chunks_exact_mut(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
-                    *pixel = f(*pixel, x, y);
+            layer
+                .chunks_exact_mut(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
+                        *pixel = f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn run_alpha_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(u8, usize, usize) -> u8,
+    where
+        F: Fn(u8, usize, usize) -> u8,
     {
-        if !self.layer_pipe.channel_selector.unwrap().alpha_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().alpha_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.alpha_layer.as_mut() {
             let width = layer.width;
-            layer.chunks_exact_mut(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
-                    *pixel = f(*pixel, x, y);
+            layer
+                .chunks_exact_mut(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
+                        *pixel = f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn run_hue_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(f32, usize, usize) -> f32,
+    where
+        F: Fn(f32, usize, usize) -> f32,
     {
-        if !self.layer_pipe.channel_selector.unwrap().hue_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().hue_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.hue_layer.as_mut() {
             let width = layer.width;
-            layer.chunks_exact_mut(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
-                    *pixel = f(*pixel, x, y);
+            layer
+                .chunks_exact_mut(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
+                        *pixel = f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn run_saturation_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(f32, usize, usize) -> f32,
+    where
+        F: Fn(f32, usize, usize) -> f32,
     {
-        if !self.layer_pipe.channel_selector.unwrap().saturation_enabled() { return; }
+        if !self
+            .layer_pipe
+            .channel_selector
+            .unwrap()
+            .saturation_enabled()
+        {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.saturation_layer.as_mut() {
             let width = layer.width;
-            layer.chunks_exact_mut(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
-                    *pixel = f(*pixel, x, y);
+            layer
+                .chunks_exact_mut(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
+                        *pixel = f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn run_lightness_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(f32, usize, usize) -> f32,
+    where
+        F: Fn(f32, usize, usize) -> f32,
     {
-        if !self.layer_pipe.channel_selector.unwrap().lightness_enabled() { return; }
+        if !self
+            .layer_pipe
+            .channel_selector
+            .unwrap()
+            .lightness_enabled()
+        {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.lightness_layer.as_mut() {
             let width = layer.width;
-            layer.chunks_exact_mut(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
-                    *pixel = f(*pixel, x, y);
+            layer
+                .chunks_exact_mut(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
+                        *pixel = f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn run_value_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(f32, usize, usize) -> f32,
+    where
+        F: Fn(f32, usize, usize) -> f32,
     {
-        if !self.layer_pipe.channel_selector.unwrap().value_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().value_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.value_layer.as_mut() {
             let width = layer.width;
-            layer.chunks_exact_mut(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
-                    *pixel = f(*pixel, x, y);
+            layer
+                .chunks_exact_mut(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
+                        *pixel = f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
@@ -357,16 +405,15 @@ impl LayerPipeRunner {
         fs: FS,
         fl: FL,
         fv: FV,
-    )
-        where
-            FR: Fn(u8, usize, usize) -> u8,
-            FG: Fn(u8, usize, usize) -> u8,
-            FB: Fn(u8, usize, usize) -> u8,
-            FA: Fn(u8, usize, usize) -> u8,
-            FH: Fn(f32, usize, usize) -> f32,
-            FS: Fn(f32, usize, usize) -> f32,
-            FL: Fn(f32, usize, usize) -> f32,
-            FV: Fn(f32, usize, usize) -> f32,
+    ) where
+        FR: Fn(u8, usize, usize) -> u8,
+        FG: Fn(u8, usize, usize) -> u8,
+        FB: Fn(u8, usize, usize) -> u8,
+        FA: Fn(u8, usize, usize) -> u8,
+        FH: Fn(f32, usize, usize) -> f32,
+        FS: Fn(f32, usize, usize) -> f32,
+        FL: Fn(f32, usize, usize) -> f32,
+        FV: Fn(f32, usize, usize) -> f32,
     {
         self.run_red_layer_if_enabled(fr);
         self.run_green_layer_if_enabled(fg);
@@ -379,122 +426,172 @@ impl LayerPipeRunner {
     }
 
     pub fn par_run_red_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(u8, usize, usize) -> u8 + Send + Sync,
+    where
+        F: Fn(u8, usize, usize) -> u8 + Send + Sync,
     {
-        if !self.layer_pipe.channel_selector.unwrap().red_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().red_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.red_layer.as_mut() {
             let width = layer.width;
-            layer.par_chunks_exact_mut(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
-                    *pixel = f(*pixel, x, y);
+            layer
+                .par_chunks_exact_mut(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
+                        *pixel = f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn par_run_green_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(u8, usize, usize) -> u8 + Sync + Send,
+    where
+        F: Fn(u8, usize, usize) -> u8 + Sync + Send,
     {
-        if !self.layer_pipe.channel_selector.unwrap().green_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().green_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.green_layer.as_mut() {
             let width = layer.width;
-            layer.par_chunks_exact_mut(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
-                    *pixel = f(*pixel, x, y);
+            layer
+                .par_chunks_exact_mut(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
+                        *pixel = f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn par_run_blue_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(u8, usize, usize) -> u8 + Sync + Send,
+    where
+        F: Fn(u8, usize, usize) -> u8 + Sync + Send,
     {
-        if !self.layer_pipe.channel_selector.unwrap().blue_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().blue_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.blue_layer.as_mut() {
             let width = layer.width;
-            layer.par_chunks_exact_mut(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
-                    *pixel = f(*pixel, x, y);
+            layer
+                .par_chunks_exact_mut(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
+                        *pixel = f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn par_run_alpha_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(u8, usize, usize) -> u8 + Sync + Send,
+    where
+        F: Fn(u8, usize, usize) -> u8 + Sync + Send,
     {
-        if !self.layer_pipe.channel_selector.unwrap().alpha_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().alpha_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.alpha_layer.as_mut() {
             let width = layer.width;
-            layer.par_chunks_exact_mut(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
-                    *pixel = f(*pixel, x, y);
+            layer
+                .par_chunks_exact_mut(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
+                        *pixel = f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn par_run_hue_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(f32, usize, usize) -> f32 + Sync + Send,
+    where
+        F: Fn(f32, usize, usize) -> f32 + Sync + Send,
     {
-        if !self.layer_pipe.channel_selector.unwrap().hue_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().hue_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.hue_layer.as_mut() {
             let width = layer.width;
-            layer.par_chunks_exact_mut(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
-                    *pixel = f(*pixel, x, y);
+            layer
+                .par_chunks_exact_mut(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
+                        *pixel = f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn par_run_saturation_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(f32, usize, usize) -> f32 + Sync + Send,
+    where
+        F: Fn(f32, usize, usize) -> f32 + Sync + Send,
     {
-        if !self.layer_pipe.channel_selector.unwrap().saturation_enabled() { return; }
+        if !self
+            .layer_pipe
+            .channel_selector
+            .unwrap()
+            .saturation_enabled()
+        {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.saturation_layer.as_mut() {
             let width = layer.width;
-            layer.par_chunks_exact_mut(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
-                    *pixel = f(*pixel, x, y);
+            layer
+                .par_chunks_exact_mut(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
+                        *pixel = f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn par_run_lightness_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(f32, usize, usize) -> f32 + Sync + Send,
+    where
+        F: Fn(f32, usize, usize) -> f32 + Sync + Send,
     {
-        if !self.layer_pipe.channel_selector.unwrap().lightness_enabled() { return; }
+        if !self
+            .layer_pipe
+            .channel_selector
+            .unwrap()
+            .lightness_enabled()
+        {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.lightness_layer.as_mut() {
             let width = layer.width;
-            layer.par_chunks_exact_mut(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
-                    *pixel = f(*pixel, x, y);
+            layer
+                .par_chunks_exact_mut(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
+                        *pixel = f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn par_run_value_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(f32, usize, usize) -> f32 + Sync + Send,
+    where
+        F: Fn(f32, usize, usize) -> f32 + Sync + Send,
     {
-        if !self.layer_pipe.channel_selector.unwrap().value_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().value_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.value_layer.as_mut() {
             let width = layer.width;
-            layer.par_chunks_exact_mut(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
-                    *pixel = f(*pixel, x, y);
+            layer
+                .par_chunks_exact_mut(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter_mut().enumerate().for_each(|(x, pixel)| {
+                        *pixel = f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
@@ -508,16 +605,15 @@ impl LayerPipeRunner {
         fs: FS,
         fl: FL,
         fv: FV,
-    )
-        where
-            FR: Fn(u8, usize, usize) -> u8 + Sync + Send,
-            FG: Fn(u8, usize, usize) -> u8 + Sync + Send,
-            FB: Fn(u8, usize, usize) -> u8 + Sync + Send,
-            FA: Fn(u8, usize, usize) -> u8 + Sync + Send,
-            FH: Fn(f32, usize, usize) -> f32 + Sync + Send,
-            FS: Fn(f32, usize, usize) -> f32 + Sync + Send,
-            FL: Fn(f32, usize, usize) -> f32 + Sync + Send,
-            FV: Fn(f32, usize, usize) -> f32 + Sync + Send,
+    ) where
+        FR: Fn(u8, usize, usize) -> u8 + Sync + Send,
+        FG: Fn(u8, usize, usize) -> u8 + Sync + Send,
+        FB: Fn(u8, usize, usize) -> u8 + Sync + Send,
+        FA: Fn(u8, usize, usize) -> u8 + Sync + Send,
+        FH: Fn(f32, usize, usize) -> f32 + Sync + Send,
+        FS: Fn(f32, usize, usize) -> f32 + Sync + Send,
+        FL: Fn(f32, usize, usize) -> f32 + Sync + Send,
+        FV: Fn(f32, usize, usize) -> f32 + Sync + Send,
     {
         self.par_run_red_layer_if_enabled(fr);
         self.par_run_green_layer_if_enabled(fg);
@@ -530,122 +626,172 @@ impl LayerPipeRunner {
     }
 
     pub fn read_red_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(u8, usize, usize),
+    where
+        F: Fn(u8, usize, usize),
     {
-        if !self.layer_pipe.channel_selector.unwrap().red_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().red_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.red_layer.as_mut() {
             let width = layer.width;
-            layer.chunks_exact(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter().enumerate().for_each(|(x, pixel)| {
-                    f(*pixel, x, y);
+            layer
+                .chunks_exact(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter().enumerate().for_each(|(x, pixel)| {
+                        f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn read_green_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(u8, usize, usize),
+    where
+        F: Fn(u8, usize, usize),
     {
-        if !self.layer_pipe.channel_selector.unwrap().green_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().green_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.green_layer.as_mut() {
             let width = layer.width;
-            layer.chunks_exact(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter().enumerate().for_each(|(x, pixel)| {
-                    f(*pixel, x, y);
+            layer
+                .chunks_exact(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter().enumerate().for_each(|(x, pixel)| {
+                        f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn read_blue_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(u8, usize, usize),
+    where
+        F: Fn(u8, usize, usize),
     {
-        if !self.layer_pipe.channel_selector.unwrap().blue_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().blue_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.blue_layer.as_mut() {
             let width = layer.width;
-            layer.chunks_exact(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter().enumerate().for_each(|(x, pixel)| {
-                    f(*pixel, x, y);
+            layer
+                .chunks_exact(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter().enumerate().for_each(|(x, pixel)| {
+                        f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn read_alpha_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(u8, usize, usize),
+    where
+        F: Fn(u8, usize, usize),
     {
-        if !self.layer_pipe.channel_selector.unwrap().alpha_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().alpha_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.alpha_layer.as_mut() {
             let width = layer.width;
-            layer.chunks_exact(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter().enumerate().for_each(|(x, pixel)| {
-                    f(*pixel, x, y);
+            layer
+                .chunks_exact(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter().enumerate().for_each(|(x, pixel)| {
+                        f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn read_hue_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(f32, usize, usize),
+    where
+        F: Fn(f32, usize, usize),
     {
-        if !self.layer_pipe.channel_selector.unwrap().hue_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().hue_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.hue_layer.as_mut() {
             let width = layer.width;
-            layer.chunks_exact(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter().enumerate().for_each(|(x, pixel)| {
-                    f(*pixel, x, y);
+            layer
+                .chunks_exact(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter().enumerate().for_each(|(x, pixel)| {
+                        f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn read_saturation_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(f32, usize, usize),
+    where
+        F: Fn(f32, usize, usize),
     {
-        if !self.layer_pipe.channel_selector.unwrap().saturation_enabled() { return; }
+        if !self
+            .layer_pipe
+            .channel_selector
+            .unwrap()
+            .saturation_enabled()
+        {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.saturation_layer.as_mut() {
             let width = layer.width;
-            layer.chunks_exact(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter().enumerate().for_each(|(x, pixel)| {
-                    f(*pixel, x, y);
+            layer
+                .chunks_exact(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter().enumerate().for_each(|(x, pixel)| {
+                        f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn read_lightness_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(f32, usize, usize),
+    where
+        F: Fn(f32, usize, usize),
     {
-        if !self.layer_pipe.channel_selector.unwrap().lightness_enabled() { return; }
+        if !self
+            .layer_pipe
+            .channel_selector
+            .unwrap()
+            .lightness_enabled()
+        {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.lightness_layer.as_mut() {
             let width = layer.width;
-            layer.chunks_exact(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter().enumerate().for_each(|(x, pixel)| {
-                    f(*pixel, x, y);
+            layer
+                .chunks_exact(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter().enumerate().for_each(|(x, pixel)| {
+                        f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn read_value_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(f32, usize, usize),
+    where
+        F: Fn(f32, usize, usize),
     {
-        if !self.layer_pipe.channel_selector.unwrap().value_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().value_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.value_layer.as_mut() {
             let width = layer.width;
-            layer.chunks_exact_mut(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter().enumerate().for_each(|(x, pixel)| {
-                    f(*pixel, x, y);
+            layer
+                .chunks_exact_mut(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter().enumerate().for_each(|(x, pixel)| {
+                        f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
@@ -659,16 +805,15 @@ impl LayerPipeRunner {
         fs: FS,
         fl: FL,
         fv: FV,
-    )
-        where
-            FR: Fn(u8, usize, usize),
-            FG: Fn(u8, usize, usize),
-            FB: Fn(u8, usize, usize),
-            FA: Fn(u8, usize, usize),
-            FH: Fn(f32, usize, usize),
-            FS: Fn(f32, usize, usize),
-            FL: Fn(f32, usize, usize),
-            FV: Fn(f32, usize, usize),
+    ) where
+        FR: Fn(u8, usize, usize),
+        FG: Fn(u8, usize, usize),
+        FB: Fn(u8, usize, usize),
+        FA: Fn(u8, usize, usize),
+        FH: Fn(f32, usize, usize),
+        FS: Fn(f32, usize, usize),
+        FL: Fn(f32, usize, usize),
+        FV: Fn(f32, usize, usize),
     {
         self.read_red_layer_if_enabled(fr);
         self.read_green_layer_if_enabled(fg);
@@ -681,122 +826,172 @@ impl LayerPipeRunner {
     }
 
     pub fn par_read_red_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(u8, usize, usize) + Send + Sync,
+    where
+        F: Fn(u8, usize, usize) + Send + Sync,
     {
-        if !self.layer_pipe.channel_selector.unwrap().red_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().red_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.red_layer.as_mut() {
             let width = layer.width;
-            layer.par_chunks_exact(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter().enumerate().for_each(|(x, pixel)| {
-                    f(*pixel, x, y);
+            layer
+                .par_chunks_exact(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter().enumerate().for_each(|(x, pixel)| {
+                        f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn par_read_green_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(u8, usize, usize) + Sync + Send,
+    where
+        F: Fn(u8, usize, usize) + Sync + Send,
     {
-        if !self.layer_pipe.channel_selector.unwrap().green_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().green_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.green_layer.as_mut() {
             let width = layer.width;
-            layer.par_chunks_exact(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter().enumerate().for_each(|(x, pixel)| {
-                    f(*pixel, x, y);
+            layer
+                .par_chunks_exact(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter().enumerate().for_each(|(x, pixel)| {
+                        f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn par_read_blue_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(u8, usize, usize) + Sync + Send,
+    where
+        F: Fn(u8, usize, usize) + Sync + Send,
     {
-        if !self.layer_pipe.channel_selector.unwrap().blue_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().blue_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.blue_layer.as_mut() {
             let width = layer.width;
-            layer.par_chunks_exact(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter().enumerate().for_each(|(x, pixel)| {
-                    f(*pixel, x, y);
+            layer
+                .par_chunks_exact(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter().enumerate().for_each(|(x, pixel)| {
+                        f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn par_read_alpha_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(u8, usize, usize) + Sync + Send,
+    where
+        F: Fn(u8, usize, usize) + Sync + Send,
     {
-        if !self.layer_pipe.channel_selector.unwrap().alpha_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().alpha_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.alpha_layer.as_mut() {
             let width = layer.width;
-            layer.par_chunks_exact(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter().enumerate().for_each(|(x, pixel)| {
-                    f(*pixel, x, y);
+            layer
+                .par_chunks_exact(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter().enumerate().for_each(|(x, pixel)| {
+                        f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn par_read_hue_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(f32, usize, usize) + Sync + Send,
+    where
+        F: Fn(f32, usize, usize) + Sync + Send,
     {
-        if !self.layer_pipe.channel_selector.unwrap().hue_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().hue_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.hue_layer.as_mut() {
             let width = layer.width;
-            layer.par_chunks_exact(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter().enumerate().for_each(|(x, pixel)| {
-                    f(*pixel, x, y);
+            layer
+                .par_chunks_exact(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter().enumerate().for_each(|(x, pixel)| {
+                        f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn par_read_saturation_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(f32, usize, usize) + Sync + Send,
+    where
+        F: Fn(f32, usize, usize) + Sync + Send,
     {
-        if !self.layer_pipe.channel_selector.unwrap().saturation_enabled() { return; }
+        if !self
+            .layer_pipe
+            .channel_selector
+            .unwrap()
+            .saturation_enabled()
+        {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.saturation_layer.as_mut() {
             let width = layer.width;
-            layer.par_chunks_exact(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter().enumerate().for_each(|(x, pixel)| {
-                    f(*pixel, x, y);
+            layer
+                .par_chunks_exact(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter().enumerate().for_each(|(x, pixel)| {
+                        f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn par_read_lightness_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(f32, usize, usize) + Sync + Send,
+    where
+        F: Fn(f32, usize, usize) + Sync + Send,
     {
-        if !self.layer_pipe.channel_selector.unwrap().lightness_enabled() { return; }
+        if !self
+            .layer_pipe
+            .channel_selector
+            .unwrap()
+            .lightness_enabled()
+        {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.lightness_layer.as_mut() {
             let width = layer.width;
-            layer.par_chunks_exact(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter().enumerate().for_each(|(x, pixel)| {
-                    f(*pixel, x, y);
+            layer
+                .par_chunks_exact(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter().enumerate().for_each(|(x, pixel)| {
+                        f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
     pub fn par_read_value_layer_if_enabled<F>(&mut self, f: F)
-        where
-            F: Fn(f32, usize, usize) + Sync + Send,
+    where
+        F: Fn(f32, usize, usize) + Sync + Send,
     {
-        if !self.layer_pipe.channel_selector.unwrap().value_enabled() { return; }
+        if !self.layer_pipe.channel_selector.unwrap().value_enabled() {
+            return;
+        }
         if let Some(layer) = self.layer_pipe.value_layer.as_mut() {
             let width = layer.width;
-            layer.par_chunks_exact(width).enumerate().for_each(|(y, chunk)| {
-                chunk.iter().enumerate().for_each(|(x, pixel)| {
-                    f(*pixel, x, y);
+            layer
+                .par_chunks_exact(width)
+                .enumerate()
+                .for_each(|(y, chunk)| {
+                    chunk.iter().enumerate().for_each(|(x, pixel)| {
+                        f(*pixel, x, y);
+                    });
                 });
-            });
         }
     }
 
@@ -810,16 +1005,15 @@ impl LayerPipeRunner {
         fs: FS,
         fl: FL,
         fv: FV,
-    )
-        where
-            FR: Fn(u8, usize, usize) + Sync + Send,
-            FG: Fn(u8, usize, usize) + Sync + Send,
-            FB: Fn(u8, usize, usize) + Sync + Send,
-            FA: Fn(u8, usize, usize) + Sync + Send,
-            FH: Fn(f32, usize, usize) + Sync + Send,
-            FS: Fn(f32, usize, usize) + Sync + Send,
-            FL: Fn(f32, usize, usize) + Sync + Send,
-            FV: Fn(f32, usize, usize) + Sync + Send,
+    ) where
+        FR: Fn(u8, usize, usize) + Sync + Send,
+        FG: Fn(u8, usize, usize) + Sync + Send,
+        FB: Fn(u8, usize, usize) + Sync + Send,
+        FA: Fn(u8, usize, usize) + Sync + Send,
+        FH: Fn(f32, usize, usize) + Sync + Send,
+        FS: Fn(f32, usize, usize) + Sync + Send,
+        FL: Fn(f32, usize, usize) + Sync + Send,
+        FV: Fn(f32, usize, usize) + Sync + Send,
     {
         self.par_read_red_layer_if_enabled(fr);
         self.par_read_green_layer_if_enabled(fg);

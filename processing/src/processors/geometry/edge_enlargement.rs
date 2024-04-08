@@ -1,10 +1,10 @@
+use crate::common::channel::ChannelSelector;
+use crate::common::execution::{CpuOptions, ExecutionPlan};
+use crate::common::process::Processor;
 use picturify_core::error::PicturifyResult;
 use picturify_core::image::fast_image::FastImage;
 use picturify_core::image::pixel::RgbaPixel;
 use picturify_core::image::virtual_image::{VirtualImage, VirtualRgbaImage};
-use crate::common::channel::ChannelSelector;
-use crate::common::execution::{CpuOptions, ExecutionPlan};
-use crate::common::process::Processor;
 
 pub enum EdgeEnlargementStrategy {
     Constant(RgbaPixel),
@@ -38,16 +38,12 @@ impl EdgeEnlargementProcessor {
         action(&mut self.options);
     }
 
-    fn run_cpu(
-        &self,
-        fast_image: FastImage,
-        cpu_options: CpuOptions,
-    ) -> FastImage {
+    fn run_cpu(&self, fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
         let new_width = fast_image.get_width() + self.options.border * 2;
         let new_height = fast_image.get_height() + self.options.border * 2;
 
         let mut new_image = FastImage::empty(new_width, new_height);
-        
+
         let width = fast_image.get_width();
         let height = fast_image.get_height();
 
@@ -55,35 +51,56 @@ impl EdgeEnlargementProcessor {
             match self.options.strategy {
                 EdgeEnlargementStrategy::Constant(pixel) => {
                     new_image.iterate_par_rgba(|new_pixel, x, y| {
-                        if x < self.options.border || x >= new_width - self.options.border || y < self.options.border || y >= new_height - self.options.border {
+                        if x < self.options.border
+                            || x >= new_width - self.options.border
+                            || y < self.options.border
+                            || y >= new_height - self.options.border
+                        {
                             *new_pixel = pixel;
                         } else {
-                            *new_pixel = fast_image.get_rgba(x - self.options.border, y - self.options.border);
+                            *new_pixel = fast_image
+                                .get_rgba(x - self.options.border, y - self.options.border);
                         }
                     });
                 }
                 EdgeEnlargementStrategy::Mirror => {
                     new_image.iterate_par_rgba(|new_pixel, x, y| {
-                        if x < self.options.border || x >= new_width - self.options.border || y < self.options.border || y >= new_height - self.options.border {
+                        if x < self.options.border
+                            || x >= new_width - self.options.border
+                            || y < self.options.border
+                            || y >= new_height - self.options.border
+                        {
                             let x = if x < self.options.border {
-                                self.options.border - x - 1  // For the left border
+                                self.options.border - x - 1 // For the left border
                             } else if x >= width + self.options.border {
-                                2 * width + self.options.border - x - 1  // For the right self.options.borderorder
+                                2 * width + self.options.border - x - 1 // For the right self.options.borderorder
                             } else {
-                                x - self.options.border  // For the middle section
+                                x - self.options.border // For the middle section
                             };
 
                             let y = if y < self.options.border {
-                                self.options.border - y - 1  // For the top self.options.borderorder
+                                self.options.border - y - 1 // For the top self.options.borderorder
                             } else if y >= height + self.options.border {
-                                2 * height + self.options.border - y - 1  // For the self.options.borderottom self.options.borderorder
+                                2 * height + self.options.border - y - 1 // For the self.options.borderottom self.options.borderorder
                             } else {
-                                y - self.options.border  // For the middle section
+                                y - self.options.border // For the middle section
                             };
 
-                            *new_pixel = fast_image.get_rgba(if x > new_width / 2 { (new_width - x - 1) % width } else { x % width }, if y > new_height / 2 { (new_height - y - 1) % height } else { y % height});
+                            *new_pixel = fast_image.get_rgba(
+                                if x > new_width / 2 {
+                                    (new_width - x - 1) % width
+                                } else {
+                                    x % width
+                                },
+                                if y > new_height / 2 {
+                                    (new_height - y - 1) % height
+                                } else {
+                                    y % height
+                                },
+                            );
                         } else {
-                            *new_pixel = fast_image.get_rgba(x - self.options.border, y - self.options.border);
+                            *new_pixel = fast_image
+                                .get_rgba(x - self.options.border, y - self.options.border);
                         }
                     });
                 }

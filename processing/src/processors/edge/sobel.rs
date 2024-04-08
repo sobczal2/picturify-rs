@@ -2,9 +2,14 @@ use picturify_core::error::PicturifyResult;
 use picturify_core::image::fast_image::FastImage;
 use picturify_core::image::layer::LayerType;
 use picturify_core::image::pixel::RgbaPixel;
-use picturify_core::image::virtual_image::{VirtualHslImage, VirtualHsvaImage, VirtualImage, VirtualRgbaImage};
+use picturify_core::image::virtual_image::{
+    VirtualHslImage, VirtualHsvaImage, VirtualImage, VirtualRgbaImage,
+};
 
-use crate::common::channel::{ChannelSelector, HslaChannelSelector, HsvaChannelSelector, LaChannelSelector, RgbaChannelSelector};
+use crate::common::channel::{
+    ChannelSelector, HslaChannelSelector, HsvaChannelSelector, LaChannelSelector,
+    RgbaChannelSelector,
+};
 use crate::common::execution::{CpuOptions, ExecutionPlan};
 use crate::common::process::Processor;
 
@@ -44,19 +49,11 @@ impl SobelOperatorProcessor {
     fn run_cpu(&self, fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
         cpu_options.build_thread_pool().install(|| {
             return match self.channel_selector {
-                ChannelSelector::Rgba(selector) => {
-                    self.run_cpu_rgba(fast_image, selector)
-                }
-                ChannelSelector::Hsva(selector) => {
-                    self.run_cpu_hsva(fast_image, selector)
-                }
-                ChannelSelector::Hsla(selector) => {
-                    self.run_cpu_hsla(fast_image, selector)
-                }
-                ChannelSelector::La(selector) => {
-                    self.run_cpu_la(fast_image, selector)
-                }
-            }
+                ChannelSelector::Rgba(selector) => self.run_cpu_rgba(fast_image, selector),
+                ChannelSelector::Hsva(selector) => self.run_cpu_hsva(fast_image, selector),
+                ChannelSelector::Hsla(selector) => self.run_cpu_hsla(fast_image, selector),
+                ChannelSelector::La(selector) => self.run_cpu_la(fast_image, selector),
+            };
         })
     }
 
@@ -64,7 +61,12 @@ impl SobelOperatorProcessor {
         unimplemented!()
     }
 
-    fn get_sobel_magnitude_squared(fast_image: &FastImage, layer_type: LayerType, x: usize, y: usize) -> f32 {
+    fn get_sobel_magnitude_squared(
+        fast_image: &FastImage,
+        layer_type: LayerType,
+        x: usize,
+        y: usize,
+    ) -> f32 {
         let mut sobel_x = 0.0;
         let mut sobel_y = 0.0;
 
@@ -119,7 +121,11 @@ impl Processor for SobelOperatorProcessor {
 }
 
 impl SobelOperatorProcessor {
-    fn run_cpu_rgba(&self, fast_image: FastImage, rgba_channel_selector: RgbaChannelSelector) -> FastImage {
+    fn run_cpu_rgba(
+        &self,
+        fast_image: FastImage,
+        rgba_channel_selector: RgbaChannelSelector,
+    ) -> FastImage {
         let width = fast_image.get_width();
         let height = fast_image.get_height();
 
@@ -154,7 +160,8 @@ impl SobelOperatorProcessor {
             }
 
             let old_pixel = fast_image.get_rgba(x, y);
-            let new_pixel = (self.options.magnitude_mapping)(old_pixel, magnitude_sum / magnitude_count as f32);
+            let new_pixel =
+                (self.options.magnitude_mapping)(old_pixel, magnitude_sum / magnitude_count as f32);
 
             pixel.red = new_pixel.red;
             pixel.green = new_pixel.green;
@@ -165,14 +172,22 @@ impl SobelOperatorProcessor {
         output_image
     }
 
-    fn run_cpu_hsva(&self, fast_image: FastImage, hsva_channel_selector: HsvaChannelSelector) -> FastImage {
+    fn run_cpu_hsva(
+        &self,
+        fast_image: FastImage,
+        hsva_channel_selector: HsvaChannelSelector,
+    ) -> FastImage {
         let width = fast_image.get_width();
         let height = fast_image.get_height();
 
         let mut output_image = FastImage::empty(width, height);
 
         output_image.iterate_par_hsva(|pixel, x, y| {
-            if x == 0 || y == 0 || x == fast_image.get_width() - 1 || y == fast_image.get_height() - 1 {
+            if x == 0
+                || y == 0
+                || x == fast_image.get_width() - 1
+                || y == fast_image.get_height() - 1
+            {
                 return;
             }
             let mut magnitude_sum = 0.0;
@@ -199,7 +214,8 @@ impl SobelOperatorProcessor {
                 magnitude_count += 1;
             }
             let old_pixel = fast_image.get_rgba(x, y);
-            let new_pixel = (self.options.magnitude_mapping)(old_pixel, magnitude_sum / magnitude_count as f32);
+            let new_pixel =
+                (self.options.magnitude_mapping)(old_pixel, magnitude_sum / magnitude_count as f32);
 
             pixel.copy_from_rgba(new_pixel);
         });
@@ -207,7 +223,11 @@ impl SobelOperatorProcessor {
         output_image
     }
 
-    fn run_cpu_hsla(&self, fast_image: FastImage, hsla_channel_selector: HslaChannelSelector) -> FastImage {
+    fn run_cpu_hsla(
+        &self,
+        fast_image: FastImage,
+        hsla_channel_selector: HslaChannelSelector,
+    ) -> FastImage {
         let width = fast_image.get_width();
         let height = fast_image.get_height();
 
@@ -241,7 +261,8 @@ impl SobelOperatorProcessor {
                 magnitude_count += 1;
             }
             let old_pixel = fast_image.get_rgba(x, y);
-            let new_pixel = (self.options.magnitude_mapping)(old_pixel, magnitude_sum / magnitude_count as f32);
+            let new_pixel =
+                (self.options.magnitude_mapping)(old_pixel, magnitude_sum / magnitude_count as f32);
 
             pixel.copy_from_rgba(new_pixel);
         });
@@ -249,7 +270,11 @@ impl SobelOperatorProcessor {
         output_image
     }
 
-    fn run_cpu_la(&self, _fast_image: FastImage, _la_channel_selector: LaChannelSelector) -> FastImage {
+    fn run_cpu_la(
+        &self,
+        _fast_image: FastImage,
+        _la_channel_selector: LaChannelSelector,
+    ) -> FastImage {
         unimplemented!()
     }
 }

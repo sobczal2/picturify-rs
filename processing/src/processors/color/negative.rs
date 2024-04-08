@@ -1,8 +1,8 @@
-use picturify_core::error::PicturifyResult;
-use picturify_core::image::fast_image::FastImage;
 use crate::common::channel::ChannelSelector;
 use crate::common::execution::{CpuOptions, ExecutionPlan};
 use crate::common::process::{LayerPipe, LayerPipeRunner, Processor};
+use picturify_core::error::PicturifyResult;
+use picturify_core::image::fast_image::FastImage;
 
 pub struct NegativeProcessor {
     channel_selector: ChannelSelector,
@@ -22,33 +22,16 @@ impl NegativeProcessor {
         let layer_pipe = layer_pipe.prepare_layers(&fast_image, self.channel_selector);
         let mut layer_pipe_runner = LayerPipeRunner::new(layer_pipe);
 
-
         cpu_options.build_thread_pool().install(|| {
             layer_pipe_runner.par_run_all_layers_if_enabled(
-                |r, _x, _y| {
-                    255 - r
-                },
-                |g, _x, _y| {
-                    255 - g
-                },
-                |b, _x, _y| {
-                    255 - b
-                },
-                |a, _x, _y| {
-                    255 - a
-                },
-                |h, _x, _y| {
-                    360.0 - h
-                },
-                |s, _x, _y| {
-                    1.0 - s
-                },
-                |v, _x, _y| {
-                    1.0 - v
-                },
-                |l, _x, _y| {
-                    1.0 - l
-                },
+                |r, _x, _y| 255 - r,
+                |g, _x, _y| 255 - g,
+                |b, _x, _y| 255 - b,
+                |a, _x, _y| 255 - a,
+                |h, _x, _y| 360.0 - h,
+                |s, _x, _y| 1.0 - s,
+                |v, _x, _y| 1.0 - v,
+                |l, _x, _y| 1.0 - l,
             );
         });
 

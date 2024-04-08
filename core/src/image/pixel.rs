@@ -15,7 +15,7 @@ impl RgbaPixel {
         self.green = green;
         self.blue = blue;
     }
-    
+
     pub fn copy_from_hsla(&mut self, hsla: HslaPixel) {
         let (red, green, blue) = hsv_to_rgb(hsla.hue, hsla.saturation, hsla.lightness);
         self.red = red;
