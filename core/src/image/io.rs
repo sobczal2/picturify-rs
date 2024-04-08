@@ -1,4 +1,4 @@
-use crate::error::{PicturifyError, PicturifyResult};
+use crate::error::PicturifyResult;
 
 pub trait ReadFromFile {
     fn read_from_file(path: &str) -> PicturifyResult<Box<Self>>;

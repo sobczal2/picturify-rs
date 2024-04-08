@@ -11,7 +11,11 @@ use crate::common::process::Processor;
 pub struct SobelOperatorProcessor {
     execution_plan: ExecutionPlan,
     channel_selector: ChannelSelector,
-    magnitude_mapping: fn(RgbaPixel, f32) -> RgbaPixel,
+    options: SobelOperatorProcessorOptions,
+}
+
+pub struct SobelOperatorProcessorOptions {
+    pub magnitude_mapping: fn(RgbaPixel, f32) -> RgbaPixel,
 }
 
 impl SobelOperatorProcessor {
@@ -19,21 +23,22 @@ impl SobelOperatorProcessor {
         SobelOperatorProcessor {
             execution_plan: ExecutionPlan::Cpu(Default::default()),
             channel_selector: ChannelSelector::Rgba(Default::default()),
-            magnitude_mapping: |old_pixel, magnitude_squared| {
-                let magnitude = (magnitude_squared.sqrt() * 255.0).min(255.0).round() as u8;
-                RgbaPixel {
-                    red: magnitude,
-                    green: magnitude,
-                    blue: magnitude,
-                    alpha: old_pixel.alpha,
-                }
+            options: SobelOperatorProcessorOptions {
+                magnitude_mapping: |old_pixel, magnitude_squared| {
+                    let magnitude = (magnitude_squared.sqrt() * 255.0).min(255.0).round() as u8;
+                    RgbaPixel {
+                        red: magnitude,
+                        green: magnitude,
+                        blue: magnitude,
+                        alpha: old_pixel.alpha,
+                    }
+                },
             },
         }
     }
 
-    pub fn set_magnitude_mapping(&mut self, magnitude_mapping: fn(RgbaPixel, f32) -> RgbaPixel) -> PicturifyResult<()> {
-        self.magnitude_mapping = magnitude_mapping;
-        Ok(())
+    pub fn change_options(&mut self, action: fn(&mut SobelOperatorProcessorOptions)) {
+        action(&mut self.options);
     }
 
     fn run_cpu(&self, fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
@@ -55,7 +60,7 @@ impl SobelOperatorProcessor {
         })
     }
 
-    fn run_gpu(&self, fast_image: FastImage) -> FastImage {
+    fn run_gpu(&self, _fast_image: FastImage) -> FastImage {
         unimplemented!()
     }
 
@@ -114,7 +119,7 @@ impl Processor for SobelOperatorProcessor {
 }
 
 impl SobelOperatorProcessor {
-    fn run_cpu_rgba(&self, mut fast_image: FastImage, rgba_channel_selector: RgbaChannelSelector) -> FastImage {
+    fn run_cpu_rgba(&self, fast_image: FastImage, rgba_channel_selector: RgbaChannelSelector) -> FastImage {
         let width = fast_image.get_width();
         let height = fast_image.get_height();
 
@@ -149,7 +154,7 @@ impl SobelOperatorProcessor {
             }
 
             let old_pixel = fast_image.get_rgba(x, y);
-            let new_pixel = (self.magnitude_mapping)(old_pixel, magnitude_sum / magnitude_count as f32);
+            let new_pixel = (self.options.magnitude_mapping)(old_pixel, magnitude_sum / magnitude_count as f32);
 
             pixel.red = new_pixel.red;
             pixel.green = new_pixel.green;
@@ -160,7 +165,7 @@ impl SobelOperatorProcessor {
         output_image
     }
 
-    fn run_cpu_hsva(&self, mut fast_image: FastImage, hsva_channel_selector: HsvaChannelSelector) -> FastImage {
+    fn run_cpu_hsva(&self, fast_image: FastImage, hsva_channel_selector: HsvaChannelSelector) -> FastImage {
         let width = fast_image.get_width();
         let height = fast_image.get_height();
 
@@ -194,7 +199,7 @@ impl SobelOperatorProcessor {
                 magnitude_count += 1;
             }
             let old_pixel = fast_image.get_rgba(x, y);
-            let new_pixel = (self.magnitude_mapping)(old_pixel, magnitude_sum / magnitude_count as f32);
+            let new_pixel = (self.options.magnitude_mapping)(old_pixel, magnitude_sum / magnitude_count as f32);
 
             pixel.copy_from_rgba(new_pixel);
         });
@@ -202,7 +207,7 @@ impl SobelOperatorProcessor {
         output_image
     }
 
-    fn run_cpu_hsla(&self, mut fast_image: FastImage, hsla_channel_selector: HslaChannelSelector) -> FastImage {
+    fn run_cpu_hsla(&self, fast_image: FastImage, hsla_channel_selector: HslaChannelSelector) -> FastImage {
         let width = fast_image.get_width();
         let height = fast_image.get_height();
 
@@ -236,7 +241,7 @@ impl SobelOperatorProcessor {
                 magnitude_count += 1;
             }
             let old_pixel = fast_image.get_rgba(x, y);
-            let new_pixel = (self.magnitude_mapping)(old_pixel, magnitude_sum / magnitude_count as f32);
+            let new_pixel = (self.options.magnitude_mapping)(old_pixel, magnitude_sum / magnitude_count as f32);
 
             pixel.copy_from_rgba(new_pixel);
         });
@@ -244,7 +249,7 @@ impl SobelOperatorProcessor {
         output_image
     }
 
-    fn run_cpu_la(&self, mut fast_image: FastImage, la_channel_selector: LaChannelSelector) -> FastImage {
+    fn run_cpu_la(&self, _fast_image: FastImage, _la_channel_selector: LaChannelSelector) -> FastImage {
         unimplemented!()
     }
 }

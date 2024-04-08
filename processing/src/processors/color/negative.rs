@@ -20,40 +20,42 @@ impl NegativeProcessor {
     fn run_cpu(&self, fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
         let layer_pipe = LayerPipe::new();
         let layer_pipe = layer_pipe.prepare_layers(&fast_image, self.channel_selector);
-        let mut layer_pipe_runner = LayerPipeRunner::new(layer_pipe, self.execution_plan);
-        
-        
-        layer_pipe_runner.par_run_all_layers_if_enabled(
-            |r, x, y| {
-                255 - r
-            },
-            |g, x, y| {
-                255 - g
-            },
-            |b, x, y| {
-                255 - b
-            },
-            |a, x, y| {
-                255 - a
-            },
-            |h, x, y| {
-                360.0 - h
-            },
-            |s, x, y| {
-                1.0 - s
-            },
-            |v, x, y| {
-                1.0 - v
-            },
-            |l, x, y| {
-                1.0 - l
-            },
-        );
-        
+        let mut layer_pipe_runner = LayerPipeRunner::new(layer_pipe);
+
+
+        cpu_options.build_thread_pool().install(|| {
+            layer_pipe_runner.par_run_all_layers_if_enabled(
+                |r, _x, _y| {
+                    255 - r
+                },
+                |g, _x, _y| {
+                    255 - g
+                },
+                |b, _x, _y| {
+                    255 - b
+                },
+                |a, _x, _y| {
+                    255 - a
+                },
+                |h, _x, _y| {
+                    360.0 - h
+                },
+                |s, _x, _y| {
+                    1.0 - s
+                },
+                |v, _x, _y| {
+                    1.0 - v
+                },
+                |l, _x, _y| {
+                    1.0 - l
+                },
+            );
+        });
+
         layer_pipe_runner.get_final_image()
     }
 
-    fn run_gpu(&self, fast_image: FastImage) -> FastImage {
+    fn run_gpu(&self, _fast_image: FastImage) -> FastImage {
         unimplemented!()
     }
 }

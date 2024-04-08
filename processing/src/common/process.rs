@@ -8,7 +8,6 @@ use picturify_core::image::layer::{
     LaLayered, LaLayers, LightnessLayer, RedLayer, RgbaLayered, RgbaLayers, SaturationLayer,
     ValueLayer,
 };
-use picturify_core::image::util::cord_1d_to_2d;
 
 use crate::common::channel::ChannelSelector;
 use crate::common::execution::ExecutionPlan;
@@ -215,14 +214,12 @@ impl LayerPipe<FinalImagePrepared> {
 
 pub struct LayerPipeRunner {
     layer_pipe: LayerPipe<LayersPrepared>,
-    execution_plan: ExecutionPlan,
 }
 
 impl LayerPipeRunner {
-    pub fn new(layer_pipe: LayerPipe<LayersPrepared>, execution_plan: ExecutionPlan) -> LayerPipeRunner {
+    pub fn new(layer_pipe: LayerPipe<LayersPrepared>) -> LayerPipeRunner {
         LayerPipeRunner {
             layer_pipe,
-            execution_plan,
         }
     }
 

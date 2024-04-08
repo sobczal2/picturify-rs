@@ -1,11 +1,11 @@
-use image::{DynamicImage, GenericImage, GenericImageView, Rgba, RgbaImage};
+use image::{DynamicImage, GenericImage, GenericImageView, Rgba};
 use rayon::prelude::*;
 
 use crate::color::hsl_conversions::{hsl_to_rgb, rgb_to_hsl};
 use crate::color::hsv_conversions::{hsv_to_rgb, rgb_to_hsv};
 use crate::error::{PicturifyError, PicturifyResult};
 use crate::image::io::{ReadFromFile, WriteToFile};
-use crate::image::layer::{HslaLayered, HslaLayers, HsvaLayered, HsvaLayers, LaLayered, LaLayers, LayerType, LightnessLayer, RgbaLayered, RgbaLayers};
+use crate::image::layer::{HslaLayered, HslaLayers, HsvaLayered, HsvaLayers, LaLayered, LaLayers, LayerType, RgbaLayered, RgbaLayers};
 use crate::image::pixel::{HslaPixel, HsvaPixel, RgbaPixel};
 use crate::image::virtual_image::{
     VirtualHslImage, VirtualHsvaImage, VirtualImage, VirtualRgbaImage,
@@ -17,14 +17,14 @@ pub struct FastImage {
 }
 
 impl FastImage {
-    pub fn to_grayscale(&mut self) {
+    pub fn as_grayscale(&mut self) {
         match &self.dynamic_image {
             DynamicImage::ImageLuma8(_) => {}
             _ => self.dynamic_image = DynamicImage::ImageLuma8(self.dynamic_image.to_luma8()),
         }
     }
 
-    pub fn to_color(&mut self) {
+    pub fn as_color(&mut self) {
         match &self.dynamic_image {
             DynamicImage::ImageRgba8(_) => {}
             _ => self.dynamic_image = DynamicImage::ImageRgba8(self.dynamic_image.to_rgba8()),
@@ -61,6 +61,10 @@ impl FastImage {
             LayerType::Value => self.get_hsva(x, y).value,
             LayerType::Lightness => self.get_hsla(x, y).lightness,
         }
+    }
+
+    pub fn crop(&mut self, x: usize, y: usize, width: usize, height: usize) {
+        self.dynamic_image = self.dynamic_image.crop(x as u32, y as u32, width as u32, height as u32);
     }
 }
 

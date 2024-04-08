@@ -1,5 +1,3 @@
-use picturify_core::image::fast_image::FastImage;
-
 #[derive(Copy, Clone)]
 pub struct CpuOptions {
     pub num_threads: Option<usize>,

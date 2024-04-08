@@ -1,5 +1,4 @@
 use crate::image::pixel::{HslaPixel, HsvaPixel, RgbaPixel};
-use rayon::prelude::*;
 
 pub trait VirtualImage {
     fn get_width(&self) -> usize;

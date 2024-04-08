@@ -34,13 +34,13 @@ impl SepiaProcessor {
         pixel.blue = new_b;
     }
 
-    fn run_multi_thread_cpu(
+    fn run_cpu(
         &self,
         mut fast_image: FastImage,
         cpu_options: CpuOptions,
     ) -> FastImage {
         cpu_options.build_thread_pool().install(|| {
-            fast_image.iterate_par_rgba(|pixel, x, y| {
+            fast_image.iterate_par_rgba(|pixel, _x, _y| {
                 self.calculate_pixel(pixel);
             });
         });
@@ -48,7 +48,7 @@ impl SepiaProcessor {
         fast_image
     }
 
-    fn run_gpu(&self, fast_image: FastImage) -> FastImage {
+    fn run_gpu(&self, _fast_image: FastImage) -> FastImage {
         unimplemented!()
     }
 }
@@ -65,7 +65,7 @@ impl Processor for SepiaProcessor {
 
     fn process(&self, fast_image: FastImage) -> FastImage {
         match self.execution_plan {
-            ExecutionPlan::Cpu(options) => self.run_multi_thread_cpu(fast_image, options),
+            ExecutionPlan::Cpu(options) => self.run_cpu(fast_image, options),
             ExecutionPlan::Gpu => self.run_gpu(fast_image),
         }
     }
