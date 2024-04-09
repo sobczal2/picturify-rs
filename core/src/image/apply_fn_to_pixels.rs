@@ -37,9 +37,9 @@ where
 pub trait ApplyFnToImagePixels {
     fn apply_fn_to_pixel<F>(&mut self, f: F)
     where
-        F: Fn(&mut Rgba<f32>, usize, usize);
+        F: Fn(&mut Rgba<u8>, usize, usize);
 
     fn par_apply_fn_to_pixel<F>(&mut self, f: F)
     where
-        F: Fn(&mut Rgba<f32>, usize, usize) + Send + Sync;
+        F: Fn(&mut Rgba<u8>, usize, usize) + Send + Sync;
 }

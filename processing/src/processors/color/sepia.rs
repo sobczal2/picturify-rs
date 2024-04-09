@@ -40,17 +40,17 @@ impl SepiaProcessor {
         cpu_options.build_thread_pool().install(|| {
             if self.options.use_fast_approximation {
                 fast_image.par_apply_fn_to_pixel(|pixel, _x, _y| {
-                    let r = pixel.0[0];
-                    let g = pixel.0[1];
-                    let b = pixel.0[2];
+                    let r = pixel.0[0] as f32;
+                    let g = pixel.0[1] as f32;
+                    let b = pixel.0[2] as f32;
 
                     let new_r = r * 0.393 + g * 0.769 + b * 0.189;
                     let new_g = r * 0.349 + g * 0.686 + b * 0.168;
                     let new_b = r * 0.272 + g * 0.534 + b * 0.131;
 
-                    pixel.0[0] = new_r;
-                    pixel.0[1] = new_g;
-                    pixel.0[2] = new_b;
+                    pixel.0[0] = new_r.round() as u8;
+                    pixel.0[1] = new_g.round() as u8;
+                    pixel.0[2] = new_b.round() as u8;
                 });
             } else {
                 fast_image.par_apply_fn_to_linsrgba(|mut pixel, _x, _y| {

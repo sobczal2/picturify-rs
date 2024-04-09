@@ -17,7 +17,7 @@ impl NegativeProcessor {
         NegativeProcessor {
             execution_plan: ExecutionPlan::Cpu(Default::default()),
             options: NegativeProcessorOptions {
-                use_fast_approximation: true,
+                use_fast_approximation: false,
             },
         }
     }
@@ -33,9 +33,9 @@ impl NegativeProcessor {
         cpu_options.build_thread_pool().install(|| {
             if self.options.use_fast_approximation {
                 fast_image.par_apply_fn_to_pixel(|pixel, _x, _y| {
-                    pixel.0[0] = 1.0 - pixel.0[0];
-                    pixel.0[1] = 1.0 - pixel.0[1];
-                    pixel.0[2] = 1.0 - pixel.0[2];
+                    pixel.0[0] = 255 - pixel.0[0];
+                    pixel.0[1] = 255 - pixel.0[1];
+                    pixel.0[2] = 255 - pixel.0[2];
                 });
             } else {
                 fast_image.par_apply_fn_to_linsrgba(|pixel, _x, _y| {

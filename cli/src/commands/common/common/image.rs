@@ -1,3 +1,4 @@
+use crate::commands::common::color::negative::NegativeCommand;
 use clap::{Arg, Command};
 
 use crate::commands::common::color::sepia::SepiaCommand;
@@ -19,6 +20,10 @@ impl ImageCommand {
                     .index(2)
                     .required(true),
             ])
-            .subcommands([SepiaCommand::new(), NoneCommand::new()])
+            .subcommands([
+                SepiaCommand::new(),
+                NegativeCommand::new(),
+                NoneCommand::new(),
+            ])
     }
 }

@@ -1,5 +1,5 @@
+use crate::handlers::color::negative::NegativeCommandHandler;
 use crate::handlers::color::sepia::SepiaCommandHandler;
-use crate::handlers::common::none::NoneCommandHandler;
 use clap::ArgMatches;
 use log::info;
 use picturify_core::image::fast_image::FastImage;
@@ -17,7 +17,7 @@ impl ImageCommandHandler {
         let mut image = *image;
         let read_elapsed_ms = read_start.elapsed().as_millis();
         info!("Reading image took {}ms", read_elapsed_ms);
-        
+
         match arg_matches.subcommand() {
             Some(("sepia", args)) => {
                 let now = std::time::Instant::now();
@@ -25,22 +25,23 @@ impl ImageCommandHandler {
                 let elapsed_ms = now.elapsed().as_millis();
                 info!("Sepia took {}ms", elapsed_ms);
             }
-            Some(("none", args)) => {
+            Some(("negative", args)) => {
                 let now = std::time::Instant::now();
-                NoneCommandHandler::handle(args.clone());
+                image = NegativeCommandHandler::handle(image, args.clone());
                 let elapsed_ms = now.elapsed().as_millis();
-                info!("None took {}ms", elapsed_ms);
+                info!("Negative took {}ms", elapsed_ms);
             }
+            Some(("none", _args)) => {}
             _ => {
                 panic!("Unknown subcommand");
             }
         }
-        
+
         let write_start = std::time::Instant::now();
         image.write_to_file(output).unwrap();
         let write_elapsed_ms = write_start.elapsed().as_millis();
         info!("Writing image took {}ms", write_elapsed_ms);
-        
+
         let total_elapsed_ms = read_start.elapsed().as_millis();
         info!("Total time elapsed: {}ms", total_elapsed_ms);
     }
