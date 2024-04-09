@@ -1,9 +1,9 @@
+use crate::handlers::color::negative::NegativeCommandHandler;
 use crate::handlers::color::sepia::SepiaCommandHandler;
 use clap::ArgMatches;
 use log::info;
 use picturify_core::image::fast_image::FastImage;
 use picturify_core::image::io::{ReadFromFile, WriteToFile};
-use crate::handlers::color::negative::NegativeCommandHandler;
 
 pub struct ImageCommandHandler;
 

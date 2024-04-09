@@ -1,10 +1,11 @@
+use image::io::Reader;
+use image::{Rgba, RgbaImage};
+use palette::{LinSrgba, Srgba};
+use rayon::prelude::*;
+
 use crate::error::PicturifyResult;
 use crate::image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
 use crate::image::io::{ReadFromFile, WriteToFile};
-use image::io::Reader;
-use image::{DynamicImage, Rgba, Rgba32FImage, RgbaImage};
-use palette::{LinSrgba, Srgba};
-use rayon::prelude::*;
 
 #[derive(Debug)]
 pub struct FastImage {
@@ -30,7 +31,12 @@ impl FastImage {
 
     pub fn get_pixel(&self, x: usize, y: usize) -> Srgba {
         let pixel = self.inner.get_pixel(x as u32, y as u32);
-        Srgba::new(pixel[0] as f32 / 255.0, pixel[1] as f32 / 255.0, pixel[2] as f32 / 255.0, pixel[3] as f32 / 255.0)
+        Srgba::new(
+            pixel[0] as f32 / 255.0,
+            pixel[1] as f32 / 255.0,
+            pixel[2] as f32 / 255.0,
+            pixel[3] as f32 / 255.0,
+        )
     }
 
     pub fn set_pixel(&mut self, x: usize, y: usize, pixel: Srgba) {
@@ -78,12 +84,12 @@ where
     let linsrgba = srgba.into_linear();
     let new_linsrgba = f(linsrgba, x, y);
     let new_srgba: Srgba = new_linsrgba.into();
-    
+
     let r = (new_srgba.red * 255.0).round() as u8;
     let g = (new_srgba.green * 255.0).round() as u8;
     let b = (new_srgba.blue * 255.0).round() as u8;
     let a = (new_srgba.alpha * 255.0).round() as u8;
-    
+
     let new_pixel = Rgba::<u8>::from([r, g, b, a]);
     *pixel = new_pixel;
 }

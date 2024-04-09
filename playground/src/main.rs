@@ -8,7 +8,7 @@ use picturify_processing::processors::color::negative::{
 };
 
 fn main() {
-    let fast_image = FastImage::read_from_file("/home/sobczal/Downloads/silnik2.jpg").unwrap();
+    let fast_image = FastImage::read_from_file("/home/sobczal/Downloads/4k.jpg").unwrap();
     let image = *fast_image;
     let start = Instant::now();
 
