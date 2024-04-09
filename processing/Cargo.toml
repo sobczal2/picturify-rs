@@ -9,3 +9,4 @@ edition = "2021"
 picturify-core = { path = "../core" }
 thiserror = "1.0.58"
 rayon = "1.10.0"
+palette = "0.7.5"

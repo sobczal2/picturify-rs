@@ -1,41 +1,54 @@
-use crate::common::channel::ChannelSelector;
-use crate::common::execution::{CpuOptions, ExecutionPlan};
-use crate::common::process::{LayerPipe, LayerPipeRunner, Processor};
+use crate::common::execution::{CpuOptions, ExecutionPlan, Processor};
 use picturify_core::error::PicturifyResult;
+use picturify_core::image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
 use picturify_core::image::fast_image::FastImage;
 
+pub struct NegativeProcessorOptions {
+    pub use_fast_approximation: bool,
+}
+
 pub struct NegativeProcessor {
-    channel_selector: ChannelSelector,
     execution_plan: ExecutionPlan,
+    options: NegativeProcessorOptions,
 }
 
 impl NegativeProcessor {
     pub fn new() -> NegativeProcessor {
         NegativeProcessor {
-            channel_selector: ChannelSelector::Rgba(Default::default()),
             execution_plan: ExecutionPlan::Cpu(Default::default()),
+            options: NegativeProcessorOptions {
+                use_fast_approximation: true,
+            },
         }
     }
 
-    fn run_cpu(&self, fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
-        let layer_pipe = LayerPipe::new();
-        let layer_pipe = layer_pipe.prepare_layers(&fast_image, self.channel_selector);
-        let mut layer_pipe_runner = LayerPipeRunner::new(layer_pipe);
+    pub fn with_options(options: NegativeProcessorOptions) -> NegativeProcessor {
+        NegativeProcessor {
+            execution_plan: ExecutionPlan::Cpu(Default::default()),
+            options,
+        }
+    }
 
+    fn run_cpu(&self, mut fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
         cpu_options.build_thread_pool().install(|| {
-            layer_pipe_runner.par_run_all_layers_if_enabled(
-                |r, _x, _y| 255 - r,
-                |g, _x, _y| 255 - g,
-                |b, _x, _y| 255 - b,
-                |a, _x, _y| 255 - a,
-                |h, _x, _y| 360.0 - h,
-                |s, _x, _y| 1.0 - s,
-                |v, _x, _y| 1.0 - v,
-                |l, _x, _y| 1.0 - l,
-            );
+            if self.options.use_fast_approximation {
+                fast_image.par_apply_fn_to_pixel(|pixel, _x, _y| {
+                    pixel.0[0] = 1.0 - pixel.0[0];
+                    pixel.0[1] = 1.0 - pixel.0[1];
+                    pixel.0[2] = 1.0 - pixel.0[2];
+                });
+            } else {
+                fast_image.par_apply_fn_to_linsrgba(|pixel, _x, _y| {
+                    let mut pixel = pixel.clone();
+                    pixel.red = 1.0 - pixel.red;
+                    pixel.green = 1.0 - pixel.green;
+                    pixel.blue = 1.0 - pixel.blue;
+                    pixel
+                });
+            }
         });
 
-        layer_pipe_runner.get_final_image()
+        fast_image
     }
 
     fn run_gpu(&self, _fast_image: FastImage) -> FastImage {
@@ -49,19 +62,14 @@ impl Processor for NegativeProcessor {
         Ok(())
     }
 
-    fn set_channel_selector(&mut self, channel_selector: ChannelSelector) -> PicturifyResult<()> {
-        self.channel_selector = channel_selector;
-        Ok(())
-    }
-
     fn process(&self, fast_image: FastImage) -> FastImage {
-        match self.execution_plan {
+        return match self.execution_plan {
             ExecutionPlan::Cpu(options) => {
-                return self.run_cpu(fast_image, options);
+                self.run_cpu(fast_image, options)
             }
             ExecutionPlan::Gpu => {
-                return self.run_gpu(fast_image);
+                self.run_gpu(fast_image)
             }
-        }
+        };
     }
 }

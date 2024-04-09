@@ -1,2 +1,1 @@
-pub mod hsl_conversions;
-pub mod hsv_conversions;
+pub mod fast_rgba;

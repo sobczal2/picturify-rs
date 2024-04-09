@@ -1,3 +1,6 @@
+use picturify_core::error::PicturifyResult;
+use picturify_core::image::fast_image::FastImage;
+
 #[derive(Copy, Clone)]
 pub struct CpuOptions {
     pub num_threads: Option<usize>,
@@ -26,4 +29,9 @@ impl Default for CpuOptions {
 pub enum ExecutionPlan {
     Cpu(CpuOptions),
     Gpu,
+}
+
+pub trait Processor {
+    fn set_execution_plan(&mut self, execution_plan: ExecutionPlan) -> PicturifyResult<()>;
+    fn process(&self, fast_image: FastImage) -> FastImage;
 }
