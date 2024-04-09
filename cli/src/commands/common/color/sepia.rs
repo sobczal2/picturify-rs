@@ -1,4 +1,4 @@
-use clap::{Arg, Command};
+use clap::Command;
 
 pub struct SepiaCommand;
 

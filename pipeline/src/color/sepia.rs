@@ -3,20 +3,20 @@ use picturify_pipelines_macro::pipeline_run;
 use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::color::sepia::SepiaProcessor;
 
-pub struct SepiaOptions {}
+pub struct SepiaPipelineOptions {}
 
 #[derive(pipeline_run)]
 pub struct SepiaPipeline {
     processors: Vec<Box<dyn Processor>>,
     #[allow(dead_code)]
-    options: SepiaOptions,
+    options: SepiaPipelineOptions,
 }
 
 impl SepiaPipeline {
-    pub fn new(_sepia_options: SepiaOptions) -> Self {
+    pub fn new(_sepia_pipeline_options: SepiaPipelineOptions) -> Self {
         Self {
             processors: vec![Box::new(SepiaProcessor::new())],
-            options: SepiaOptions {},
+            options: SepiaPipelineOptions {},
         }
     }
 }
