@@ -1,17 +1,17 @@
 // use picturify_core::error::PicturifyResult;
 // use picturify_core::image::fast_image::FastImage;
-// 
+//
 // use crate::common::execution::{CpuOptions, ExecutionPlan};
-// 
+//
 // pub struct SobelOperatorProcessor {
 //     execution_plan: ExecutionPlan,
 //     options: SobelOperatorProcessorOptions,
 // }
-// 
+//
 // pub struct SobelOperatorProcessorOptions {
 //     pub magnitude_mapping: fn(RgbaPixel, f32) -> RgbaPixel,
 // }
-// 
+//
 // impl SobelOperatorProcessor {
 //     pub fn new() -> SobelOperatorProcessor {
 //         SobelOperatorProcessor {
@@ -30,11 +30,11 @@
 //             },
 //         }
 //     }
-// 
+//
 //     pub fn change_options(&mut self, action: fn(&mut SobelOperatorProcessorOptions)) {
 //         action(&mut self.options);
 //     }
-// 
+//
 //     fn run_cpu(&self, fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
 //         cpu_options.build_thread_pool().install(|| {
 //             return match self.channel_selector {
@@ -45,11 +45,11 @@
 //             };
 //         })
 //     }
-// 
+//
 //     fn run_gpu(&self, _fast_image: FastImage) -> FastImage {
 //         unimplemented!()
 //     }
-// 
+//
 //     fn get_sobel_magnitude_squared(
 //         fast_image: &FastImage,
 //         layer_type: LayerType,
@@ -58,7 +58,7 @@
 //     ) -> f32 {
 //         let mut sobel_x = 0.0;
 //         let mut sobel_y = 0.0;
-// 
+//
 //         let value_00 = fast_image.get_normalized_value(&layer_type, x - 1, y - 1);
 //         let value_01 = fast_image.get_normalized_value(&layer_type, x - 1, y);
 //         let value_02 = fast_image.get_normalized_value(&layer_type, x - 1, y + 1);
@@ -67,36 +67,36 @@
 //         let value_20 = fast_image.get_normalized_value(&layer_type, x + 1, y - 1);
 //         let value_21 = fast_image.get_normalized_value(&layer_type, x + 1, y);
 //         let value_22 = fast_image.get_normalized_value(&layer_type, x + 1, y + 1);
-// 
+//
 //         sobel_x -= value_00;
 //         sobel_x -= value_01 * 2.0;
 //         sobel_x -= value_02;
 //         sobel_x += value_20;
 //         sobel_x += value_21 * 2.0;
 //         sobel_x += value_22;
-// 
+//
 //         sobel_y -= value_00;
 //         sobel_y -= value_10 * 2.0;
 //         sobel_y -= value_20;
 //         sobel_y += value_02;
 //         sobel_y += value_12 * 2.0;
 //         sobel_y += value_22;
-// 
+//
 //         sobel_x.powi(2) + sobel_y.powi(2)
 //     }
 // }
-// 
+//
 // impl Processor for SobelOperatorProcessor {
 //     fn set_execution_plan(&mut self, execution_plan: ExecutionPlan) -> PicturifyResult<()> {
 //         self.execution_plan = execution_plan;
 //         Ok(())
 //     }
-// 
+//
 //     fn set_channel_selector(&mut self, channel_selector: ChannelSelector) -> PicturifyResult<()> {
 //         self.channel_selector = channel_selector;
 //         Ok(())
 //     }
-// 
+//
 //     fn process(&self, fast_image: FastImage) -> FastImage {
 //         match self.execution_plan {
 //             ExecutionPlan::Cpu(options) => {
@@ -108,7 +108,7 @@
 //         }
 //     }
 // }
-// 
+//
 // impl SobelOperatorProcessor {
 //     fn run_cpu_rgba(
 //         &self,
@@ -117,16 +117,16 @@
 //     ) -> FastImage {
 //         let width = fast_image.get_width();
 //         let height = fast_image.get_height();
-// 
+//
 //         let mut output_image = FastImage::empty(width, height);
-// 
+//
 //         output_image.iterate_par_rgba(|pixel, x, y| {
 //             if x == 0 || y == 0 || x == width - 1 || y == height - 1 {
 //                 return;
 //             }
 //             let mut magnitude_sum = 0.0;
 //             let mut magnitude_count = 0;
-// 
+//
 //             if rgba_channel_selector.red_enabled() {
 //                 let r = Self::get_sobel_magnitude_squared(&fast_image, LayerType::Red, x, y);
 //                 magnitude_sum += r;
@@ -147,20 +147,20 @@
 //                 magnitude_sum += a;
 //                 magnitude_count += 1;
 //             }
-// 
+//
 //             let old_pixel = fast_image.get_rgba(x, y);
 //             let new_pixel =
 //                 (self.options.magnitude_mapping)(old_pixel, magnitude_sum / magnitude_count as f32);
-// 
+//
 //             pixel.red = new_pixel.red;
 //             pixel.green = new_pixel.green;
 //             pixel.blue = new_pixel.blue;
 //             pixel.alpha = new_pixel.alpha;
 //         });
-// 
+//
 //         output_image
 //     }
-// 
+//
 //     fn run_cpu_hsva(
 //         &self,
 //         fast_image: FastImage,
@@ -168,9 +168,9 @@
 //     ) -> FastImage {
 //         let width = fast_image.get_width();
 //         let height = fast_image.get_height();
-// 
+//
 //         let mut output_image = FastImage::empty(width, height);
-// 
+//
 //         output_image.iterate_par_hsva(|pixel, x, y| {
 //             if x == 0
 //                 || y == 0
@@ -181,7 +181,7 @@
 //             }
 //             let mut magnitude_sum = 0.0;
 //             let mut magnitude_count = 0;
-// 
+//
 //             if hsva_channel_selector.hue_enabled() {
 //                 let h = Self::get_sobel_magnitude_squared(&fast_image, LayerType::Hue, x, y);
 //                 magnitude_sum += h;
@@ -205,13 +205,13 @@
 //             let old_pixel = fast_image.get_rgba(x, y);
 //             let new_pixel =
 //                 (self.options.magnitude_mapping)(old_pixel, magnitude_sum / magnitude_count as f32);
-// 
+//
 //             pixel.copy_from_rgba(new_pixel);
 //         });
-// 
+//
 //         output_image
 //     }
-// 
+//
 //     fn run_cpu_hsla(
 //         &self,
 //         fast_image: FastImage,
@@ -219,16 +219,16 @@
 //     ) -> FastImage {
 //         let width = fast_image.get_width();
 //         let height = fast_image.get_height();
-// 
+//
 //         let mut output_image = FastImage::empty(width, height);
-// 
+//
 //         output_image.iterate_par_hsla(|pixel, x, y| {
 //             if x == 0 || y == 0 || x == width - 1 || y == height - 1 {
 //                 return;
 //             }
 //             let mut magnitude_sum = 0.0;
 //             let mut magnitude_count = 0;
-// 
+//
 //             if hsla_channel_selector.hue_enabled() {
 //                 let h = Self::get_sobel_magnitude_squared(&fast_image, LayerType::Hue, x, y);
 //                 magnitude_sum += h;
@@ -252,13 +252,13 @@
 //             let old_pixel = fast_image.get_rgba(x, y);
 //             let new_pixel =
 //                 (self.options.magnitude_mapping)(old_pixel, magnitude_sum / magnitude_count as f32);
-// 
+//
 //             pixel.copy_from_rgba(new_pixel);
 //         });
-// 
+//
 //         output_image
 //     }
-// 
+//
 //     fn run_cpu_la(
 //         &self,
 //         _fast_image: FastImage,

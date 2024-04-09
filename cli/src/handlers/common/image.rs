@@ -1,7 +1,7 @@
 use crate::handlers::color::sepia::SepiaCommandHandler;
-use clap::ArgMatches;
-use log::{info};
 use crate::handlers::common::none::NoneCommandHandler;
+use clap::ArgMatches;
+use log::info;
 
 pub struct ImageCommandHandler;
 
@@ -20,6 +20,10 @@ impl ImageCommandHandler {
             }
         }
         let elapsed_ms = now.elapsed().as_millis();
-        info!("Command {} took {}ms", arg_matches.subcommand_name().unwrap(), elapsed_ms);
+        info!(
+            "Command {} took {}ms",
+            arg_matches.subcommand_name().unwrap(),
+            elapsed_ms
+        );
     }
 }

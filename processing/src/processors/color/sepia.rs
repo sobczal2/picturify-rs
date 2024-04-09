@@ -1,7 +1,3 @@
-use palette::{encoding, LinSrgba, Srgba};
-use palette::encoding::Srgb;
-use palette::rgb::{Rgb, Rgba};
-
 use picturify_core::error::PicturifyResult;
 use picturify_core::image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
 use picturify_core::image::fast_image::FastImage;
@@ -32,14 +28,13 @@ impl SepiaProcessor {
             options: Default::default(),
         }
     }
-    
+
     pub fn with_options(options: SepiaProcessorOptions) -> SepiaProcessor {
         SepiaProcessor {
             execution_plan: ExecutionPlan::Cpu(Default::default()),
             options,
         }
     }
-    
 
     fn run_cpu(&self, mut fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
         cpu_options.build_thread_pool().install(|| {
@@ -70,7 +65,7 @@ impl SepiaProcessor {
                     pixel.red = new_r;
                     pixel.green = new_g;
                     pixel.blue = new_b;
-                    
+
                     pixel
                 });
             }

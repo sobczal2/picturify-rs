@@ -1,7 +1,7 @@
+use crate::commands::common::common::picturify::PicturifyCommand;
 use crate::handlers::common::image::ImageCommandHandler;
 use log::LevelFilter;
 use simplelog::*;
-use crate::commands::common::common::picturify::PicturifyCommand;
 
 mod commands;
 mod handlers;

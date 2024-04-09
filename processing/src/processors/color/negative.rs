@@ -64,12 +64,8 @@ impl Processor for NegativeProcessor {
 
     fn process(&self, fast_image: FastImage) -> FastImage {
         return match self.execution_plan {
-            ExecutionPlan::Cpu(options) => {
-                self.run_cpu(fast_image, options)
-            }
-            ExecutionPlan::Gpu => {
-                self.run_gpu(fast_image)
-            }
+            ExecutionPlan::Cpu(options) => self.run_cpu(fast_image, options),
+            ExecutionPlan::Gpu => self.run_gpu(fast_image),
         };
     }
 }
