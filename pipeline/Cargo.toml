@@ -8,4 +8,4 @@ edition = "2021"
 [dependencies]
 picturify-processing = { path = "../processing" }
 picturify-core = { path = "../core" }
-picturify-pipelines-macro = { path = "../pipelines-macro" }
+picturify-macros = { path = "../macros" }

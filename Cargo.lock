@@ -2354,20 +2354,20 @@ dependencies = [
 ]
 
 [[package]]
-name = "picturify-pipeline"
-version = "0.1.0"
-dependencies = [
- "picturify-core",
- "picturify-pipelines-macro",
- "picturify-processing",
-]
-
-[[package]]
-name = "picturify-pipelines-macro"
+name = "picturify-macros"
 version = "0.1.0"
 dependencies = [
  "quote",
  "syn 2.0.58",
+]
+
+[[package]]
+name = "picturify-pipeline"
+version = "0.1.0"
+dependencies = [
+ "picturify-core",
+ "picturify-macros",
+ "picturify-processing",
 ]
 
 [[package]]

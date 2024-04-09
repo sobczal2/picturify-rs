@@ -9,7 +9,7 @@
       <sourceFolder url="file://$MODULE_DIR$/playground/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/gui/src-tauri/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/pipeline/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/pipelines-macro/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/macros/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.idea/copilot/chatSessions" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
