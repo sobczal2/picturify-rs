@@ -1,6 +1,6 @@
-use image::{Rgba, RgbaImage};
 use image::buffer::{Pixels, PixelsMut};
 use image::io::Reader;
+use image::{Rgba, RgbaImage};
 use palette::Srgba;
 use rayon::prelude::*;
 
@@ -48,11 +48,11 @@ impl FastImage {
         let a = (pixel.alpha * 255.0).round() as u8;
         self.inner.put_pixel(x as u32, y as u32, Rgba([r, g, b, a]));
     }
-    
+
     pub fn iter(&self) -> Pixels<Rgba<u8>> {
         self.inner.pixels()
     }
-    
+
     pub fn iter_mut(&mut self) -> PixelsMut<Rgba<u8>> {
         self.inner.pixels_mut()
     }
@@ -60,7 +60,10 @@ impl FastImage {
 
 // Slower implementation, use if you need to work with the pixel's color space
 impl ApplyFnToPalettePixels for FastImage {
-    fn apply_fn_to_srgba<F>(&mut self, f: F) where F: Fn(Srgba, usize, usize) -> Srgba {
+    fn apply_fn_to_srgba<F>(&mut self, f: F)
+    where
+        F: Fn(Srgba, usize, usize) -> Srgba,
+    {
         let _ = &self.inner.enumerate_rows_mut().for_each(|(_, row)| {
             row.into_iter().for_each(|(x, y, pixel)| {
                 run_on_srgba_pixel(pixel, x as usize, y as usize, &f);
@@ -68,7 +71,10 @@ impl ApplyFnToPalettePixels for FastImage {
         });
     }
 
-    fn par_apply_fn_to_srgba<F>(&mut self, f: F) where F: Fn(Srgba, usize, usize) -> Srgba + Send + Sync {
+    fn par_apply_fn_to_srgba<F>(&mut self, f: F)
+    where
+        F: Fn(Srgba, usize, usize) -> Srgba + Send + Sync,
+    {
         let _ = &self
             .inner
             .enumerate_rows_mut()
@@ -82,8 +88,8 @@ impl ApplyFnToPalettePixels for FastImage {
 }
 
 fn run_on_srgba_pixel<F>(pixel: &mut Rgba<u8>, x: usize, y: usize, f: F)
-    where
-        F: Fn(Srgba, usize, usize) -> Srgba,
+where
+    F: Fn(Srgba, usize, usize) -> Srgba,
 {
     let r = pixel[0] as f32 / 255.0;
     let g = pixel[1] as f32 / 255.0;
@@ -105,8 +111,8 @@ fn run_on_srgba_pixel<F>(pixel: &mut Rgba<u8>, x: usize, y: usize, f: F)
 // Speedy implementation, use if you don't need to work with the pixel's color space
 impl ApplyFnToImagePixels for FastImage {
     fn apply_fn_to_image_pixel<F>(&mut self, f: F)
-        where
-            F: Fn(&mut Rgba<u8>, usize, usize),
+    where
+        F: Fn(&mut Rgba<u8>, usize, usize),
     {
         let _ = &self.inner.enumerate_rows_mut().for_each(|(_, row)| {
             row.into_iter().for_each(|(x, y, pixel)| {
@@ -116,8 +122,8 @@ impl ApplyFnToImagePixels for FastImage {
     }
 
     fn par_apply_fn_to_image_pixel<F>(&mut self, f: F)
-        where
-            F: Fn(&mut Rgba<u8>, usize, usize) + Send + Sync,
+    where
+        F: Fn(&mut Rgba<u8>, usize, usize) + Send + Sync,
     {
         let _ = &self
             .inner
@@ -132,7 +138,10 @@ impl ApplyFnToImagePixels for FastImage {
 }
 
 impl ReadPixels for FastImage {
-    fn read_srgba_pixel<F>(&self, f: F) where F: Fn(Srgba, usize, usize) {
+    fn read_srgba_pixel<F>(&self, f: F)
+    where
+        F: Fn(Srgba, usize, usize),
+    {
         let _ = &self.inner.enumerate_rows().for_each(|(_, row)| {
             row.into_iter().for_each(|(x, y, pixel)| {
                 let r = pixel[0] as f32 / 255.0;
@@ -146,7 +155,10 @@ impl ReadPixels for FastImage {
         });
     }
 
-    fn par_read_srgba_pixel<F>(&self, f: F) where F: Fn(Srgba, usize, usize) + Send + Sync {
+    fn par_read_srgba_pixel<F>(&self, f: F)
+    where
+        F: Fn(Srgba, usize, usize) + Send + Sync,
+    {
         let _ = &self
             .inner
             .enumerate_rows()
