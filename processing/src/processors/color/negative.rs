@@ -32,7 +32,7 @@ impl NegativeProcessor {
     fn run_cpu(&self, mut fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
         cpu_options.build_thread_pool().install(|| {
             if self.options.use_fast_approximation {
-                fast_image.par_apply_fn_to_pixel(|pixel, _x, _y| {
+                fast_image.par_apply_fn_to_image_pixel(|pixel, _x, _y| {
                     pixel.0[0] = 255 - pixel.0[0];
                     pixel.0[1] = 255 - pixel.0[1];
                     pixel.0[2] = 255 - pixel.0[2];

@@ -1,1 +1,1 @@
-mod kuwahara;
+pub mod kuwahara;

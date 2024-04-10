@@ -39,7 +39,7 @@ impl SepiaProcessor {
     fn run_cpu(&self, mut fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
         cpu_options.build_thread_pool().install(|| {
             if self.options.use_fast_approximation {
-                fast_image.par_apply_fn_to_pixel(|pixel, _x, _y| {
+                fast_image.par_apply_fn_to_image_pixel(|pixel, _x, _y| {
                     let r = pixel.0[0] as f32;
                     let g = pixel.0[1] as f32;
                     let b = pixel.0[2] as f32;

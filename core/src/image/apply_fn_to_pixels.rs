@@ -2,44 +2,71 @@ use image::Rgba;
 use palette::convert::FromColorUnclamped;
 use palette::encoding::{Linear, Srgb};
 use palette::rgb::Rgb;
-use palette::{Clamp, IntoColor, LinSrgba, WithAlpha};
+use palette::{Clamp, IntoColor, LinSrgba, Srgba, WithAlpha};
 
 pub trait ApplyFnToPalettePixels {
+    fn apply_fn_to_srgba<F>(&mut self, f: F)
+        where
+            F: Fn(Srgba, usize, usize) -> Srgba;
     fn apply_fn_to_linsrgba<F>(&mut self, f: F)
-    where
-        F: Fn(LinSrgba, usize, usize) -> LinSrgba;
+        where
+            F: Fn(LinSrgba, usize, usize) -> LinSrgba {
+        self.apply_fn_to_srgba(|pixel, x, y| {
+            let linsrgba = pixel.into_linear();
+            let new_linsrgba = f(linsrgba, x, y);
+            new_linsrgba.into()
+        });
+    }
 
     fn apply_fn_to_pixel<F, P>(&mut self, f: F)
-    where
-        F: Fn(P, usize, usize) -> P,
-        P: FromColorUnclamped<Rgb<Linear<Srgb>>> + Clamp + WithAlpha<f32>,
-        Rgb<Linear<Srgb>>: FromColorUnclamped<<P as WithAlpha<f32>>::Color>,
+        where
+            F: Fn(P, usize, usize) -> P + Send + Sync,
+            P: FromColorUnclamped<Rgb> + Clamp + WithAlpha<f32>,
+            Rgb: FromColorUnclamped<<P as WithAlpha<f32>>::Color>,
     {
-        self.apply_fn_to_linsrgba(|pixel, x, y| run_on_linsrgba_pixel(pixel, x, y, &f));
+        self.apply_fn_to_srgba(|pixel, x, y| run_on_srgba_pixel(pixel, x, y, &f));
     }
+    fn par_apply_fn_to_srgba<F>(&mut self, f: F)
+        where
+            F: Fn(Srgba, usize, usize) -> Srgba + Send + Sync;
     fn par_apply_fn_to_linsrgba<F>(&mut self, f: F)
-    where
-        F: Fn(LinSrgba, usize, usize) -> LinSrgba + Send + Sync;
+        where
+            F: Fn(LinSrgba, usize, usize) -> LinSrgba + Send + Sync {
+        self.par_apply_fn_to_srgba(|pixel, x, y| {
+            let linsrgba = pixel.into_linear();
+            let new_linsrgba = f(linsrgba, x, y);
+            new_linsrgba.into()
+        });
+    }
+
+    fn par_apply_fn_to_pixel<F, P>(&mut self, f: F)
+        where
+            F: Fn(P, usize, usize) -> P + Send + Sync,
+            P: FromColorUnclamped<Rgb> + Clamp + WithAlpha<f32>,
+            Rgb: FromColorUnclamped<<P as WithAlpha<f32>>::Color>,
+    {
+        self.par_apply_fn_to_srgba(|pixel, x, y| run_on_srgba_pixel(pixel, x, y, &f));
+    }
 }
 
-fn run_on_linsrgba_pixel<F, P>(pixel: LinSrgba, x: usize, y: usize, f: F) -> LinSrgba
-where
-    F: Fn(P, usize, usize) -> P,
-    P: FromColorUnclamped<Rgb<Linear<Srgb>>> + Clamp + WithAlpha<f32>,
-    Rgb<Linear<Srgb>>: FromColorUnclamped<<P as WithAlpha<f32>>::Color>,
+fn run_on_srgba_pixel<F, P>(pixel: Srgba, x: usize, y: usize, f: F) -> Srgba
+    where
+        F: Fn(P, usize, usize) -> P,
+        P: FromColorUnclamped<Rgb> + Clamp + WithAlpha<f32>,
+        Rgb: FromColorUnclamped<<P as WithAlpha<f32>>::Color>
 {
     let color: P = pixel.color.into_color();
     let result = f(color, x, y);
-    let linsrgba: LinSrgba = result.into_color();
-    linsrgba
+    let srgba = result.into_color();
+    srgba
 }
 
 pub trait ApplyFnToImagePixels {
-    fn apply_fn_to_pixel<F>(&mut self, f: F)
-    where
-        F: Fn(&mut Rgba<u8>, usize, usize);
+    fn apply_fn_to_image_pixel<F>(&mut self, f: F)
+        where
+            F: Fn(&mut Rgba<u8>, usize, usize);
 
-    fn par_apply_fn_to_pixel<F>(&mut self, f: F)
-    where
-        F: Fn(&mut Rgba<u8>, usize, usize) + Send + Sync;
+    fn par_apply_fn_to_image_pixel<F>(&mut self, f: F)
+        where
+            F: Fn(&mut Rgba<u8>, usize, usize) + Send + Sync;
 }

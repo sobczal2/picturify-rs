@@ -1,13 +1,15 @@
-use image::io::Reader;
 use image::{Rgba, RgbaImage};
-use palette::{LinSrgba, Srgba};
+use image::buffer::{Pixels, PixelsMut};
+use image::io::Reader;
+use palette::Srgba;
 use rayon::prelude::*;
 
 use crate::error::PicturifyResult;
 use crate::image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
 use crate::image::io::{ReadFromFile, WriteToFile};
+use crate::image::read_pixels::ReadPixels;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct FastImage {
     inner: RgbaImage,
 }
@@ -29,7 +31,7 @@ impl FastImage {
         self.inner.height() as usize
     }
 
-    pub fn get_pixel(&self, x: usize, y: usize) -> Srgba {
+    pub fn get_srgba_pixel(&self, x: usize, y: usize) -> Srgba {
         let pixel = self.inner.get_pixel(x as u32, y as u32);
         Srgba::new(
             pixel[0] as f32 / 255.0,
@@ -39,51 +41,57 @@ impl FastImage {
         )
     }
 
-    pub fn set_pixel(&mut self, x: usize, y: usize, pixel: Srgba) {
+    pub fn set_srgba_pixel(&mut self, x: usize, y: usize, pixel: Srgba) {
         let r = (pixel.red * 255.0).round() as u8;
         let g = (pixel.green * 255.0).round() as u8;
         let b = (pixel.blue * 255.0).round() as u8;
         let a = (pixel.alpha * 255.0).round() as u8;
         self.inner.put_pixel(x as u32, y as u32, Rgba([r, g, b, a]));
     }
+    
+    pub fn iter(&self) -> Pixels<Rgba<u8>> {
+        self.inner.pixels()
+    }
+    
+    pub fn iter_mut(&mut self) -> PixelsMut<Rgba<u8>> {
+        self.inner.pixels_mut()
+    }
 }
 
 // Slower implementation, use if you need to work with the pixel's color space
 impl ApplyFnToPalettePixels for FastImage {
-    fn apply_fn_to_linsrgba<F>(&mut self, f: F)
-    where
-        F: Fn(LinSrgba, usize, usize) -> LinSrgba,
-    {
+    fn apply_fn_to_srgba<F>(&mut self, f: F) where F: Fn(Srgba, usize, usize) -> Srgba {
         let _ = &self.inner.enumerate_rows_mut().for_each(|(_, row)| {
             row.into_iter().for_each(|(x, y, pixel)| {
-                run_on_linsrgba_pixel(pixel, x as usize, y as usize, &f);
+                run_on_srgba_pixel(pixel, x as usize, y as usize, &f);
             });
         });
     }
-    fn par_apply_fn_to_linsrgba<F>(&mut self, f: F)
-    where
-        F: Fn(LinSrgba, usize, usize) -> LinSrgba + Send + Sync,
-    {
+
+    fn par_apply_fn_to_srgba<F>(&mut self, f: F) where F: Fn(Srgba, usize, usize) -> Srgba + Send + Sync {
         let _ = &self
             .inner
             .enumerate_rows_mut()
             .par_bridge()
             .for_each(|(_, row)| {
                 row.into_iter().for_each(|(x, y, pixel)| {
-                    run_on_linsrgba_pixel(pixel, x as usize, y as usize, &f);
+                    run_on_srgba_pixel(pixel, x as usize, y as usize, &f);
                 });
             });
     }
 }
 
-fn run_on_linsrgba_pixel<F>(pixel: &mut Rgba<u8>, x: usize, y: usize, f: F)
-where
-    F: Fn(LinSrgba, usize, usize) -> LinSrgba,
+fn run_on_srgba_pixel<F>(pixel: &mut Rgba<u8>, x: usize, y: usize, f: F)
+    where
+        F: Fn(Srgba, usize, usize) -> Srgba,
 {
-    let srgba = Srgba::new(pixel[0], pixel[1], pixel[2], pixel[3]);
-    let linsrgba = srgba.into_linear();
-    let new_linsrgba = f(linsrgba, x, y);
-    let new_srgba: Srgba = new_linsrgba.into();
+    let r = pixel[0] as f32 / 255.0;
+    let g = pixel[1] as f32 / 255.0;
+    let b = pixel[2] as f32 / 255.0;
+    let a = pixel[3] as f32 / 255.0;
+
+    let srgba = Srgba::new(r, g, b, a);
+    let new_srgba = f(srgba, x, y);
 
     let r = (new_srgba.red * 255.0).round() as u8;
     let g = (new_srgba.green * 255.0).round() as u8;
@@ -96,9 +104,9 @@ where
 
 // Speedy implementation, use if you don't need to work with the pixel's color space
 impl ApplyFnToImagePixels for FastImage {
-    fn apply_fn_to_pixel<F>(&mut self, f: F)
-    where
-        F: Fn(&mut Rgba<u8>, usize, usize),
+    fn apply_fn_to_image_pixel<F>(&mut self, f: F)
+        where
+            F: Fn(&mut Rgba<u8>, usize, usize),
     {
         let _ = &self.inner.enumerate_rows_mut().for_each(|(_, row)| {
             row.into_iter().for_each(|(x, y, pixel)| {
@@ -107,9 +115,9 @@ impl ApplyFnToImagePixels for FastImage {
         });
     }
 
-    fn par_apply_fn_to_pixel<F>(&mut self, f: F)
-    where
-        F: Fn(&mut Rgba<u8>, usize, usize) + Send + Sync,
+    fn par_apply_fn_to_image_pixel<F>(&mut self, f: F)
+        where
+            F: Fn(&mut Rgba<u8>, usize, usize) + Send + Sync,
     {
         let _ = &self
             .inner
@@ -118,6 +126,40 @@ impl ApplyFnToImagePixels for FastImage {
             .for_each(|(_, row)| {
                 row.into_iter().for_each(|(x, y, pixel)| {
                     f(pixel, x as usize, y as usize);
+                });
+            });
+    }
+}
+
+impl ReadPixels for FastImage {
+    fn read_srgba_pixel<F>(&self, f: F) where F: Fn(Srgba, usize, usize) {
+        let _ = &self.inner.enumerate_rows().for_each(|(_, row)| {
+            row.into_iter().for_each(|(x, y, pixel)| {
+                let r = pixel[0] as f32 / 255.0;
+                let g = pixel[1] as f32 / 255.0;
+                let b = pixel[2] as f32 / 255.0;
+                let a = pixel[3] as f32 / 255.0;
+
+                let srgba = Srgba::new(r, g, b, a);
+                f(srgba, x as usize, y as usize);
+            });
+        });
+    }
+
+    fn par_read_srgba_pixel<F>(&self, f: F) where F: Fn(Srgba, usize, usize) + Send + Sync {
+        let _ = &self
+            .inner
+            .enumerate_rows()
+            .par_bridge()
+            .for_each(|(_, row)| {
+                row.into_iter().for_each(|(x, y, pixel)| {
+                    let r = pixel[0] as f32 / 255.0;
+                    let g = pixel[1] as f32 / 255.0;
+                    let b = pixel[2] as f32 / 255.0;
+                    let a = pixel[3] as f32 / 255.0;
+
+                    let srgba = Srgba::new(r, g, b, a);
+                    f(srgba, x as usize, y as usize);
                 });
             });
     }
