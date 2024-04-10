@@ -1,6 +1,7 @@
 use clap::ArgMatches;
-use picturify_core::image::fast_image::FastImage;
+use picturify_core::fast_image::fast_image::FastImage;
 use picturify_pipeline::color::negative::{NegativePipeline, NegativePipelineOptions};
+use picturify_pipeline::pipeline::Pipeline;
 
 pub struct NegativeCommandHandler;
 

@@ -1,7 +1,7 @@
 use crate::common::execution::{CpuOptions, ExecutionPlan, Processor};
 use picturify_core::error::PicturifyResult;
-use picturify_core::image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
-use picturify_core::image::fast_image::FastImage;
+use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
+use picturify_core::fast_image::fast_image::FastImage;
 
 pub struct NegativeProcessorOptions {
     pub use_fast_approximation: bool,

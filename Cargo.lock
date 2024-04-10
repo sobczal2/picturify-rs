@@ -2375,6 +2375,7 @@ name = "picturify-playground"
 version = "0.1.0"
 dependencies = [
  "picturify-core",
+ "picturify-pipeline",
  "picturify-processing",
 ]
 
@@ -2382,10 +2383,7 @@ dependencies = [
 name = "picturify-processing"
 version = "0.1.0"
 dependencies = [
- "palette",
  "picturify-core",
- "rayon",
- "thiserror",
 ]
 
 [[package]]

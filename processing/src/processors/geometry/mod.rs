@@ -1,1 +1,2 @@
-pub mod edge_enlargement;
+pub mod enlargement;
+pub mod crop;

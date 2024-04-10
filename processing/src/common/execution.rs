@@ -1,5 +1,6 @@
 use picturify_core::error::PicturifyResult;
-use picturify_core::image::fast_image::FastImage;
+use picturify_core::fast_image::fast_image::FastImage;
+use picturify_core::rayon::{current_num_threads, ThreadPool, ThreadPoolBuilder};
 
 #[derive(Copy, Clone)]
 pub struct CpuOptions {
@@ -8,11 +9,11 @@ pub struct CpuOptions {
 
 impl CpuOptions {
     pub fn get_num_threads(&self) -> usize {
-        self.num_threads.unwrap_or(rayon::current_num_threads())
+        self.num_threads.unwrap_or(current_num_threads())
     }
 
-    pub fn build_thread_pool(&self) -> rayon::ThreadPool {
-        rayon::ThreadPoolBuilder::new()
+    pub fn build_thread_pool(&self) -> ThreadPool {
+        ThreadPoolBuilder::new()
             .num_threads(self.get_num_threads())
             .build()
             .unwrap()

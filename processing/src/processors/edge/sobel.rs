@@ -1,5 +1,5 @@
 // use picturify_core::error::PicturifyResult;
-// use picturify_core::image::fast_image::FastImage;
+// use picturify_core::fast_image::fast_image::FastImage;
 //
 // use crate::common::execution::{CpuOptions, ExecutionPlan};
 //

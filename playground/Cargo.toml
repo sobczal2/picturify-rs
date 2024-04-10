@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 picturify-core = { path = "../core" }
 picturify-processing = { path = "../processing" }
+picturify-pipeline = { path = "../pipeline" }

@@ -1,18 +1,18 @@
 use crate::common::execution::{CpuOptions, ExecutionPlan, Processor};
-use palette::{Hsva, IntoColor};
 use picturify_core::error::PicturifyResult;
-use picturify_core::image::apply_fn_to_pixels::ApplyFnToPalettePixels;
-use picturify_core::image::fast_image::FastImage;
-use picturify_core::image::util::{cord_2d_to_1d, image_rgba_to_palette_srgba};
+use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToPalettePixels;
+use picturify_core::fast_image::fast_image::FastImage;
+use picturify_core::fast_image::util::{cord_2d_to_1d, image_rgba_to_palette_srgba};
 use std::ops::Range;
+use picturify_core::palette::{Hsva, IntoColor};
 
 pub struct KuwaharaProcessorOptions {
-    pub quadrant_size: usize,
+    pub radius: usize,
 }
 
 impl Default for KuwaharaProcessorOptions {
     fn default() -> KuwaharaProcessorOptions {
-        KuwaharaProcessorOptions { quadrant_size: 3 }
+        KuwaharaProcessorOptions { radius: 3 }
     }
 }
 
@@ -40,14 +40,14 @@ impl KuwaharaProcessor {
         let width = fast_image.get_width();
         let height = fast_image.get_height();
 
-        let quadrant_size = self.options.quadrant_size;
+        let radius = self.options.radius;
 
         cpu_options.build_thread_pool().install(|| {
             let mut value_array = vec![0.0; width * height];
 
             value_array
                 .iter_mut()
-                .zip(fast_image.iter())
+                .zip(fast_image.pixels())
                 .for_each(|(value, pixel)| {
                     let rgba = image_rgba_to_palette_srgba(*pixel);
                     let hsva: Hsva = rgba.into_color();
@@ -55,18 +55,18 @@ impl KuwaharaProcessor {
                 });
 
             fast_image.par_apply_fn_to_pixel(|pixel: Hsva, x, y| {
-                if x < quadrant_size
-                    || y < quadrant_size
-                    || x >= width - quadrant_size
-                    || y >= height - quadrant_size
+                if x < radius
+                    || y < radius
+                    || x >= width - radius
+                    || y >= height - radius
                 {
                     return pixel;
                 }
 
-                let quadrant1_ranges = (x - quadrant_size..x, y - quadrant_size..y);
-                let quadrant2_ranges = (x..x + quadrant_size, y - quadrant_size..y);
-                let quadrant3_ranges = (x - quadrant_size..x, y..y + quadrant_size);
-                let quadrant4_ranges = (x..x + quadrant_size, y..y + quadrant_size);
+                let quadrant1_ranges = (x - radius..x, y - radius..y);
+                let quadrant2_ranges = (x..x + radius, y - radius..y);
+                let quadrant3_ranges = (x - radius..x, y..y + radius);
+                let quadrant4_ranges = (x..x + radius, y..y + radius);
 
                 let quadrant_1_variance = calculate_variance(
                     &value_array,

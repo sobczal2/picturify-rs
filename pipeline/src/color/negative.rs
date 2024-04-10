@@ -1,11 +1,10 @@
-use picturify_core::image::fast_image::FastImage;
-use picturify_macros::pipeline_run;
+use picturify_core::fast_image::fast_image::FastImage;
 use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::color::negative::NegativeProcessor;
+use crate::pipeline::Pipeline;
 
 pub struct NegativePipelineOptions {}
 
-#[derive(pipeline_run)]
 pub struct NegativePipeline {
     processors: Vec<Box<dyn Processor>>,
     #[allow(dead_code)]
@@ -18,5 +17,15 @@ impl NegativePipeline {
             processors: vec![Box::new(NegativeProcessor::new())],
             options: NegativePipelineOptions {},
         }
+    }
+}
+
+impl Pipeline for NegativePipeline {
+    fn run(&self, fast_image: FastImage) -> FastImage {
+        let mut image = fast_image;
+        for processor in &self.processors {
+            image = processor.process(image);
+        }
+        image
     }
 }

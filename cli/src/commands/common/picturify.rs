@@ -1,7 +1,7 @@
-use crate::commands::common::common::image::ImageCommand;
-use crate::commands::common::common::movie::MovieCommand;
 use crate::metadata::get_metadata;
 use clap::Command;
+use crate::commands::common::image::ImageCommand;
+use crate::commands::common::movie::MovieCommand;
 
 pub struct PicturifyCommand;
 
@@ -12,7 +12,7 @@ impl PicturifyCommand {
         Command::new("picturify")
             .version(picturify_metadata.cli_version.to_string())
             .about(format!(
-                "Picturify CLI - a CLI tool for image processing using the Picturify library\n\
+                "Picturify CLI - a CLI tool for fast_image processing using the Picturify library\n\
                 CLI Version: {}\n\
                 Core Version: {}\n\
                 Processing Version: {}",
