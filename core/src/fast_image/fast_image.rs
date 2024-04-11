@@ -20,6 +20,16 @@ impl FastImage {
             inner: RgbaImage::new(width as u32, height as u32),
         }
     }
+
+    pub fn from_rgba_vec(width: usize, height: usize, rgba_vec: Vec<u8>) -> FastImage {
+        FastImage {
+            inner: RgbaImage::from_raw(width as u32, height as u32, rgba_vec).unwrap(),
+        }
+    }
+
+    pub fn to_rgba_vec(&self) -> Vec<u8> {
+        self.inner.clone().into_raw()
+    }
 }
 
 impl FastImage {
@@ -64,11 +74,11 @@ impl FastImage {
     pub fn pixels_mut(&mut self) -> PixelsMut<Rgba<u8>> {
         self.inner.pixels_mut()
     }
-    
+
     pub fn rows(&self) -> Rows<Rgba<u8>> {
         self.inner.rows()
     }
-    
+
     pub fn rows_mut(&mut self) -> RowsMut<Rgba<u8>> {
         self.inner.rows_mut()
     }
