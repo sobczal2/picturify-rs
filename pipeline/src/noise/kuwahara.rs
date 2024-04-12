@@ -28,14 +28,14 @@ impl Pipeline for KuwaharaPipeline {
         let original_width = fast_image.get_width();
         let original_height = fast_image.get_height();
 
-        let edge_enlargement_processor = EnlargementProcessor::with_options(
+        let enlargement_processor = EnlargementProcessor::with_options(
             EnlargementProcessorOptions {
                 border: radius,
                 strategy: EnlargementStrategy::Constant(Srgba::new(0.0, 0.0, 0.0, 1.0)),
             }
         );
 
-        let enlarged_image = edge_enlargement_processor.process(fast_image);
+        let enlarged_image = enlargement_processor.process(fast_image);
 
         let kuwahara_processor = KuwaharaProcessor::with_options(
             KuwaharaProcessorOptions {

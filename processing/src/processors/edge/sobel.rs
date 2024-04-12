@@ -1,269 +1,146 @@
-// use picturify_core::error::PicturifyResult;
-// use picturify_core::fast_image::fast_image::FastImage;
-//
-// use crate::common::execution::{CpuOptions, ExecutionPlan};
-//
-// pub struct SobelOperatorProcessor {
-//     execution_plan: ExecutionPlan,
-//     options: SobelOperatorProcessorOptions,
-// }
-//
-// pub struct SobelOperatorProcessorOptions {
-//     pub magnitude_mapping: fn(RgbaPixel, f32) -> RgbaPixel,
-// }
-//
-// impl SobelOperatorProcessor {
-//     pub fn new() -> SobelOperatorProcessor {
-//         SobelOperatorProcessor {
-//             execution_plan: ExecutionPlan::Cpu(Default::default()),
-//             channel_selector: ChannelSelector::Rgba(Default::default()),
-//             options: SobelOperatorProcessorOptions {
-//                 magnitude_mapping: |old_pixel, magnitude_squared| {
-//                     let magnitude = (magnitude_squared.sqrt() * 255.0).min(255.0).round() as u8;
-//                     RgbaPixel {
-//                         red: magnitude,
-//                         green: magnitude,
-//                         blue: magnitude,
-//                         alpha: old_pixel.alpha,
-//                     }
-//                 },
-//             },
-//         }
-//     }
-//
-//     pub fn change_options(&mut self, action: fn(&mut SobelOperatorProcessorOptions)) {
-//         action(&mut self.options);
-//     }
-//
-//     fn run_cpu(&self, fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
-//         cpu_options.build_thread_pool().install(|| {
-//             return match self.channel_selector {
-//                 ChannelSelector::Rgba(selector) => self.run_cpu_rgba(fast_image, selector),
-//                 ChannelSelector::Hsva(selector) => self.run_cpu_hsva(fast_image, selector),
-//                 ChannelSelector::Hsla(selector) => self.run_cpu_hsla(fast_image, selector),
-//                 ChannelSelector::La(selector) => self.run_cpu_la(fast_image, selector),
-//             };
-//         })
-//     }
-//
-//     fn run_gpu(&self, _fast_image: FastImage) -> FastImage {
-//         unimplemented!()
-//     }
-//
-//     fn get_sobel_magnitude_squared(
-//         fast_image: &FastImage,
-//         layer_type: LayerType,
-//         x: usize,
-//         y: usize,
-//     ) -> f32 {
-//         let mut sobel_x = 0.0;
-//         let mut sobel_y = 0.0;
-//
-//         let value_00 = fast_image.get_normalized_value(&layer_type, x - 1, y - 1);
-//         let value_01 = fast_image.get_normalized_value(&layer_type, x - 1, y);
-//         let value_02 = fast_image.get_normalized_value(&layer_type, x - 1, y + 1);
-//         let value_10 = fast_image.get_normalized_value(&layer_type, x, y - 1);
-//         let value_12 = fast_image.get_normalized_value(&layer_type, x, y + 1);
-//         let value_20 = fast_image.get_normalized_value(&layer_type, x + 1, y - 1);
-//         let value_21 = fast_image.get_normalized_value(&layer_type, x + 1, y);
-//         let value_22 = fast_image.get_normalized_value(&layer_type, x + 1, y + 1);
-//
-//         sobel_x -= value_00;
-//         sobel_x -= value_01 * 2.0;
-//         sobel_x -= value_02;
-//         sobel_x += value_20;
-//         sobel_x += value_21 * 2.0;
-//         sobel_x += value_22;
-//
-//         sobel_y -= value_00;
-//         sobel_y -= value_10 * 2.0;
-//         sobel_y -= value_20;
-//         sobel_y += value_02;
-//         sobel_y += value_12 * 2.0;
-//         sobel_y += value_22;
-//
-//         sobel_x.powi(2) + sobel_y.powi(2)
-//     }
-// }
-//
-// impl Processor for SobelOperatorProcessor {
-//     fn set_execution_plan(&mut self, execution_plan: ExecutionPlan) -> PicturifyResult<()> {
-//         self.execution_plan = execution_plan;
-//         Ok(())
-//     }
-//
-//     fn set_channel_selector(&mut self, channel_selector: ChannelSelector) -> PicturifyResult<()> {
-//         self.channel_selector = channel_selector;
-//         Ok(())
-//     }
-//
-//     fn process(&self, fast_image: FastImage) -> FastImage {
-//         match self.execution_plan {
-//             ExecutionPlan::Cpu(options) => {
-//                 return self.run_cpu(fast_image, options);
-//             }
-//             ExecutionPlan::Gpu => {
-//                 return self.run_gpu(fast_image);
-//             }
-//         }
-//     }
-// }
-//
-// impl SobelOperatorProcessor {
-//     fn run_cpu_rgba(
-//         &self,
-//         fast_image: FastImage,
-//         rgba_channel_selector: RgbaChannelSelector,
-//     ) -> FastImage {
-//         let width = fast_image.get_width();
-//         let height = fast_image.get_height();
-//
-//         let mut output_image = FastImage::empty(width, height);
-//
-//         output_image.iterate_par_rgba(|pixel, x, y| {
-//             if x == 0 || y == 0 || x == width - 1 || y == height - 1 {
-//                 return;
-//             }
-//             let mut magnitude_sum = 0.0;
-//             let mut magnitude_count = 0;
-//
-//             if rgba_channel_selector.red_enabled() {
-//                 let r = Self::get_sobel_magnitude_squared(&fast_image, LayerType::Red, x, y);
-//                 magnitude_sum += r;
-//                 magnitude_count += 1;
-//             }
-//             if rgba_channel_selector.green_enabled() {
-//                 let g = Self::get_sobel_magnitude_squared(&fast_image, LayerType::Green, x, y);
-//                 magnitude_sum += g;
-//                 magnitude_count += 1;
-//             }
-//             if rgba_channel_selector.blue_enabled() {
-//                 let b = Self::get_sobel_magnitude_squared(&fast_image, LayerType::Blue, x, y);
-//                 magnitude_sum += b;
-//                 magnitude_count += 1;
-//             }
-//             if rgba_channel_selector.alpha_enabled() {
-//                 let a = Self::get_sobel_magnitude_squared(&fast_image, LayerType::Alpha, x, y);
-//                 magnitude_sum += a;
-//                 magnitude_count += 1;
-//             }
-//
-//             let old_pixel = fast_image.get_rgba(x, y);
-//             let new_pixel =
-//                 (self.options.magnitude_mapping)(old_pixel, magnitude_sum / magnitude_count as f32);
-//
-//             pixel.red = new_pixel.red;
-//             pixel.green = new_pixel.green;
-//             pixel.blue = new_pixel.blue;
-//             pixel.alpha = new_pixel.alpha;
-//         });
-//
-//         output_image
-//     }
-//
-//     fn run_cpu_hsva(
-//         &self,
-//         fast_image: FastImage,
-//         hsva_channel_selector: HsvaChannelSelector,
-//     ) -> FastImage {
-//         let width = fast_image.get_width();
-//         let height = fast_image.get_height();
-//
-//         let mut output_image = FastImage::empty(width, height);
-//
-//         output_image.iterate_par_hsva(|pixel, x, y| {
-//             if x == 0
-//                 || y == 0
-//                 || x == fast_image.get_width() - 1
-//                 || y == fast_image.get_height() - 1
-//             {
-//                 return;
-//             }
-//             let mut magnitude_sum = 0.0;
-//             let mut magnitude_count = 0;
-//
-//             if hsva_channel_selector.hue_enabled() {
-//                 let h = Self::get_sobel_magnitude_squared(&fast_image, LayerType::Hue, x, y);
-//                 magnitude_sum += h;
-//                 magnitude_count += 1;
-//             }
-//             if hsva_channel_selector.saturation_enabled() {
-//                 let s = Self::get_sobel_magnitude_squared(&fast_image, LayerType::Saturation, x, y);
-//                 magnitude_sum += s;
-//                 magnitude_count += 1;
-//             }
-//             if hsva_channel_selector.value_enabled() {
-//                 let v = Self::get_sobel_magnitude_squared(&fast_image, LayerType::Value, x, y);
-//                 magnitude_sum += v;
-//                 magnitude_count += 1;
-//             }
-//             if hsva_channel_selector.alpha_enabled() {
-//                 let a = Self::get_sobel_magnitude_squared(&fast_image, LayerType::Alpha, x, y);
-//                 magnitude_sum += a;
-//                 magnitude_count += 1;
-//             }
-//             let old_pixel = fast_image.get_rgba(x, y);
-//             let new_pixel =
-//                 (self.options.magnitude_mapping)(old_pixel, magnitude_sum / magnitude_count as f32);
-//
-//             pixel.copy_from_rgba(new_pixel);
-//         });
-//
-//         output_image
-//     }
-//
-//     fn run_cpu_hsla(
-//         &self,
-//         fast_image: FastImage,
-//         hsla_channel_selector: HslaChannelSelector,
-//     ) -> FastImage {
-//         let width = fast_image.get_width();
-//         let height = fast_image.get_height();
-//
-//         let mut output_image = FastImage::empty(width, height);
-//
-//         output_image.iterate_par_hsla(|pixel, x, y| {
-//             if x == 0 || y == 0 || x == width - 1 || y == height - 1 {
-//                 return;
-//             }
-//             let mut magnitude_sum = 0.0;
-//             let mut magnitude_count = 0;
-//
-//             if hsla_channel_selector.hue_enabled() {
-//                 let h = Self::get_sobel_magnitude_squared(&fast_image, LayerType::Hue, x, y);
-//                 magnitude_sum += h;
-//                 magnitude_count += 1;
-//             }
-//             if hsla_channel_selector.saturation_enabled() {
-//                 let s = Self::get_sobel_magnitude_squared(&fast_image, LayerType::Saturation, x, y);
-//                 magnitude_sum += s;
-//                 magnitude_count += 1;
-//             }
-//             if hsla_channel_selector.lightness_enabled() {
-//                 let l = Self::get_sobel_magnitude_squared(&fast_image, LayerType::Lightness, x, y);
-//                 magnitude_sum += l;
-//                 magnitude_count += 1;
-//             }
-//             if hsla_channel_selector.alpha_enabled() {
-//                 let a = Self::get_sobel_magnitude_squared(&fast_image, LayerType::Alpha, x, y);
-//                 magnitude_sum += a;
-//                 magnitude_count += 1;
-//             }
-//             let old_pixel = fast_image.get_rgba(x, y);
-//             let new_pixel =
-//                 (self.options.magnitude_mapping)(old_pixel, magnitude_sum / magnitude_count as f32);
-//
-//             pixel.copy_from_rgba(new_pixel);
-//         });
-//
-//         output_image
-//     }
-//
-//     fn run_cpu_la(
-//         &self,
-//         _fast_image: FastImage,
-//         _la_channel_selector: LaChannelSelector,
-//     ) -> FastImage {
-//         unimplemented!()
-//     }
-// }
+use std::sync::{Arc, Mutex};
+use picturify_core::error::PicturifyResult;
+use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
+use picturify_core::fast_image::fast_image::FastImage;
+use picturify_core::rayon::prelude::*;
+use crate::common::execution::{CpuOptions, ExecutionPlan, Processor};
+
+pub  struct SobelProcessorOptions {
+    
+}
+
+impl Default for SobelProcessorOptions {
+    fn default() -> SobelProcessorOptions {
+        SobelProcessorOptions {  }
+    }
+}
+
+pub struct SobelProcessor {
+    execution_plan: ExecutionPlan,
+    options: SobelProcessorOptions,
+}
+
+const SOBEL_KERNEL_X: [[f32; 3]; 3] = [
+    [-1.0, 0.0, 1.0],
+    [-2.0, 0.0, 2.0],
+    [-1.0, 0.0, 1.0],
+];
+
+const SOBEL_KERNEL_Y: [[f32; 3]; 3] = [
+    [-1.0, -2.0, -1.0],
+    [0.0, 0.0, 0.0],
+    [1.0, 2.0, 1.0],
+];
+
+impl SobelProcessor {
+    pub fn new() -> SobelProcessor {
+        SobelProcessor {
+            execution_plan: ExecutionPlan::Cpu(Default::default()),
+            options: Default::default(),
+        }
+    }
+    
+    pub fn with_options(options: SobelProcessorOptions) -> SobelProcessor {
+        SobelProcessor {
+            execution_plan: ExecutionPlan::Cpu(Default::default()),
+            options,
+        }
+    }
+
+    fn run_cpu(&self, mut fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
+        let width = fast_image.get_width();
+        let height = fast_image.get_height();
+        
+        cpu_options.build_thread_pool().install(|| {
+            let mut magnitude_vec = vec![vec![0.0; width - 2]; height - 2];
+            let min_magnitude = Arc::new(Mutex::new(f32::MAX));
+            let max_magnitude = Arc::new(Mutex::new(f32::MIN));
+            
+            magnitude_vec
+                .iter_mut()
+                .enumerate()
+                .par_bridge()
+                .for_each(|(y_mag, row)| {
+                    let mut row_min_magnitude = f32::MAX;
+                    let mut row_max_magnitude = f32::MIN;
+                    row
+                        .iter_mut()
+                        .enumerate()
+                        .for_each(|(x_mag, magnitude)| {
+                            let x = x_mag + 1;
+                            let y = y_mag + 1;
+                            
+                            let mut magnitude_x = 0.0;
+                            let mut magnitude_y = 0.0;
+                            
+                            for i in 0..3 {
+                                for j in 0..3 {
+                                    let pixel = fast_image.get_image_pixel(x + i - 1, y + j - 1);
+                                    let red = pixel[0] as f32 / 255.0;
+                                    let green = pixel[1] as f32 / 255.0;
+                                    let blue = pixel[2] as f32 / 255.0;
+                                    
+                                    magnitude_x += SOBEL_KERNEL_X[j][i] * (red + green + blue) / 3.0;
+                                    magnitude_y += SOBEL_KERNEL_Y[j][i] * (red + green + blue) / 3.0;
+                                }
+                            }
+                            
+                            let actual_magnitude = (magnitude_x.powi(2) + magnitude_y.powi(2)).sqrt();
+                            *magnitude = actual_magnitude;
+                            
+                            if actual_magnitude < row_min_magnitude {
+                                row_min_magnitude = actual_magnitude;
+                            }
+                            
+                            if actual_magnitude > row_max_magnitude {
+                                row_max_magnitude = actual_magnitude;
+                            }
+                        });
+                    
+                    if row_min_magnitude < min_magnitude.lock().unwrap().clone() {
+                        *min_magnitude.lock().unwrap() = row_min_magnitude;
+                    }
+                    
+                    if row_max_magnitude > max_magnitude.lock().unwrap().clone() {
+                        *max_magnitude.lock().unwrap() = row_max_magnitude;
+                    }
+                });
+            
+            let min_magnitude = min_magnitude.lock().unwrap().clone();
+            let max_magnitude = max_magnitude.lock().unwrap().clone();
+            
+            fast_image.apply_fn_to_image_pixel(|pixel, x, y| {
+                if x == 0 || y == 0 || x == width - 1 || y == height - 1 {
+                    return;
+                }
+                let magnitude = magnitude_vec[y - 1][x - 1];
+                let magnitude = ((magnitude - min_magnitude) / (max_magnitude - min_magnitude)) * 255.0;
+                let magnitude = magnitude as u8;
+                
+                pixel[0] = magnitude;
+                pixel[1] = magnitude;
+                pixel[2] = magnitude;
+            });
+            
+            fast_image
+        })
+    }
+    
+    fn run_gpu(&self, _fast_image: FastImage) -> FastImage {
+        unimplemented!()
+    }
+}
+
+impl Processor for SobelProcessor {
+    fn set_execution_plan(&mut self, execution_plan: ExecutionPlan) -> PicturifyResult<()> {
+        self.execution_plan = execution_plan;
+        Ok(())
+    }
+    
+    fn process(&self, fast_image: FastImage) -> FastImage {
+        match self.execution_plan {
+            ExecutionPlan::Cpu(options) => self.run_cpu(fast_image, options),
+            ExecutionPlan::Gpu => self.run_gpu(fast_image),
+        }
+    }
+}
