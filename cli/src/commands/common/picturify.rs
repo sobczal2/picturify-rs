@@ -1,12 +1,12 @@
-use crate::metadata::get_metadata;
-use clap::Command;
 use crate::commands::common::image::ImageCommand;
 use crate::commands::common::movie::MovieCommand;
+use crate::metadata::get_metadata;
+use clap::Command;
 
 pub struct PicturifyCommand;
 
 impl PicturifyCommand {
-    pub fn new() -> Command {
+    pub fn get() -> Command {
         let picturify_metadata = get_metadata();
 
         Command::new("picturify")
@@ -20,6 +20,6 @@ impl PicturifyCommand {
                 picturify_metadata.core_version,
                 picturify_metadata.processing_version
             ))
-            .subcommands(vec![ImageCommand::new(), MovieCommand::new()])
+            .subcommands(vec![ImageCommand::get(), MovieCommand::get()])
     }
 }

@@ -1,7 +1,7 @@
 use crate::common::execution::{CpuOptions, ExecutionPlan, Processor};
 use picturify_core::error::PicturifyResult;
 use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToPalettePixels;
-use picturify_core::fast_image::fast_image::FastImage;
+use picturify_core::fast_image::FastImage;
 use picturify_core::palette::Srgba;
 
 pub enum EnlargementStrategy {
@@ -30,7 +30,9 @@ impl EnlargementProcessor {
         }
     }
 
-    pub fn with_options(edge_enlargement_processor_options: EnlargementProcessorOptions) -> EnlargementProcessor {
+    pub fn with_options(
+        edge_enlargement_processor_options: EnlargementProcessorOptions,
+    ) -> EnlargementProcessor {
         EnlargementProcessor {
             execution_plan: ExecutionPlan::Cpu(Default::default()),
             options: edge_enlargement_processor_options,
@@ -57,7 +59,8 @@ impl EnlargementProcessor {
                         {
                             pixel
                         } else {
-                            fast_image.get_srgba_pixel(x - self.options.border, y - self.options.border)
+                            fast_image
+                                .get_srgba_pixel(x - self.options.border, y - self.options.border)
                         }
                     });
                 }
@@ -75,7 +78,7 @@ impl EnlargementProcessor {
                     //         } else {
                     //             x - self.options.border
                     //         };
-                    // 
+                    //
                     //         let y = if y < self.options.border {
                     //             self.options.border - y - 1
                     //         } else if y >= height + self.options.border {
@@ -83,7 +86,7 @@ impl EnlargementProcessor {
                     //         } else {
                     //             y - self.options.border
                     //         };
-                    // 
+                    //
                     //         fast_image.get_srgba_pixel(
                     //             if x > new_width / 2 {
                     //                 (new_width - x - 1) % width

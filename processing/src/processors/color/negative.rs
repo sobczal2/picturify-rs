@@ -1,7 +1,9 @@
 use crate::common::execution::{CpuOptions, ExecutionPlan, Processor};
 use picturify_core::error::PicturifyResult;
-use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
-use picturify_core::fast_image::fast_image::FastImage;
+use picturify_core::fast_image::apply_fn_to_pixels::{
+    ApplyFnToImagePixels, ApplyFnToPalettePixels,
+};
+use picturify_core::fast_image::FastImage;
 
 pub struct NegativeProcessorOptions {
     pub use_fast_approximation: bool,
@@ -10,6 +12,12 @@ pub struct NegativeProcessorOptions {
 pub struct NegativeProcessor {
     execution_plan: ExecutionPlan,
     options: NegativeProcessorOptions,
+}
+
+impl Default for NegativeProcessor {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl NegativeProcessor {
@@ -39,7 +47,7 @@ impl NegativeProcessor {
                 });
             } else {
                 fast_image.par_apply_fn_to_linsrgba(|pixel, _x, _y| {
-                    let mut pixel = pixel.clone();
+                    let mut pixel = pixel;
                     pixel.red = 1.0 - pixel.red;
                     pixel.green = 1.0 - pixel.green;
                     pixel.blue = 1.0 - pixel.blue;
@@ -63,9 +71,9 @@ impl Processor for NegativeProcessor {
     }
 
     fn process(&self, fast_image: FastImage) -> FastImage {
-        return match self.execution_plan {
+        match self.execution_plan {
             ExecutionPlan::Cpu(options) => self.run_cpu(fast_image, options),
             ExecutionPlan::Gpu => self.run_gpu(fast_image),
-        };
+        }
     }
 }

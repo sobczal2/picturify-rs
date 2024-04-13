@@ -1,24 +1,27 @@
 use picturify_core::error::PicturifyResult;
-use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
-use picturify_core::fast_image::fast_image::FastImage;
+use picturify_core::fast_image::apply_fn_to_pixels::{
+    ApplyFnToImagePixels, ApplyFnToPalettePixels,
+};
+use picturify_core::fast_image::FastImage;
 
 use crate::common::execution::{CpuOptions, ExecutionPlan, Processor};
 
+#[derive(Default)]
 pub struct SepiaProcessorOptions {
     pub use_fast_approximation: bool,
 }
 
-impl Default for SepiaProcessorOptions {
-    fn default() -> SepiaProcessorOptions {
-        SepiaProcessorOptions {
-            use_fast_approximation: false,
-        }
-    }
-}
+
 
 pub struct SepiaProcessor {
     execution_plan: ExecutionPlan,
     options: SepiaProcessorOptions,
+}
+
+impl Default for SepiaProcessor {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl SepiaProcessor {

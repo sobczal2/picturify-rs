@@ -1,9 +1,9 @@
-use clap::{Arg, Command, value_parser};
+use clap::{value_parser, Arg, Command};
 
 pub struct KuwaharaCommand;
 
 impl KuwaharaCommand {
-    pub fn new() -> Command {
+    pub fn get() -> Command {
         Command::new("kuwahara")
             .arg(
                 Arg::new("radius")

@@ -1,15 +1,14 @@
-use clap::{Arg, Command};
 use crate::commands::color::negative::NegativeCommand;
 use crate::commands::color::sepia::SepiaCommand;
 use crate::commands::common::none::NoneCommand;
 use crate::commands::noise::kuwahara::KuwaharaCommand;
 use crate::commands::noise::median::MedianCommand;
-
+use clap::{Arg, Command};
 
 pub struct ImageCommand;
 
 impl ImageCommand {
-    pub fn new() -> Command {
+    pub fn get() -> Command {
         Command::new("image")
             .about("Run image processing pipeline on an fast_image")
             .args(&[
@@ -23,11 +22,11 @@ impl ImageCommand {
                     .required(true),
             ])
             .subcommands([
-                SepiaCommand::new(),
-                NegativeCommand::new(),
-                NoneCommand::new(),
-                KuwaharaCommand::new(),
-                MedianCommand::new(),
+                SepiaCommand::get(),
+                NegativeCommand::get(),
+                NoneCommand::get(),
+                KuwaharaCommand::get(),
+                MedianCommand::get(),
             ])
     }
 }

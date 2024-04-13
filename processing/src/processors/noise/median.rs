@@ -1,8 +1,8 @@
-use std::collections::VecDeque;
-use picturify_core::error::PicturifyResult;
-use picturify_core::fast_image::fast_image::FastImage;
-use picturify_core::rayon::prelude::*;
 use crate::common::execution::{CpuOptions, ExecutionPlan, Processor};
+use picturify_core::error::PicturifyResult;
+use picturify_core::fast_image::FastImage;
+use picturify_core::rayon::prelude::*;
+use std::collections::VecDeque;
 
 pub struct MedianProcessorOptions {
     pub radius: usize,
@@ -17,6 +17,12 @@ impl Default for MedianProcessorOptions {
 pub struct MedianProcessor {
     execution_plan: ExecutionPlan,
     options: MedianProcessorOptions,
+}
+
+impl Default for MedianProcessor {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl MedianProcessor {
@@ -42,40 +48,59 @@ impl MedianProcessor {
         cpu_options.build_thread_pool().install(|| {
             let mut new_fast_image = fast_image.clone();
 
-            new_fast_image.rows_mut().enumerate().skip(radius).take(height - 2 * radius).par_bridge().for_each(|(y, row)| {
-                let mut red_window = VecDeque::with_capacity((2 * radius + 1) * (2 * radius + 1));
-                let mut green_window = VecDeque::with_capacity((2 * radius + 1) * (2 * radius + 1));
-                let mut blue_window = VecDeque::with_capacity((2 * radius + 1) * (2 * radius + 1));
+            new_fast_image
+                .rows_mut()
+                .enumerate()
+                .skip(radius)
+                .take(height - 2 * radius)
+                .par_bridge()
+                .for_each(|(y, row)| {
+                    let mut red_window =
+                        VecDeque::with_capacity((2 * radius + 1) * (2 * radius + 1));
+                    let mut green_window =
+                        VecDeque::with_capacity((2 * radius + 1) * (2 * radius + 1));
+                    let mut blue_window =
+                        VecDeque::with_capacity((2 * radius + 1) * (2 * radius + 1));
 
-                let radius_i32 = radius as i32;
-                for window_x in -radius_i32..=radius_i32 {
-                    for window_y in -radius_i32..=radius_i32 {
-                        let pixel = fast_image.get_image_pixel((radius_i32 + window_x) as usize, (y as i32 + window_y) as usize);
-                        red_window.push_back(pixel[0]);
-                        green_window.push_back(pixel[1]);
-                        blue_window.push_back(pixel[2]);
+                    let radius_i32 = radius as i32;
+                    for window_x in -radius_i32..=radius_i32 {
+                        for window_y in -radius_i32..=radius_i32 {
+                            let pixel = fast_image.get_image_pixel(
+                                (radius_i32 + window_x) as usize,
+                                (y as i32 + window_y) as usize,
+                            );
+                            red_window.push_back(pixel[0]);
+                            green_window.push_back(pixel[1]);
+                            blue_window.push_back(pixel[2]);
+                        }
                     }
-                }
-                row.into_iter().enumerate().skip(radius).take(width - 2 * radius).for_each(|(x, pixel)| {
-                    let current_red_median = calculate_median(&mut red_window);
-                    let current_green_median = calculate_median(&mut green_window);
-                    let current_blue_median = calculate_median(&mut blue_window);
+                    row.into_iter()
+                        .enumerate()
+                        .skip(radius)
+                        .take(width - 2 * radius)
+                        .for_each(|(x, pixel)| {
+                            let current_red_median = calculate_median(&red_window);
+                            let current_green_median = calculate_median(&green_window);
+                            let current_blue_median = calculate_median(&blue_window);
 
-                    pixel[0] = current_red_median;
-                    pixel[1] = current_green_median;
-                    pixel[2] = current_blue_median;
+                            pixel[0] = current_red_median;
+                            pixel[1] = current_green_median;
+                            pixel[2] = current_blue_median;
 
-                    for window_y in -radius_i32..=radius_i32 {
-                        let pixel = fast_image.get_image_pixel((x as i32 - radius_i32) as usize, (y as i32 + window_y) as usize);
-                        red_window.pop_front();
-                        green_window.pop_front();
-                        blue_window.pop_front();
-                        red_window.push_back(pixel[0]);
-                        green_window.push_back(pixel[1]);
-                        blue_window.push_back(pixel[2]);
-                    }
+                            for window_y in -radius_i32..=radius_i32 {
+                                let pixel = fast_image.get_image_pixel(
+                                    (x as i32 - radius_i32) as usize,
+                                    (y as i32 + window_y) as usize,
+                                );
+                                red_window.pop_front();
+                                green_window.pop_front();
+                                blue_window.pop_front();
+                                red_window.push_back(pixel[0]);
+                                green_window.push_back(pixel[1]);
+                                blue_window.push_back(pixel[2]);
+                            }
+                        });
                 });
-            });
 
             new_fast_image
         })

@@ -1,8 +1,9 @@
 use picturify_core::error::PicturifyResult;
-use picturify_core::fast_image::fast_image::FastImage;
+use picturify_core::fast_image::FastImage;
 use picturify_core::rayon::{current_num_threads, ThreadPool, ThreadPoolBuilder};
 
 #[derive(Copy, Clone)]
+#[derive(Default)]
 pub struct CpuOptions {
     pub num_threads: Option<usize>,
 }
@@ -20,11 +21,7 @@ impl CpuOptions {
     }
 }
 
-impl Default for CpuOptions {
-    fn default() -> Self {
-        CpuOptions { num_threads: None }
-    }
-}
+
 
 #[derive(Copy, Clone)]
 pub enum ExecutionPlan {

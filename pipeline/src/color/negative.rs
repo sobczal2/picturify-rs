@@ -1,7 +1,7 @@
-use picturify_core::fast_image::fast_image::FastImage;
+use crate::pipeline::Pipeline;
+use picturify_core::fast_image::FastImage;
 use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::color::negative::NegativeProcessor;
-use crate::pipeline::Pipeline;
 
 pub struct NegativePipelineOptions {}
 

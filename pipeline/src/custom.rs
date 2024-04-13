@@ -1,5 +1,5 @@
-use picturify_core::fast_image::fast_image::FastImage;
 use crate::pipeline::Pipeline;
+use picturify_core::fast_image::FastImage;
 
 pub struct CustomPipeline {
     function: fn(fast_image: FastImage) -> FastImage,
@@ -7,9 +7,7 @@ pub struct CustomPipeline {
 
 impl CustomPipeline {
     pub fn new(function: fn(fast_image: FastImage) -> FastImage) -> CustomPipeline {
-        CustomPipeline {
-            function,
-        }
+        CustomPipeline { function }
     }
 }
 

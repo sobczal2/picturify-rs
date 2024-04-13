@@ -1,15 +1,26 @@
-use picturify_core::error::PicturifyResult;
-use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
-use picturify_core::fast_image::fast_image::FastImage;
-use picturify_core::image::Rgba;
-use picturify_core::palette::{LinSrgb, LinSrgba};
 use crate::common::execution::{CpuOptions, ExecutionPlan, Processor};
+use picturify_core::error::PicturifyResult;
+use picturify_core::fast_image::apply_fn_to_pixels::{
+    ApplyFnToPalettePixels,
+};
+use picturify_core::fast_image::FastImage;
+
+use picturify_core::palette::{LinSrgba};
 
 pub enum RemappingFunction {
-    Linear { min: f32, max: f32 },
-    Exponential { factor: f32 },
-    Logarithmic { factor: f32 },
-    Custom { map: fn(lin_srgb: LinSrgba) -> LinSrgba },
+    Linear {
+        min: f32,
+        max: f32,
+    },
+    Exponential {
+        factor: f32,
+    },
+    Logarithmic {
+        factor: f32,
+    },
+    Custom {
+        map: fn(lin_srgb: LinSrgba) -> LinSrgba,
+    },
 }
 
 impl RemappingFunction {
@@ -70,6 +81,12 @@ pub struct RemappingProcessor {
     options: RemappingProcessorOptions,
 }
 
+impl Default for RemappingProcessor {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl RemappingProcessor {
     pub fn new() -> RemappingProcessor {
         RemappingProcessor {
@@ -99,7 +116,6 @@ impl RemappingProcessor {
         unimplemented!()
     }
 }
-
 
 impl Processor for RemappingProcessor {
     fn set_execution_plan(&mut self, execution_plan: ExecutionPlan) -> PicturifyResult<()> {

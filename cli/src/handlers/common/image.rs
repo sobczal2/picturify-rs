@@ -1,12 +1,12 @@
-use std::time::Instant;
 use crate::handlers::color::negative::NegativeCommandHandler;
 use crate::handlers::color::sepia::SepiaCommandHandler;
-use clap::ArgMatches;
-use log::info;
-use picturify_core::fast_image::fast_image::FastImage;
-use picturify_core::fast_image::io::{ReadFromFile, WriteToFile};
 use crate::handlers::noise::kuwahara::KuwaharaCommandHandler;
 use crate::handlers::noise::median::MedianCommandHandler;
+use clap::ArgMatches;
+use log::info;
+use picturify_core::fast_image::FastImage;
+use picturify_core::fast_image::io::{ReadFromFile, WriteToFile};
+use std::time::Instant;
 
 pub struct ImageCommandHandler;
 

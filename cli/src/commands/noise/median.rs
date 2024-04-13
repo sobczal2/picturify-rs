@@ -1,9 +1,9 @@
-use clap::{Arg, Command, value_parser};
+use clap::{value_parser, Arg, Command};
 
 pub struct MedianCommand;
 
 impl MedianCommand {
-    pub fn new() -> Command {
+    pub fn get() -> Command {
         Command::new("median")
             .arg(
                 Arg::new("radius")

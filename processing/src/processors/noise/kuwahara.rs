@@ -1,10 +1,10 @@
 use crate::common::execution::{CpuOptions, ExecutionPlan, Processor};
 use picturify_core::error::PicturifyResult;
 use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToPalettePixels;
-use picturify_core::fast_image::fast_image::FastImage;
+use picturify_core::fast_image::FastImage;
 use picturify_core::fast_image::util::{cord_2d_to_1d, image_rgba_to_palette_srgba};
-use std::ops::Range;
 use picturify_core::palette::{Hsva, IntoColor};
+use std::ops::Range;
 
 pub struct KuwaharaProcessorOptions {
     pub radius: usize,
@@ -19,6 +19,12 @@ impl Default for KuwaharaProcessorOptions {
 pub struct KuwaharaProcessor {
     execution_plan: ExecutionPlan,
     options: KuwaharaProcessorOptions,
+}
+
+impl Default for KuwaharaProcessor {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl KuwaharaProcessor {
@@ -55,11 +61,7 @@ impl KuwaharaProcessor {
                 });
 
             fast_image.par_apply_fn_to_pixel(|pixel: Hsva, x, y| {
-                if x < radius
-                    || y < radius
-                    || x >= width - radius
-                    || y >= height - radius
-                {
+                if x < radius || y < radius || x >= width - radius || y >= height - radius {
                     return pixel;
                 }
 
@@ -142,7 +144,7 @@ impl Processor for KuwaharaProcessor {
 }
 
 fn calculate_variance(
-    value_vec: &Vec<f32>,
+    value_vec: &[f32],
     range_x: &Range<usize>,
     range_y: &Range<usize>,
     width: usize,
@@ -160,12 +162,12 @@ fn calculate_variance(
     }
 
     let mean = sum / count as f32;
-    let variance = (sum_squared - mean * mean) / count as f32;
-    variance
+    
+    (sum_squared - mean * mean) / count as f32
 }
 
 fn calculate_mean(
-    value_vec: &Vec<f32>,
+    value_vec: &[f32],
     range_x: &Range<usize>,
     range_y: &Range<usize>,
     width: usize,
@@ -180,6 +182,6 @@ fn calculate_mean(
         }
     }
 
-    let mean = sum / count as f32;
-    mean
+    
+    sum / count as f32
 }

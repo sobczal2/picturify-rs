@@ -1,7 +1,7 @@
+use crate::commands::common::picturify::PicturifyCommand;
 use crate::handlers::common::image::ImageCommandHandler;
 use log::LevelFilter;
 use simplelog::*;
-use crate::commands::common::picturify::PicturifyCommand;
 
 mod commands;
 mod handlers;
@@ -16,7 +16,7 @@ fn main() {
     )
     .unwrap();
 
-    let matches = PicturifyCommand::new().get_matches();
+    let matches = PicturifyCommand::get().get_matches();
 
     match matches.subcommand() {
         Some(("image", arg)) => {

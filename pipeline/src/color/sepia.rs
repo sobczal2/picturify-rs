@@ -1,7 +1,7 @@
-use picturify_core::fast_image::fast_image::FastImage;
+use crate::pipeline::Pipeline;
+use picturify_core::fast_image::FastImage;
 use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::color::sepia::SepiaProcessor;
-use crate::pipeline::Pipeline;
 
 pub struct SepiaPipelineOptions {}
 
@@ -11,6 +11,12 @@ pub struct SepiaPipeline {
     options: SepiaPipelineOptions,
 }
 
+impl Default for SepiaPipeline {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl SepiaPipeline {
     pub fn new() -> Self {
         Self {
@@ -18,7 +24,7 @@ impl SepiaPipeline {
             options: SepiaPipelineOptions {},
         }
     }
-    
+
     pub fn with_options(options: SepiaPipelineOptions) -> Self {
         Self {
             processors: vec![Box::new(SepiaProcessor::new())],

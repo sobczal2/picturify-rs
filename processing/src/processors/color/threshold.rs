@@ -1,7 +1,9 @@
-use picturify_core::error::PicturifyResult;
-use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
-use picturify_core::fast_image::fast_image::FastImage;
 use crate::common::execution::{CpuOptions, ExecutionPlan, Processor};
+use picturify_core::error::PicturifyResult;
+use picturify_core::fast_image::apply_fn_to_pixels::{
+    ApplyFnToImagePixels,
+};
+use picturify_core::fast_image::FastImage;
 
 pub struct ThresholdProcessorOptions {
     pub red_threshold: u8,
@@ -24,6 +26,12 @@ pub struct ThresholdProcessor {
     options: ThresholdProcessorOptions,
 }
 
+impl Default for ThresholdProcessor {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ThresholdProcessor {
     pub fn new() -> ThresholdProcessor {
         ThresholdProcessor {
@@ -42,9 +50,21 @@ impl ThresholdProcessor {
     fn run_cpu(&self, mut fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
         cpu_options.build_thread_pool().install(|| {
             fast_image.par_apply_fn_to_image_pixel(|pixel, _x, _y| {
-                pixel.0[0] = if pixel.0[0] > self.options.red_threshold { pixel.0[0] } else { 0 };
-                pixel.0[1] = if pixel.0[1] > self.options.green_threshold { pixel.0[1] } else { 0 };
-                pixel.0[2] = if pixel.0[2] > self.options.blue_threshold { pixel.0[2] } else { 0 };
+                pixel.0[0] = if pixel.0[0] > self.options.red_threshold {
+                    pixel.0[0]
+                } else {
+                    0
+                };
+                pixel.0[1] = if pixel.0[1] > self.options.green_threshold {
+                    pixel.0[1]
+                } else {
+                    0
+                };
+                pixel.0[2] = if pixel.0[2] > self.options.blue_threshold {
+                    pixel.0[2]
+                } else {
+                    0
+                };
             });
         });
 
@@ -69,4 +89,3 @@ impl Processor for ThresholdProcessor {
         }
     }
 }
-
