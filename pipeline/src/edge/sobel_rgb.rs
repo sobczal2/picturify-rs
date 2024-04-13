@@ -10,14 +10,28 @@ pub struct SobelRgbPipelineOptions {
     pub use_fast_approximation: bool,
 }
 
+impl Default for SobelRgbPipelineOptions {
+    fn default() -> SobelRgbPipelineOptions {
+        SobelRgbPipelineOptions {
+            use_fast_approximation: false,
+        }
+    }
+}
+
 pub struct SobelRgbPipeline {
     options: SobelRgbPipelineOptions,
 }
 
 impl SobelRgbPipeline {
-    pub fn new(sobel_pipeline_options: SobelRgbPipelineOptions) -> Self {
+    pub fn new() -> Self {
         Self {
-            options: sobel_pipeline_options,
+            options: Default::default(),
+        }
+    }
+    
+    pub fn with_options(options: SobelRgbPipelineOptions) -> Self {
+        Self {
+            options,
         }
     }
 

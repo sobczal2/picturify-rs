@@ -12,10 +12,17 @@ pub struct SepiaPipeline {
 }
 
 impl SepiaPipeline {
-    pub fn new(_sepia_pipeline_options: SepiaPipelineOptions) -> Self {
+    pub fn new() -> Self {
         Self {
             processors: vec![Box::new(SepiaProcessor::new())],
             options: SepiaPipelineOptions {},
+        }
+    }
+    
+    pub fn with_options(options: SepiaPipelineOptions) -> Self {
+        Self {
+            processors: vec![Box::new(SepiaProcessor::new())],
+            options,
         }
     }
 }
