@@ -104,7 +104,7 @@ impl RemappingProcessor {
 
     fn run_cpu(&self, mut fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
         cpu_options.build_thread_pool().install(|| {
-            fast_image.par_apply_fn_to_linsrgba(|pixel, _x, _y| {
+            fast_image.par_apply_fn_to_lin_srgba(|pixel, _x, _y| {
                 self.options.function.apply_to_pixel(pixel)
             });
         });

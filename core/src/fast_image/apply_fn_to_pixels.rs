@@ -29,7 +29,7 @@ pub trait ApplyFnToPalettePixels {
     fn par_apply_fn_to_srgba<F>(&mut self, f: F)
     where
         F: Fn(Srgba, usize, usize) -> Srgba + Send + Sync;
-    fn par_apply_fn_to_linsrgba<F>(&mut self, f: F)
+    fn par_apply_fn_to_lin_srgba<F>(&mut self, f: F)
     where
         F: Fn(LinSrgba, usize, usize) -> LinSrgba + Send + Sync,
     {

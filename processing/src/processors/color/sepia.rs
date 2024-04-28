@@ -56,7 +56,7 @@ impl SepiaProcessor {
                     pixel.0[2] = new_b.round() as u8;
                 });
             } else {
-                fast_image.par_apply_fn_to_linsrgba(|mut pixel, _x, _y| {
+                fast_image.par_apply_fn_to_lin_srgba(|mut pixel, _x, _y| {
                     let r = pixel.red;
                     let g = pixel.green;
                     let b = pixel.blue;

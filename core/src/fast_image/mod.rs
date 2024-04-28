@@ -6,7 +6,7 @@ pub mod util;
 use image::buffer::{Pixels, PixelsMut, Rows, RowsMut};
 use image::io::Reader;
 use image::{Rgba, RgbaImage};
-use palette::Srgba;
+use palette::{LinSrgba, Srgba};
 use rayon::prelude::*;
 
 use crate::error::PicturifyResult;
@@ -59,6 +59,11 @@ impl FastImage {
             pixel[3] as f32 / 255.0,
         )
     }
+    
+    pub  fn get_lin_srgba_pixel(&self, x: usize, y: usize) -> LinSrgba {
+        let pixel = self.get_srgba_pixel(x, y);
+        pixel.into_linear()
+    }
 
     pub fn set_image_pixel(&mut self, x: usize, y: usize, pixel: Rgba<u8>) {
         self.inner.put_pixel(x as u32, y as u32, pixel);
@@ -70,6 +75,11 @@ impl FastImage {
         let b = (pixel.blue * 255.0).round() as u8;
         let a = (pixel.alpha * 255.0).round() as u8;
         self.inner.put_pixel(x as u32, y as u32, Rgba([r, g, b, a]));
+    }
+    
+    pub fn set_lin_srgba_pixel(&mut self, x: usize, y: usize, pixel: LinSrgba) {
+        let srgba: Srgba = pixel.into();
+        self.set_srgba_pixel(x, y, srgba);
     }
 
     pub fn pixels(&self) -> Pixels<Rgba<u8>> {

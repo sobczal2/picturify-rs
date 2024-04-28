@@ -46,7 +46,7 @@ impl NegativeProcessor {
                     pixel.0[2] = 255 - pixel.0[2];
                 });
             } else {
-                fast_image.par_apply_fn_to_linsrgba(|pixel, _x, _y| {
+                fast_image.par_apply_fn_to_lin_srgba(|pixel, _x, _y| {
                     let mut pixel = pixel;
                     pixel.red = 1.0 - pixel.red;
                     pixel.green = 1.0 - pixel.green;
