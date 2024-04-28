@@ -19,7 +19,7 @@ use std::time::Instant;
 use picturify_processing::processors::noise::mean::{MeanProcessor, MeanProcessorOptions};
 
 fn main() {
-    run_image();
+    // run_image();
     // run_movie();
 }
 

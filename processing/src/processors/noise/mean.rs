@@ -57,7 +57,7 @@ impl MeanProcessor {
                 use_fast_approximation: self.options.use_fast_approximation,
             },
         );
-        processor.set_execution_plan(ExecutionPlan::Cpu(Default::default())).unwrap();
+        processor.set_execution_plan(ExecutionPlan::Cpu(cpu_options)).unwrap();
 
         processor.process(fast_image)
     }
