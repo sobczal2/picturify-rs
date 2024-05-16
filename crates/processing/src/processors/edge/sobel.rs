@@ -1,17 +1,19 @@
 use crate::common::execution::{Processor, WithOptions};
-use picturify_core::fast_image::apply_fn_to_pixels::{
-    ApplyFnToImagePixels,
-};
+use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
 use picturify_core::fast_image::FastImage;
 use picturify_core::rayon::prelude::*;
 use std::sync::{Arc, Mutex, RwLock};
 use picturify_core::threading::progress::Progress;
 
-pub struct SobelProcessorOptions {}
+pub struct SobelProcessorOptions {
+    pub use_fast_approximation: bool,
+}
 
 impl Default for SobelProcessorOptions {
     fn default() -> Self {
-        SobelProcessorOptions {}
+        SobelProcessorOptions {
+            use_fast_approximation: false,
+        }
     }
 }
 
@@ -64,10 +66,20 @@ impl Processor for SobelProcessor {
 
                     for i in 0..3 {
                         for j in 0..3 {
-                            let pixel = fast_image.get_image_pixel(x + i - 1, y + j - 1);
-                            let red = pixel[0] as f32 / 255.0;
-                            let green = pixel[1] as f32 / 255.0;
-                            let blue = pixel[2] as f32 / 255.0;
+                            let red: f32;
+                            let green: f32;
+                            let blue: f32;
+                            if self.options.use_fast_approximation {
+                                let pixel = fast_image.get_image_pixel(x + i - 1, y + j - 1);
+                                red = pixel[0] as f32 / 255.0;
+                                green = pixel[1] as f32 / 255.0;
+                                blue = pixel[2] as f32 / 255.0;
+                            } else {
+                                let pixel = fast_image.get_lin_srgba_pixel(x + i - 1, y + j - 1);
+                                red = pixel.red;
+                                green = pixel.green;
+                                blue = pixel.blue;
+                            }
 
                             magnitude_x += SOBEL_KERNEL_X[j][i] * (red + green + blue) / 3.0;
                             magnitude_y += SOBEL_KERNEL_Y[j][i] * (red + green + blue) / 3.0;
@@ -98,22 +110,41 @@ impl Processor for SobelProcessor {
         let min_magnitude = *min_magnitude.lock().unwrap();
         let max_magnitude = *max_magnitude.lock().unwrap();
 
-        fast_image.par_apply_fn_to_image_pixel(
-            |pixel, x, y| {
-                if x == 0 || y == 0 || x == width - 1 || y == height - 1 {
-                    return;
-                }
-                let magnitude = magnitude_vec[y - 1][x - 1];
-                let magnitude =
-                    ((magnitude - min_magnitude) / (max_magnitude - min_magnitude)) * 255.0;
-                let magnitude = magnitude as u8;
+        if self.options.use_fast_approximation {
+            fast_image.par_apply_fn_to_image_pixel(
+                |pixel, x, y| {
+                    if x == 0 || y == 0 || x == width - 1 || y == height - 1 {
+                        return;
+                    }
+                    let magnitude = magnitude_vec[y - 1][x - 1];
+                    let magnitude =
+                        ((magnitude - min_magnitude) / (max_magnitude - min_magnitude)) * 255.0;
+                    let magnitude = magnitude as u8;
 
-                pixel[0] = magnitude;
-                pixel[1] = magnitude;
-                pixel[2] = magnitude;
-            },
-            Some(progress),
-        );
+                    pixel[0] = magnitude;
+                    pixel[1] = magnitude;
+                    pixel[2] = magnitude;
+                },
+                Some(progress),
+            );
+        } else {
+            fast_image.par_apply_fn_to_lin_srgba(
+                |mut pixel, x, y| {
+                    if x == 0 || y == 0 || x == width - 1 || y == height - 1 {
+                        return pixel;
+                    }
+                    let magnitude = magnitude_vec[y - 1][x - 1];
+                    let magnitude = (magnitude - min_magnitude) / (max_magnitude - min_magnitude);
+
+                    pixel.red = magnitude;
+                    pixel.green = magnitude;
+                    pixel.blue = magnitude;
+
+                    pixel
+                },
+                Some(progress),
+            );
+        }
 
         fast_image
     }

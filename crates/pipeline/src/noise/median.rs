@@ -1,49 +1,38 @@
-// use crate::pipeline::Pipeline;
-// use picturify_core::fast_image::FastImage;
-// use picturify_core::palette::Srgba;
-// use picturify_processing::common::execution::Processor;
-// use picturify_processing::processors::geometry::crop::CropProcessor;
-// use picturify_processing::processors::geometry::enlargement::{
-//     EnlargementProcessor, EnlargementProcessorOptions, EnlargementStrategy,
-// };
-// use picturify_processing::processors::noise::median::{MedianProcessor, MedianProcessorOptions};
-// 
-// pub struct MedianPipelineOptions {
-//     pub radius: usize,
-// }
-// 
-// pub struct MedianPipeline {
-//     options: MedianPipelineOptions,
-// }
-// 
-// impl MedianPipeline {
-//     pub fn new(median_pipeline_options: MedianPipelineOptions) -> Self {
-//         Self {
-//             options: median_pipeline_options,
-//         }
-//     }
-// }
-// 
-// impl Pipeline for MedianPipeline {
-//     fn run(&self, fast_image: FastImage) -> FastImage {
-//         let radius = self.options.radius;
-//         let original_width = fast_image.get_width();
-//         let original_height = fast_image.get_height();
-// 
-//         let edge_enlargement_processor =
-//             EnlargementProcessor::with_options(EnlargementProcessorOptions {
-//                 border: radius,
-//                 strategy: EnlargementStrategy::Constant(Srgba::new(0.0, 0.0, 0.0, 1.0)),
-//             });
-// 
-//         let enlarged_image = edge_enlargement_processor.process(fast_image);
-// 
-//         let median_processor = MedianProcessor::with_options(MedianProcessorOptions { radius });
-// 
-//         let median_image = median_processor.process(enlarged_image);
-// 
-//         let crop_processor = CropProcessor::new(radius, radius, original_width, original_height);
-// 
-//         crop_processor.process(median_image)
-//     }
-// }
+use std::sync::{Arc, RwLock};
+use picturify_core::fast_image::FastImage;
+use picturify_processing::common::execution::{Processor, WithOptions};
+use picturify_processing::processors::noise::median::{MedianProcessor, MedianProcessorOptions};
+use crate::common::pipeline_progress::PipelineProgress;
+use crate::pipeline::Pipeline;
+
+pub struct MedianPipelineOptions {
+    pub radius: usize,
+}
+
+pub struct MedianPipeline {
+    options: MedianPipelineOptions,
+}
+
+impl MedianPipeline {
+    pub fn new(options: MedianPipelineOptions) -> Self {
+        Self {
+            options,
+        }
+    }
+}
+
+impl Pipeline for MedianPipeline {
+    fn run(&self, fast_image: FastImage, pipeline_progress: Arc<RwLock<PipelineProgress>>) -> FastImage {
+        let mut pipeline_progress_write = pipeline_progress.write().unwrap();
+        pipeline_progress_write.setup_combined(1);
+        pipeline_progress_write.new_individual("Median".to_string());
+        drop(pipeline_progress_write);
+
+        let processor = MedianProcessor::new().with_options(MedianProcessorOptions {
+            radius: self.options.radius,
+        });
+        let final_image = processor.process(fast_image, pipeline_progress.read().unwrap().get_individual_progress("Median".to_string()));
+        pipeline_progress.write().unwrap().increment_combined();
+        final_image
+    }
+}

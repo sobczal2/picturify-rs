@@ -1,18 +1,19 @@
 use crate::common::execution::{Processor, WithOptions};
-use picturify_core::error::PicturifyResult;
-use picturify_core::fast_image::apply_fn_to_pixels::{
-    ApplyFnToImagePixels,
-};
+use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
 use picturify_core::fast_image::FastImage;
 use picturify_core::rayon::prelude::*;
 use std::sync::{Arc, Mutex, RwLock};
 use picturify_core::threading::progress::Progress;
 
-pub struct SobelRgbProcessorOptions {}
+pub struct SobelRgbProcessorOptions {
+    pub use_fast_approximation: bool,
+}
 
 impl Default for SobelRgbProcessorOptions {
     fn default() -> Self {
-        SobelRgbProcessorOptions {}
+        SobelRgbProcessorOptions {
+            use_fast_approximation: false,
+        }
     }
 }
 
@@ -89,11 +90,20 @@ impl Processor for SobelRgbProcessor {
 
                             for i in 0..3 {
                                 for j in 0..3 {
-                                    let pixel =
-                                        fast_image.get_image_pixel(x + i - 1, y + j - 1);
-                                    let red = pixel[0] as f32 / 255.0;
-                                    let green = pixel[1] as f32 / 255.0;
-                                    let blue = pixel[2] as f32 / 255.0;
+                                    let red: f32;
+                                    let green: f32;
+                                    let blue: f32;
+                                    if self.options.use_fast_approximation {
+                                        let pixel = fast_image.get_image_pixel(x + i - 1, y + j - 1);
+                                        red = pixel[0] as f32 / 255.0;
+                                        green = pixel[1] as f32 / 255.0;
+                                        blue = pixel[2] as f32 / 255.0;
+                                    } else {
+                                        let pixel = fast_image.get_lin_srgba_pixel(x + i - 1, y + j - 1);
+                                        red = pixel.red;
+                                        green = pixel.green;
+                                        blue = pixel.blue;
+                                    }
 
                                     red_magnitude_x += SOBEL_KERNEL_X[j][i] * red;
                                     red_magnitude_y += SOBEL_KERNEL_Y[j][i] * red;
@@ -173,33 +183,59 @@ impl Processor for SobelRgbProcessor {
         let blue_min_magnitude = *blue_min_magnitude.lock().unwrap();
         let blue_max_magnitude = *blue_max_magnitude.lock().unwrap();
 
-        fast_image.par_apply_fn_to_image_pixel(
-            |pixel, x, y| {
-                if x == 0 || y == 0 || x == width - 1 || y == height - 1 {
-                    return;
-                }
-                let red_magnitude = red_magnitude_vec[y - 1][x - 1];
-                let green_magnitude = green_magnitude_vec[y - 1][x - 1];
-                let blue_magnitude = blue_magnitude_vec[y - 1][x - 1];
-                let red_magnitude = ((red_magnitude - red_min_magnitude)
-                    / (red_max_magnitude - red_min_magnitude))
-                    * 255.0;
-                let green_magnitude = ((green_magnitude - green_min_magnitude)
-                    / (green_max_magnitude - green_min_magnitude))
-                    * 255.0;
-                let blue_magnitude = ((blue_magnitude - blue_min_magnitude)
-                    / (blue_max_magnitude - blue_min_magnitude))
-                    * 255.0;
-                let red_magnitude = red_magnitude as u8;
-                let green_magnitude = green_magnitude as u8;
-                let blue_magnitude = blue_magnitude as u8;
+        if self.options.use_fast_approximation {
+            fast_image.par_apply_fn_to_image_pixel(
+                |pixel, x, y| {
+                    if x == 0 || y == 0 || x == width - 1 || y == height - 1 {
+                        return;
+                    }
+                    let red_magnitude = red_magnitude_vec[y - 1][x - 1];
+                    let green_magnitude = green_magnitude_vec[y - 1][x - 1];
+                    let blue_magnitude = blue_magnitude_vec[y - 1][x - 1];
+                    let red_magnitude = ((red_magnitude - red_min_magnitude)
+                        / (red_max_magnitude - red_min_magnitude))
+                        * 255.0;
+                    let green_magnitude = ((green_magnitude - green_min_magnitude)
+                        / (green_max_magnitude - green_min_magnitude))
+                        * 255.0;
+                    let blue_magnitude = ((blue_magnitude - blue_min_magnitude)
+                        / (blue_max_magnitude - blue_min_magnitude))
+                        * 255.0;
+                    let red_magnitude = red_magnitude as u8;
+                    let green_magnitude = green_magnitude as u8;
+                    let blue_magnitude = blue_magnitude as u8;
 
-                pixel[0] = red_magnitude;
-                pixel[1] = green_magnitude;
-                pixel[2] = blue_magnitude;
-            },
-            Some(progress),
-        );
+                    pixel[0] = red_magnitude;
+                    pixel[1] = green_magnitude;
+                    pixel[2] = blue_magnitude;
+                },
+                Some(progress),
+            );
+        } else {
+            fast_image.par_apply_fn_to_lin_srgba(
+                |mut pixel, x, y| {
+                    if x == 0 || y == 0 || x == width - 1 || y == height - 1 {
+                        return pixel;
+                    }
+                    let red_magnitude = red_magnitude_vec[y - 1][x - 1];
+                    let green_magnitude = green_magnitude_vec[y - 1][x - 1];
+                    let blue_magnitude = blue_magnitude_vec[y - 1][x - 1];
+                    let red_magnitude = (red_magnitude - red_min_magnitude)
+                        / (red_max_magnitude - red_min_magnitude);
+                    let green_magnitude = (green_magnitude - green_min_magnitude)
+                        / (green_max_magnitude - green_min_magnitude);
+                    let blue_magnitude = (blue_magnitude - blue_min_magnitude)
+                        / (blue_max_magnitude - blue_min_magnitude);
+
+                    pixel.red = red_magnitude;
+                    pixel.green = green_magnitude;
+                    pixel.blue = blue_magnitude;
+
+                    pixel
+                },
+                Some(progress),
+            );
+        }
 
         fast_image
     }

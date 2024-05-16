@@ -41,7 +41,7 @@ impl Processor for MedianProcessor {
 
         let mut new_fast_image = fast_image.clone();
 
-        progress.write().expect("Failed to lock progress").setup(height as u32);
+        progress.write().expect("Failed to lock progress").setup((height - 2 * radius) as u32);
         new_fast_image
             .rows_mut()
             .enumerate()

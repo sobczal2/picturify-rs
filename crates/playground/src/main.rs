@@ -3,10 +3,11 @@ use std::thread::spawn;
 use picturify_core::fast_image::io::{ReadFromFile, WriteToFile};
 use picturify_core::fast_image::FastImage;
 
-use picturify_processing::common::execution::Processor;
+use picturify_processing::common::execution::{Processor, WithOptions};
 use picturify_processing::processors::noise::mean::{MeanProcessor, MeanProcessorOptions};
 use std::time::Instant;
 use picturify_core::threading::progress::Progress;
+use picturify_processing::processors::edge::sobel::{SobelProcessor, SobelProcessorOptions};
 
 fn main() {
     run_image();
@@ -52,7 +53,9 @@ fn run_movie() {
 fn run_image() {
     let fast_image = *FastImage::read_from_file("/home/sobczal/Downloads/ryan.jpg").unwrap();
 
-    let processor = MeanProcessor::new();
+    let processor = SobelProcessor::new().with_options(SobelProcessorOptions {
+        use_fast_approximation: false,
+    });
 
     let progress = Arc::new(RwLock::new(Progress::new()));
     let progress_clone = progress.clone();

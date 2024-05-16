@@ -1,5 +1,4 @@
 use crate::common::execution::{Processor, WithOptions};
-use picturify_core::error::PicturifyResult;
 use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToPalettePixels;
 use picturify_core::fast_image::FastImage;
 use picturify_core::fast_image::util::{cord_2d_to_1d, image_rgba_to_palette_srgba};

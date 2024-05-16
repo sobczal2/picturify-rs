@@ -1,76 +1,38 @@
-// use crate::pipeline::Pipeline;
-// use picturify_core::fast_image::FastImage;
-// use picturify_core::palette::Srgba;
-// use picturify_processing::common::execution::Processor;
-// use picturify_processing::processors::edge::sobel_rgb::SobelRgbProcessor;
-// use picturify_processing::processors::geometry::crop::CropProcessor;
-// use picturify_processing::processors::geometry::enlargement::{
-//     EnlargementProcessor, EnlargementProcessorOptions, EnlargementStrategy,
-// };
-// 
-// #[derive(Default)]
-// pub struct SobelRgbPipelineOptions {
-//     pub use_fast_approximation: bool,
-// }
-// 
-// 
-// 
-// pub struct SobelRgbPipeline {
-//     options: SobelRgbPipelineOptions,
-// }
-// 
-// impl Default for SobelRgbPipeline {
-//     fn default() -> Self {
-//         Self::new()
-//     }
-// }
-// 
-// impl SobelRgbPipeline {
-//     pub fn new() -> Self {
-//         Self {
-//             options: Default::default(),
-//         }
-//     }
-// 
-//     pub fn with_options(options: SobelRgbPipelineOptions) -> Self {
-//         Self { options }
-//     }
-// 
-//     fn run_fast_approximation(&self, fast_image: FastImage) -> FastImage {
-//         let sobel_processor = SobelRgbProcessor::new();
-//         
-// 
-//         sobel_processor.process(fast_image)
-//     }
-// 
-//     fn run_full(&self, fast_image: FastImage) -> FastImage {
-//         let radius = 1;
-//         let original_width = fast_image.get_width();
-//         let original_height = fast_image.get_height();
-// 
-//         let enlargement_processor =
-//             EnlargementProcessor::with_options(EnlargementProcessorOptions {
-//                 border: radius,
-//                 strategy: EnlargementStrategy::Constant(Srgba::new(0.0, 0.0, 0.0, 1.0)),
-//             });
-// 
-//         let enlarged_image = enlargement_processor.process(fast_image);
-// 
-//         let sobel_processor = SobelRgbProcessor::new();
-//         let sobel_image = sobel_processor.process(enlarged_image);
-// 
-//         let crop_processor = CropProcessor::new(radius, radius, original_width, original_height);
-// 
-//         crop_processor.process(sobel_image)
-//     }
-// }
-// 
-// impl Pipeline for SobelRgbPipeline {
-//     fn run(&self, fast_image: FastImage) -> FastImage {
-//         if self.options.use_fast_approximation {
-//             self.run_fast_approximation(fast_image)
-//         } else {
-//             self.run_full(fast_image)
-//         }
-//     }
-// }
+use std::sync::{Arc, RwLock};
+use picturify_core::fast_image::FastImage;
+use picturify_processing::common::execution::{Processor, WithOptions};
+use picturify_processing::processors::edge::sobel_rgb::{SobelRgbProcessor, SobelRgbProcessorOptions};
+use crate::common::pipeline_progress::PipelineProgress;
+use crate::pipeline::Pipeline;
+
+pub struct SobelRgbPipelineOptions {
+    use_fast_approximation: bool,
+}
+
+pub struct SobelRgbPipeline {
+    options: SobelRgbPipelineOptions,
+}
+
+impl SobelRgbPipeline {
+    pub fn new(options: SobelRgbPipelineOptions) -> Self {
+        Self {
+            options,
+        }
+    }
+}
+
+impl Pipeline for SobelRgbPipeline {
+    fn run(&self, fast_image: FastImage, pipeline_progress: Arc<RwLock<PipelineProgress>>) -> FastImage {
+        let mut pipeline_progress_write = pipeline_progress.write().unwrap();
+        pipeline_progress_write.setup_combined(1);
+        pipeline_progress_write.new_individual("SobelRgb".to_string());
+        drop(pipeline_progress_write);
+        
+        let processor = SobelRgbProcessor::new().with_options(SobelRgbProcessorOptions {
+            use_fast_approximation: self.options.use_fast_approximation,
+        });
+        let final_image = processor.process(fast_image, pipeline_progress.read().unwrap().get_individual_progress("SobelRgb".to_string()));
+        pipeline_progress.write().unwrap().increment_combined();
+        final_image
+    }
+}
