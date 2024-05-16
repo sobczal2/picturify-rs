@@ -23,9 +23,9 @@ use crate::handlers::image::noise::median::MedianCommandHandler;
 
 pub struct ImageCommandHandler;
 
-impl ImageCommandHandler {
-    pub fn handle(arg_matches: ArgMatches) -> CliPicturifyResult<()> {
-        match arg_matches.subcommand() {
+impl CommandHandler for ImageCommandHandler {
+    fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
+        match args.subcommand() {
             Some((name, args)) => {
                 let mut handlers: HashMap<&str, Rc<dyn Fn(ArgMatches) -> CliPicturifyResult<()>>> = HashMap::new();
 

@@ -25,6 +25,7 @@ pub fn run_progress_bar_for_pipeline(pipeline_progress: Arc<RwLock<PipelineProgr
         if percentage == 100.0 {
             break;
         }
+        sleep(std::time::Duration::from_millis(10));
     });
 
     bar.finish();

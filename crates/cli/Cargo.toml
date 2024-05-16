@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 picturify-core.workspace = true
 picturify-pipeline.workspace = true
+picturify-movie.workspace = true
 log.workspace = true
 simplelog.workspace = true
 clap.workspace = true

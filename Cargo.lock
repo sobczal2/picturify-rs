@@ -819,6 +819,7 @@ dependencies = [
  "indicatif",
  "log",
  "picturify-core",
+ "picturify-movie",
  "picturify-pipeline",
  "simplelog",
  "thiserror",

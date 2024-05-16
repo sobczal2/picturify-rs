@@ -5,6 +5,8 @@ use log::{error, info, LevelFilter, warn};
 use simplelog::*;
 use crate::commands::common::command::Command;
 use crate::error::CliPicturifyError;
+use crate::handlers::common::handler::CommandHandler;
+use crate::handlers::common::movie::MovieCommandHandler;
 
 mod commands;
 mod handlers;
@@ -37,12 +39,11 @@ fn main() {
     let matches = PicturifyCommand::get().get_matches();
 
     let result = match matches.subcommand() {
-        Some(("image", arg)) => {
-            ImageCommandHandler::handle(arg.clone())
+        Some(("image", args)) => {
+            ImageCommandHandler::handle(args.clone())
         }
-        Some(("movie", _)) => {
-            info!("Movie command not implemented yet");
-            Err(CliPicturifyError::InvalidCommand("movie".to_string()))
+        Some(("movie", args)) => {
+            MovieCommandHandler::handle(args.clone())
         }
         _ => {
             error!("No command specified");

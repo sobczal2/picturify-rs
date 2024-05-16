@@ -1,5 +1,6 @@
 use thiserror::Error;
 use picturify_core::error::PicturifyError;
+use picturify_movie::error::MoviePicturifyError;
 
 pub type CliPicturifyResult<T> = Result<T, CliPicturifyError>;
 
@@ -13,4 +14,6 @@ pub enum CliPicturifyError {
     InvalidCommand(String),
     #[error("Missing command")]
     MissingCommand,
+    #[error("Movie Picturify error - {0}")]
+    MoviePicturifyError(#[from] MoviePicturifyError),
 }
