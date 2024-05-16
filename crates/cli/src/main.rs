@@ -9,13 +9,25 @@ mod metadata;
 mod progress;
 
 fn main() {
+    #[cfg(debug_assertions)]
+    TermLogger::init(
+        LevelFilter::Debug,
+        Config::default(),
+        TerminalMode::Mixed,
+        ColorChoice::Auto,
+    )
+        .unwrap();
+
+    #[cfg(not(debug_assertions))]
     TermLogger::init(
         LevelFilter::Info,
         Config::default(),
         TerminalMode::Mixed,
         ColorChoice::Auto,
     )
-    .unwrap();
+        .unwrap();
+
+    welcome();
 
     let matches = PicturifyCommand::get().get_matches();
 
@@ -30,4 +42,14 @@ fn main() {
             error!("No command specified")
         }
     }
+}
+
+#[cfg(not(target_os = "windows"))]
+fn welcome() {
+    info!("Welcome to Picturify CLI");
+}
+
+#[cfg(target_os = "windows")]
+fn welcome() {
+    info!("Welcome to Picturify CLI. Consider switching to a Unix-based system for sanity reasons");
 }

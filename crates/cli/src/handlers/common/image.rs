@@ -1,5 +1,5 @@
 use clap::ArgMatches;
-use log::{error, info};
+use log::{debug, error, info};
 use picturify_core::fast_image::io::{ReadFromFile, WriteToFile};
 use picturify_core::fast_image::FastImage;
 use std::time::Instant;
@@ -28,7 +28,7 @@ impl ImageCommandHandler {
         };
         let mut image = *image;
         let read_elapsed_ms = read_start.elapsed().as_millis();
-        info!("Reading fast_image took {}ms", read_elapsed_ms);
+        debug!("Reading fast_image took {}ms", read_elapsed_ms);
 
         match arg_matches.subcommand() {
             Some(("none", _args)) => {}
@@ -81,7 +81,7 @@ impl ImageCommandHandler {
             return;
         }
         let write_elapsed_ms = write_start.elapsed().as_millis();
-        info!("Writing fast_image took {}ms", write_elapsed_ms);
+        debug!("Writing fast_image took {}ms", write_elapsed_ms);
 
         let total_elapsed_ms = read_start.elapsed().as_millis();
         info!("Total time elapsed: {}ms", total_elapsed_ms);
