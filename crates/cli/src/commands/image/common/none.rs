@@ -1,16 +1,16 @@
 use crate::commands::common::arg::add_input_output_args;
 use crate::commands::common::command::Command;
 
-pub struct KuwaharaCommand;
+pub struct NoneCommand;
 
-impl Command for KuwaharaCommand {
+impl Command for NoneCommand {
     fn get() -> clap::Command {
         let cmd = clap::Command::new(Self::name())
-            .about("Run kuwahara processing pipeline on the image");
+            .about("Does nothing to the image");
         add_input_output_args(cmd)
     }
 
     fn name() -> &'static str {
-        "kuwahara"
+        "none"
     }
 }

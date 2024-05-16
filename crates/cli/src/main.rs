@@ -1,12 +1,16 @@
+use std::time::Instant;
 use crate::commands::common::picturify::PicturifyCommand;
 use crate::handlers::common::image::ImageCommandHandler;
 use log::{error, info, LevelFilter};
 use simplelog::*;
+use crate::commands::common::command::Command;
+use crate::error::CliPicturifyError;
 
 mod commands;
 mod handlers;
 mod metadata;
 mod progress;
+mod error;
 
 fn main() {
     #[cfg(debug_assertions)]
@@ -28,19 +32,32 @@ fn main() {
         .unwrap();
 
     welcome();
+    let start = Instant::now();
 
     let matches = PicturifyCommand::get().get_matches();
 
-    match matches.subcommand() {
+    let result = match matches.subcommand() {
         Some(("image", arg)) => {
-            ImageCommandHandler::handle(arg.clone());
+            ImageCommandHandler::handle(arg.clone())
         }
         Some(("movie", _)) => {
-            info!("Movie command not implemented yet")
+            info!("Movie command not implemented yet");
+            Err(CliPicturifyError::InvalidCommand("movie".to_string()))
         }
         _ => {
-            error!("No command specified")
+            error!("No command specified");
+            Err(CliPicturifyError::MissingCommand)
         }
+    };
+    
+    if let Err(e) = result {
+        error!("{}", e);
+    }
+    
+    let duration = start.elapsed();
+    match duration.as_secs() {
+        0 => info!("Damn, that was fast! Execution time: {}ms", duration.as_millis()),
+        _ => info!("Execution time: {}s", duration.as_secs()),
     }
 }
 

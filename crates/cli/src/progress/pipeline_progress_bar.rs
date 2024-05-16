@@ -28,4 +28,6 @@ pub fn run_progress_bar_for_pipeline(pipeline_progress: Arc<RwLock<PipelineProgr
     });
 
     bar.finish();
+    
+    println!();
 }

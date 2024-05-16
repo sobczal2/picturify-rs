@@ -12,3 +12,4 @@ log.workspace = true
 simplelog.workspace = true
 clap.workspace = true
 indicatif.workspace = true
+thiserror.workspace = true

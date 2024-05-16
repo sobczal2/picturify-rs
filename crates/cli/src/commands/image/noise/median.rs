@@ -1,16 +1,19 @@
-use clap::{value_parser, Arg, Command};
+use crate::commands::common::arg::{add_input_output_args, ArgType};
+use crate::commands::common::command::Command;
 
 pub struct MedianCommand;
 
-impl MedianCommand {
-    pub fn get() -> Command {
-        Command::new("median")
+impl Command for MedianCommand {
+    fn get() -> clap::Command {
+        let cmd = clap::Command::new(Self::name())
             .arg(
-                Arg::new("radius")
-                    .help("Radius of the median filter")
-                    .default_value("3")
-                    .value_parser(value_parser!(usize)),
+                ArgType::Radius.to_arg(),
             )
-            .about("Run median processing pipeline on an fast_image")
+            .about("Run median processing pipeline on the image");
+        add_input_output_args(cmd)
+    }
+
+    fn name() -> &'static str {
+        "median"
     }
 }

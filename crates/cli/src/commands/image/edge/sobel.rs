@@ -1,16 +1,19 @@
-use clap::{Arg, Command, value_parser};
+use crate::commands::common::arg::{add_input_output_args, ArgType};
+use crate::commands::common::command::Command;
 
 pub struct SobelCommand;
 
-impl SobelCommand {
-    pub fn get() -> Command {
-        Command::new("sobel")
+impl Command for SobelCommand {
+    fn get() -> clap::Command {
+        let cmd = clap::Command::new(Self::name())
             .arg(
-                Arg::new("use_fast_approximation")
-                    .help("Use fast approximation for sobel filter")
-                    .default_value("false")
-                    .value_parser(value_parser!(bool)),
+                ArgType::UseFastApproximation.to_arg(),
             )
-            .about("Run sobel processing pipeline on an fast_image")
+            .about("Run sobel processing pipeline on the image");
+        add_input_output_args(cmd)
+    }
+
+    fn name() -> &'static str {
+        "sobel"
     }
 }

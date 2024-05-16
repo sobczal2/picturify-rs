@@ -1,29 +1,20 @@
-use crate::commands::common::none::NoneCommand;
-use clap::{Arg, Command};
+use crate::commands::common::command::Command;
 use crate::commands::image::color::negative::NegativeCommand;
 use crate::commands::image::color::sepia::SepiaCommand;
+use crate::commands::image::common::none::NoneCommand;
 use crate::commands::image::edge::sobel::SobelCommand;
 use crate::commands::image::edge::sobel_rgb::SobelRgbCommand;
 use crate::commands::image::noise::kuwahara::KuwaharaCommand;
+use crate::commands::image::noise::mean::MeanCommand;
 use crate::commands::image::noise::median::MedianCommand;
 
 pub struct ImageCommand;
 
-impl ImageCommand {
-    pub fn get() -> Command {
-        Command::new("image")
+impl Command for ImageCommand {
+    fn get() -> clap::Command {
+        clap::Command::new(Self::name())
             .about("Run image processing pipeline on an fast_image")
-            .args(&[
-                Arg::new("input")
-                    .help("Input fast_image file")
-                    .index(1)
-                    .required(true),
-                Arg::new("output")
-                    .help("Output fast_image file")
-                    .index(2)
-                    .required(true),
-            ])
-            .subcommands([
+            .subcommands(&[
                 NoneCommand::get(),
                 // color
                 SepiaCommand::get(),
@@ -31,9 +22,14 @@ impl ImageCommand {
                 // noise
                 KuwaharaCommand::get(),
                 MedianCommand::get(),
+                MeanCommand::get(),
                 // edge
                 SobelCommand::get(),
                 SobelRgbCommand::get(),
             ])
+    }
+
+    fn name() -> &'static str {
+        "image"
     }
 }

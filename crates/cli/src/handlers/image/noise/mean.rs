@@ -1,21 +1,26 @@
-use clap::ArgMatches;
 use std::sync::{Arc, RwLock};
 use std::thread::spawn;
-
-use crate::progress::pipeline_progress_bar::run_progress_bar_for_pipeline;
-use picturify_pipeline::color::sepia::{SepiaPipeline, SepiaPipelineOptions};
+use clap::ArgMatches;
 use picturify_pipeline::common::pipeline_progress::PipelineProgress;
+use picturify_pipeline::noise::mean::{MeanPipeline, MeanPipelineOptions};
 use picturify_pipeline::pipeline::Pipeline;
+use crate::commands::common::arg::ArgType;
 use crate::error::CliPicturifyResult;
 use crate::handlers::common::handler::CommandHandler;
 use crate::handlers::common::image_io::{read_image, write_image};
+use crate::progress::pipeline_progress_bar::run_progress_bar_for_pipeline;
 
-pub struct SepiaCommandHandler;
+pub struct MeanCommandHandler;
 
-impl CommandHandler for SepiaCommandHandler {
+impl CommandHandler for MeanCommandHandler {
     fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
-        let negative_pipeline = SepiaPipeline::new(SepiaPipelineOptions {});
+        let radius = args.get_one::<usize>(ArgType::Radius.to_id()).unwrap();
+        let use_fast_approximation = args.get_one::<bool>(ArgType::UseFastApproximation.to_id()).unwrap();
+        let negative_pipeline = MeanPipeline::new(MeanPipelineOptions {
+            radius: radius.clone(),
+            use_fast_approximation: use_fast_approximation.clone(),
+        });
 
         let pipeline_progress = Arc::new(RwLock::new(PipelineProgress::new()));
         let pipeline_progress_clone = pipeline_progress.clone();

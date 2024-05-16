@@ -1,9 +1,16 @@
-use clap::Command;
+use crate::commands::common::arg::add_input_output_args;
+use crate::commands::common::command::Command;
 
 pub struct NegativeCommand;
 
-impl NegativeCommand {
-    pub fn get() -> Command {
-        Command::new("negative").about("Run negative processing pipeline on an fast_image")
+impl Command for NegativeCommand {
+    fn get() -> clap::Command {
+        let cmd = clap::Command::new(Self::name())
+            .about("Run negative processing pipeline on the image");
+        add_input_output_args(cmd)
+    }
+
+    fn name() -> &'static str {
+        "negative"
     }
 }
