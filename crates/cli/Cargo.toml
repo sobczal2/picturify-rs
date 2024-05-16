@@ -1,0 +1,14 @@
+[package]
+name = "picturify-cli"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+picturify-core.workspace = true
+picturify-pipeline.workspace = true
+log.workspace = true
+simplelog.workspace = true
+clap.workspace = true
+indicatif.workspace = true

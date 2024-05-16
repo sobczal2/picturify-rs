@@ -1,3 +1,26 @@
 [workspace]
 resolver = "2"
-members = ["cli", "core", "pipeline", "macros", "playground", "processing", "gui/src-tauri", "movie"]
+members = [
+    "crates/cli",
+    "crates/core",
+    "crates/pipeline",
+    "crates/playground",
+    "crates/processing",
+    "crates/movie"
+]
+
+[workspace.dependencies]
+picturify-cli = { path = "crates/cli" }
+picturify-core = { path = "crates/core" }
+picturify-pipeline = { path = "crates/pipeline" }
+picturify-playground = { path = "crates/playground" }
+picturify-processing = { path = "crates/processing" }
+picturify-movie = { path = "crates/movie" }
+log = "0.4.21"
+simplelog = "0.12.2"
+indicatif = "0.17.8"
+image = "0.25.1"
+thiserror = "1.0.58"
+rayon = "1.10.0"
+palette = "0.7.5"
+clap = { features = ["default", "derive", "cargo", "string"], version = "4.5.4" }
