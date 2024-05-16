@@ -18,14 +18,21 @@ impl ImageCommandHandler {
         let output = arg_matches.get_one::<String>("output").unwrap();
 
         let read_start = Instant::now();
-        let image = FastImage::read_from_file(input).unwrap();
+        let image = FastImage::read_from_file(input);
+        let image = match image {
+            Ok(image) => image,
+            Err(e) => {
+                error!("Failed to read file: {}", e);
+                return;
+            }
+        };
         let mut image = *image;
         let read_elapsed_ms = read_start.elapsed().as_millis();
         info!("Reading fast_image took {}ms", read_elapsed_ms);
 
         match arg_matches.subcommand() {
             Some(("none", _args)) => {}
-            
+
             // color
             Some(("sepia", args)) => {
                 image = Self::log_time("Sepia", || {
@@ -37,7 +44,7 @@ impl ImageCommandHandler {
                     NegativeCommandHandler::handle(image, args.clone())
                 });
             }
-            
+
             // noise
             Some(("kuwahara", args)) => {
                 image = Self::log_time("Kuwahara", || {
@@ -49,7 +56,7 @@ impl ImageCommandHandler {
                     MedianCommandHandler::handle(image, args.clone())
                 });
             }
-            
+
             // edge
             Some(("sobel", args)) => {
                 image = Self::log_time("Sobel", || {
@@ -68,14 +75,18 @@ impl ImageCommandHandler {
         }
 
         let write_start = Instant::now();
-        image.write_to_file(output).unwrap();
+        let result = image.write_to_file(output);
+        if let Err(e) = result {
+            error!("Failed to write file: {}", e);
+            return;
+        }
         let write_elapsed_ms = write_start.elapsed().as_millis();
         info!("Writing fast_image took {}ms", write_elapsed_ms);
 
         let total_elapsed_ms = read_start.elapsed().as_millis();
         info!("Total time elapsed: {}ms", total_elapsed_ms);
     }
-    
+
     fn log_time<T, F: FnOnce() -> T>(name: &str, f: F) -> T {
         let now = Instant::now();
         let result = f();
