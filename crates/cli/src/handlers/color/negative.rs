@@ -22,7 +22,7 @@ impl NegativeCommandHandler {
         let handle = spawn(move || {
             run_progress_bar_for_pipeline(pipeline_progress_clone);
         });
-        
+
         let result_image = negative_pipeline.run(fast_image, pipeline_progress.clone());
 
         handle.join().expect("Failed to join thread");

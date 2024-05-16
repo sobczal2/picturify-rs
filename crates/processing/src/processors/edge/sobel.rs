@@ -1,9 +1,11 @@
 use crate::common::execution::{Processor, WithOptions};
-use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
+use picturify_core::fast_image::apply_fn_to_pixels::{
+    ApplyFnToImagePixels, ApplyFnToPalettePixels,
+};
 use picturify_core::fast_image::FastImage;
 use picturify_core::rayon::prelude::*;
-use std::sync::{Arc, Mutex, RwLock};
 use picturify_core::threading::progress::Progress;
+use std::sync::{Arc, Mutex, RwLock};
 
 pub struct SobelProcessorOptions {
     pub use_fast_approximation: bool,
@@ -48,13 +50,19 @@ impl Processor for SobelProcessor {
         let min_magnitude = Arc::new(Mutex::new(f32::MAX));
         let max_magnitude = Arc::new(Mutex::new(f32::MIN));
 
-        progress.write().expect("Failed to lock progress").setup(height as u32);
+        progress
+            .write()
+            .expect("Failed to lock progress")
+            .setup(height as u32);
         magnitude_vec
             .iter_mut()
             .enumerate()
             .par_bridge()
             .for_each(|(y_mag, row)| {
-                progress.read().expect("Failed to lock progress").increment();
+                progress
+                    .read()
+                    .expect("Failed to lock progress")
+                    .increment();
                 let mut row_min_magnitude = f32::MAX;
                 let mut row_max_magnitude = f32::MIN;
                 row.iter_mut().enumerate().for_each(|(x_mag, magnitude)| {

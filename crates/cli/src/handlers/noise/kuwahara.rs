@@ -1,11 +1,11 @@
-use std::sync::{Arc, RwLock};
-use std::thread::spawn;
+use crate::progress::pipeline_progress_bar::run_progress_bar_for_pipeline;
 use clap::ArgMatches;
 use picturify_core::fast_image::FastImage;
 use picturify_pipeline::common::pipeline_progress::PipelineProgress;
 use picturify_pipeline::noise::kuwahara::{KuwaharaPipeline, KuwaharaPipelineOptions};
 use picturify_pipeline::pipeline::Pipeline;
-use crate::progress::pipeline_progress_bar::run_progress_bar_for_pipeline;
+use std::sync::{Arc, RwLock};
+use std::thread::spawn;
 
 pub struct KuwaharaCommandHandler;
 

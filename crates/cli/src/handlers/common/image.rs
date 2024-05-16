@@ -4,8 +4,8 @@ use crate::handlers::noise::kuwahara::KuwaharaCommandHandler;
 use crate::handlers::noise::median::MedianCommandHandler;
 use clap::ArgMatches;
 use log::info;
-use picturify_core::fast_image::FastImage;
 use picturify_core::fast_image::io::{ReadFromFile, WriteToFile};
+use picturify_core::fast_image::FastImage;
 use std::time::Instant;
 
 pub struct ImageCommandHandler;

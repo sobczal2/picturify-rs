@@ -1,11 +1,10 @@
-use std::sync::{Arc, RwLock};
-use std::thread::sleep;
 use crate::common::execution::{Processor, WithOptions};
 use picturify_core::fast_image::apply_fn_to_pixels::{
     ApplyFnToImagePixels, ApplyFnToPalettePixels,
 };
 use picturify_core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
+use std::sync::{Arc, RwLock};
 
 pub struct NegativeProcessorOptions {
     pub use_fast_approximation: bool,

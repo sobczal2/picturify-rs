@@ -1,9 +1,9 @@
 use crate::common::execution::{Processor, WithOptions};
 use picturify_core::fast_image::FastImage;
 use picturify_core::rayon::prelude::*;
+use picturify_core::threading::progress::Progress;
 use std::collections::VecDeque;
 use std::sync::{Arc, RwLock};
-use picturify_core::threading::progress::Progress;
 
 pub struct MedianProcessorOptions {
     pub radius: usize,
@@ -41,7 +41,10 @@ impl Processor for MedianProcessor {
 
         let mut new_fast_image = fast_image.clone();
 
-        progress.write().expect("Failed to lock progress").setup((height - 2 * radius) as u32);
+        progress
+            .write()
+            .expect("Failed to lock progress")
+            .setup((height - 2 * radius) as u32);
         new_fast_image
             .rows_mut()
             .enumerate()
@@ -49,13 +52,13 @@ impl Processor for MedianProcessor {
             .take(height - 2 * radius)
             .par_bridge()
             .for_each(|(y, row)| {
-                progress.read().expect("Failed to lock progress").increment();
-                let mut red_window =
-                    VecDeque::with_capacity((2 * radius + 1) * (2 * radius + 1));
-                let mut green_window =
-                    VecDeque::with_capacity((2 * radius + 1) * (2 * radius + 1));
-                let mut blue_window =
-                    VecDeque::with_capacity((2 * radius + 1) * (2 * radius + 1));
+                progress
+                    .read()
+                    .expect("Failed to lock progress")
+                    .increment();
+                let mut red_window = VecDeque::with_capacity((2 * radius + 1) * (2 * radius + 1));
+                let mut green_window = VecDeque::with_capacity((2 * radius + 1) * (2 * radius + 1));
+                let mut blue_window = VecDeque::with_capacity((2 * radius + 1) * (2 * radius + 1));
 
                 let radius_i32 = radius as i32;
                 for window_x in -radius_i32..=radius_i32 {

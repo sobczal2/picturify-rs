@@ -1,10 +1,8 @@
-use std::sync::{Arc, RwLock};
 use crate::common::execution::{Processor, WithOptions};
-use picturify_core::fast_image::apply_fn_to_pixels::{
-    ApplyFnToImagePixels,
-};
+use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToImagePixels;
 use picturify_core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
+use std::sync::{Arc, RwLock};
 
 pub struct ThresholdProcessorOptions {
     pub red_threshold: u8,

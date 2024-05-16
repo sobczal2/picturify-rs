@@ -1,12 +1,12 @@
+use clap::ArgMatches;
 use std::sync::{Arc, RwLock};
 use std::thread::spawn;
-use clap::ArgMatches;
 
+use crate::progress::pipeline_progress_bar::run_progress_bar_for_pipeline;
 use picturify_core::fast_image::FastImage;
 use picturify_pipeline::color::sepia::{SepiaPipeline, SepiaPipelineOptions};
 use picturify_pipeline::common::pipeline_progress::PipelineProgress;
 use picturify_pipeline::pipeline::Pipeline;
-use crate::progress::pipeline_progress_bar::run_progress_bar_for_pipeline;
 
 pub struct SepiaCommandHandler;
 

@@ -1,9 +1,11 @@
 use crate::common::execution::{Processor, WithOptions};
-use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
+use picturify_core::fast_image::apply_fn_to_pixels::{
+    ApplyFnToImagePixels, ApplyFnToPalettePixels,
+};
 use picturify_core::fast_image::FastImage;
 use picturify_core::rayon::prelude::*;
-use std::sync::{Arc, Mutex, RwLock};
 use picturify_core::threading::progress::Progress;
+use std::sync::{Arc, Mutex, RwLock};
 
 pub struct SobelRgbProcessorOptions {
     pub use_fast_approximation: bool,
@@ -56,7 +58,10 @@ impl Processor for SobelRgbProcessor {
         let green_max_magnitude = Arc::new(Mutex::new(f32::MIN));
         let blue_max_magnitude = Arc::new(Mutex::new(f32::MIN));
 
-        progress.write().expect("Failed to lock progress").setup(height as u32);
+        progress
+            .write()
+            .expect("Failed to lock progress")
+            .setup(height as u32);
         red_magnitude_vec
             .iter_mut()
             .zip(green_magnitude_vec.iter_mut())
@@ -64,7 +69,10 @@ impl Processor for SobelRgbProcessor {
             .enumerate()
             .par_bridge()
             .for_each(|(y_mag, ((red_row, green_row), blue_row))| {
-                progress.read().expect("Failed to lock progress").increment();
+                progress
+                    .read()
+                    .expect("Failed to lock progress")
+                    .increment();
                 let mut red_row_min_magnitude = f32::MAX;
                 let mut red_row_max_magnitude = f32::MIN;
                 let mut green_row_min_magnitude = f32::MAX;
@@ -94,12 +102,14 @@ impl Processor for SobelRgbProcessor {
                                     let green: f32;
                                     let blue: f32;
                                     if self.options.use_fast_approximation {
-                                        let pixel = fast_image.get_image_pixel(x + i - 1, y + j - 1);
+                                        let pixel =
+                                            fast_image.get_image_pixel(x + i - 1, y + j - 1);
                                         red = pixel[0] as f32 / 255.0;
                                         green = pixel[1] as f32 / 255.0;
                                         blue = pixel[2] as f32 / 255.0;
                                     } else {
-                                        let pixel = fast_image.get_lin_srgba_pixel(x + i - 1, y + j - 1);
+                                        let pixel =
+                                            fast_image.get_lin_srgba_pixel(x + i - 1, y + j - 1);
                                         red = pixel.red;
                                         green = pixel.green;
                                         blue = pixel.blue;

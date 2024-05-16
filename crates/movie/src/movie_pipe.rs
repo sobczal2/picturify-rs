@@ -4,7 +4,6 @@ use std::sync::{Arc, RwLock};
 use std::time::Instant;
 
 use picturify_core::fast_image::FastImage;
-use picturify_core::threading::progress::Progress;
 use picturify_pipeline::common::pipeline_progress::PipelineProgress;
 use picturify_pipeline::pipeline::Pipeline;
 
@@ -113,8 +112,7 @@ impl MoviePipe {
         while ffmpeg_stdout.read_exact(&mut buffer).is_ok() {
             let now = Instant::now();
             frame_count += 1;
-            let image =
-                FastImage::from_rgba_vec(width as usize, height as usize, buffer.clone());
+            let image = FastImage::from_rgba_vec(width as usize, height as usize, buffer.clone());
             let progress = Arc::new(RwLock::new(PipelineProgress::new()));
             let processed_image = self.pipeline.run(image, progress);
             ffmpeg_stdin

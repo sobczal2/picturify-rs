@@ -1,5 +1,5 @@
-use std::sync::Arc;
 use std::sync::atomic::{AtomicU32, Ordering};
+use std::sync::Arc;
 
 pub struct Progress {
     value: Arc<AtomicU32>,
@@ -13,7 +13,7 @@ impl Progress {
             max_value: 0,
         }
     }
-    
+
     pub fn setup(&mut self, max_value: u32) {
         self.max_value = max_value;
         self.value.store(0, Ordering::SeqCst);
