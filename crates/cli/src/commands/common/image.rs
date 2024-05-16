@@ -13,7 +13,7 @@ pub struct ImageCommand;
 impl Command for ImageCommand {
     fn get() -> clap::Command {
         clap::Command::new(Self::name())
-            .about("Run image processing pipeline on an fast_image")
+            .about("Run image processing pipeline on an image")
             .subcommands(&[
                 NoneCommand::get(),
                 // color
