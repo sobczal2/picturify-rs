@@ -3,7 +3,8 @@ pub mod io;
 mod read_pixels;
 pub mod util;
 
-use image::buffer::{Pixels, PixelsMut, Rows, RowsMut};
+use std::sync::{Arc, RwLock};
+use image::buffer::{EnumeratePixels, Pixels, PixelsMut, Rows, RowsMut};
 use image::io::Reader;
 use image::{Rgba, RgbaImage};
 use palette::{LinSrgba, Srgba};
@@ -13,6 +14,7 @@ use crate::error::PicturifyResult;
 use crate::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
 use crate::fast_image::io::{ReadFromFile, WriteToFile};
 use crate::fast_image::read_pixels::ReadPixels;
+use crate::threading::progress::{Progress};
 
 #[derive(Debug, Clone)]
 pub struct FastImage {
@@ -59,8 +61,8 @@ impl FastImage {
             pixel[3] as f32 / 255.0,
         )
     }
-    
-    pub  fn get_lin_srgba_pixel(&self, x: usize, y: usize) -> LinSrgba {
+
+    pub fn get_lin_srgba_pixel(&self, x: usize, y: usize) -> LinSrgba {
         let pixel = self.get_srgba_pixel(x, y);
         pixel.into_linear()
     }
@@ -76,7 +78,7 @@ impl FastImage {
         let a = (pixel.alpha * 255.0).round() as u8;
         self.inner.put_pixel(x as u32, y as u32, Rgba([r, g, b, a]));
     }
-    
+
     pub fn set_lin_srgba_pixel(&mut self, x: usize, y: usize, pixel: LinSrgba) {
         let srgba: Srgba = pixel.into();
         self.set_srgba_pixel(x, y, srgba);
@@ -101,30 +103,57 @@ impl FastImage {
 
 // Slower implementation, use if you need to work with the pixel's color space
 impl ApplyFnToPalettePixels for FastImage {
-    fn apply_fn_to_srgba<F>(&mut self, f: F)
+    fn apply_fn_to_srgba<F>(&mut self, f: F, progress: Option<Arc<RwLock<Progress>>>)
         where
             F: Fn(Srgba, usize, usize) -> Srgba,
     {
-        let _ = &self.inner.enumerate_rows_mut().for_each(|(_, row)| {
-            row.into_iter().for_each(|(x, y, pixel)| {
-                run_on_srgba_pixel(pixel, x as usize, y as usize, &f);
-            });
-        });
-    }
-
-    fn par_apply_fn_to_srgba<F>(&mut self, f: F)
-        where
-            F: Fn(Srgba, usize, usize) -> Srgba + Send + Sync,
-    {
-        let _ = &self
-            .inner
-            .enumerate_rows_mut()
-            .par_bridge()
-            .for_each(|(_, row)| {
+        if let Some(progress) = progress {
+            let max_value = self.get_height() as u32;
+            progress.write().expect("Failed to lock progress").setup(max_value);
+            let _ = &self.inner.enumerate_rows_mut().for_each(|(_, row)| {
+                progress.read().expect("Failed to lock progress").increment();
                 row.into_iter().for_each(|(x, y, pixel)| {
                     run_on_srgba_pixel(pixel, x as usize, y as usize, &f);
                 });
             });
+        } else {
+            let _ = &self.inner.enumerate_rows_mut().for_each(|(_, row)| {
+                row.into_iter().for_each(|(x, y, pixel)| {
+                    run_on_srgba_pixel(pixel, x as usize, y as usize, &f);
+                });
+            });
+        }
+    }
+
+    fn par_apply_fn_to_srgba<F>(&mut self, f: F, progress: Option<Arc<RwLock<Progress>>>)
+        where
+            F: Fn(Srgba, usize, usize) -> Srgba + Send + Sync,
+    {
+        if let Some(progress) = progress {
+            let max_value = self.get_height() as u32;
+            progress.write().expect("Failed to lock progress").setup(max_value);
+
+            let _ = self
+                .inner
+                .enumerate_rows_mut()
+                .par_bridge()
+                .for_each(|(_, row)| {
+                    progress.read().expect("Failed to lock progress").increment();
+                    row.into_iter().for_each(|(x, y, pixel)| {
+                        run_on_srgba_pixel(pixel, x as usize, y as usize, &f);
+                    });
+                });
+        } else {
+            let _ = self
+                .inner
+                .enumerate_rows_mut()
+                .par_bridge()
+                .for_each(|(_, row)| {
+                    row.into_iter().for_each(|(x, y, pixel)| {
+                        run_on_srgba_pixel(pixel, x as usize, y as usize, &f);
+                    });
+                });
+        }
     }
 }
 
@@ -151,71 +180,115 @@ fn run_on_srgba_pixel<F>(pixel: &mut Rgba<u8>, x: usize, y: usize, f: F)
 
 // Speedy implementation, use if you don't need to work with the pixel's color space
 impl ApplyFnToImagePixels for FastImage {
-    fn apply_fn_to_image_pixel<F>(&mut self, f: F)
+    fn apply_fn_to_image_pixel<F>(&mut self, f: F, progress: Option<Arc<RwLock<Progress>>>)
         where
             F: Fn(&mut Rgba<u8>, usize, usize),
     {
-        let _ = &self.inner.enumerate_rows_mut().for_each(|(_, row)| {
-            row.into_iter().for_each(|(x, y, pixel)| {
-                f(pixel, x as usize, y as usize);
-            });
-        });
-    }
-
-    fn par_apply_fn_to_image_pixel<F>(&mut self, f: F)
-        where
-            F: Fn(&mut Rgba<u8>, usize, usize) + Send + Sync,
-    {
-        let _ = &self
-            .inner
-            .enumerate_rows_mut()
-            .par_bridge()
-            .for_each(|(_, row)| {
+        if let Some(progress) = progress {
+            let max_value = self.get_height() as u32;
+            progress.write().expect("Failed to lock progress").setup(max_value);
+            let _ = &self.inner.enumerate_rows_mut().for_each(|(_, row)| {
+                progress.read().expect("Failed to lock progress").increment();
                 row.into_iter().for_each(|(x, y, pixel)| {
                     f(pixel, x as usize, y as usize);
                 });
             });
+        } else {
+            let _ = &self.inner.enumerate_rows_mut().for_each(|(_, row)| {
+                row.into_iter().for_each(|(x, y, pixel)| {
+                    f(pixel, x as usize, y as usize);
+                });
+            });
+        }
+    }
+
+    fn par_apply_fn_to_image_pixel<F>(&mut self, f: F, progress: Option<Arc<RwLock<Progress>>>)
+        where
+            F: Fn(&mut Rgba<u8>, usize, usize) + Send + Sync,
+    {
+        if let Some(progress) = progress {
+            let max_value = self.get_height() as u32;
+            progress.write().expect("Failed to lock progress").setup(max_value);
+            let _ = &self
+                .inner
+                .enumerate_rows_mut()
+                .par_bridge()
+                .for_each(|(_, row)| {
+                    progress.read().expect("Failed to lock progress").increment();
+                    row.into_iter().for_each(|(x, y, pixel)| {
+                        f(pixel, x as usize, y as usize);
+                    });
+                });
+        } else {
+            let _ = &self
+                .inner
+                .enumerate_rows_mut()
+                .par_bridge()
+                .for_each(|(_, row)| {
+                    row.into_iter().for_each(|(x, y, pixel)| {
+                        f(pixel, x as usize, y as usize);
+                    });
+                });
+        }
     }
 }
 
 impl ReadPixels for FastImage {
-    fn read_srgba_pixel<F>(&self, f: F)
+    fn read_srgba_pixel<F>(&self, f: F, progress: Option<Arc<RwLock<Progress>>>)
         where
             F: Fn(Srgba, usize, usize),
     {
-        let _ = &self.inner.enumerate_rows().for_each(|(_, row)| {
-            row.into_iter().for_each(|(x, y, pixel)| {
-                let r = pixel[0] as f32 / 255.0;
-                let g = pixel[1] as f32 / 255.0;
-                let b = pixel[2] as f32 / 255.0;
-                let a = pixel[3] as f32 / 255.0;
-
-                let srgba = Srgba::new(r, g, b, a);
-                f(srgba, x as usize, y as usize);
+        if let Some(progress) = progress {
+            let max_value = self.get_height() as u32;
+            progress.write().expect("Failed to lock progress").setup(max_value);
+            let _ = &self.inner.enumerate_rows().for_each(|(_, row)| {
+                progress.read().expect("Failed to lock progress").increment();
+                read_srgba_pixel_process_row(&f, row);
             });
-        });
+        } else {
+            let _ = &self.inner.enumerate_rows().for_each(|(_, row)| {
+                read_srgba_pixel_process_row(&f, row);
+            });
+        }
     }
 
-    fn par_read_srgba_pixel<F>(&self, f: F)
+    fn par_read_srgba_pixel<F>(&self, f: F, progress: Option<Arc<RwLock<Progress>>>)
         where
             F: Fn(Srgba, usize, usize) + Send + Sync,
     {
-        let _ = &self
-            .inner
-            .enumerate_rows()
-            .par_bridge()
-            .for_each(|(_, row)| {
-                row.into_iter().for_each(|(x, y, pixel)| {
-                    let r = pixel[0] as f32 / 255.0;
-                    let g = pixel[1] as f32 / 255.0;
-                    let b = pixel[2] as f32 / 255.0;
-                    let a = pixel[3] as f32 / 255.0;
-
-                    let srgba = Srgba::new(r, g, b, a);
-                    f(srgba, x as usize, y as usize);
+        if let Some(progress) = progress {
+            let max_value = self.get_height() as u32;
+            progress.write().expect("Failed to lock progress").setup(max_value);
+            let _ = &self
+                .inner
+                .enumerate_rows()
+                .par_bridge()
+                .for_each(|(_, row)| {
+                    progress.read().expect("Failed to lock progress").increment();
+                    read_srgba_pixel_process_row(&f, row);
                 });
-            });
+        } else {
+            let _ = &self
+                .inner
+                .enumerate_rows()
+                .par_bridge()
+                .for_each(|(_, row)| {
+                    read_srgba_pixel_process_row(&f, row);
+                });
+        }
     }
+}
+
+fn read_srgba_pixel_process_row<F>(f: &F, row: EnumeratePixels<Rgba<u8>>) where F: Fn(Srgba, usize, usize) {
+    row.into_iter().for_each(|(x, y, pixel)| {
+        let r = pixel[0] as f32 / 255.0;
+        let g = pixel[1] as f32 / 255.0;
+        let b = pixel[2] as f32 / 255.0;
+        let a = pixel[3] as f32 / 255.0;
+
+        let srgba = Srgba::new(r, g, b, a);
+        f(srgba, x as usize, y as usize);
+    });
 }
 
 impl ReadFromFile for FastImage {

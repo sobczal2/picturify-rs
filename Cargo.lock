@@ -2423,8 +2423,6 @@ name = "picturify-playground"
 version = "0.1.0"
 dependencies = [
  "picturify-core",
- "picturify-movie",
- "picturify-pipeline",
  "picturify-processing",
 ]
 

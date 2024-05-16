@@ -1,11 +1,12 @@
-use crate::common::execution::{CpuOptions, ExecutionPlan, Processor};
-use picturify_core::error::PicturifyResult;
+use std::sync::{Arc, RwLock};
+use crate::common::execution::{Processor};
 use picturify_core::fast_image::apply_fn_to_pixels::{
     ApplyFnToPalettePixels,
 };
 use picturify_core::fast_image::FastImage;
 
 use picturify_core::palette::{LinSrgba};
+use picturify_core::threading::progress::Progress;
 
 pub enum RemappingFunction {
     Linear {
@@ -77,56 +78,30 @@ impl Default for RemappingProcessorOptions {
 }
 
 pub struct RemappingProcessor {
-    execution_plan: ExecutionPlan,
     options: RemappingProcessorOptions,
 }
 
-impl Default for RemappingProcessor {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl RemappingProcessor {
-    pub fn new() -> RemappingProcessor {
+impl Processor<RemappingProcessorOptions> for RemappingProcessor {
+    fn new() -> Self {
         RemappingProcessor {
-            execution_plan: ExecutionPlan::Cpu(Default::default()),
             options: Default::default(),
         }
     }
 
-    pub fn with_options(options: RemappingProcessorOptions) -> RemappingProcessor {
+    fn with_options(self, options: RemappingProcessorOptions) -> Self {
         RemappingProcessor {
-            execution_plan: ExecutionPlan::Cpu(Default::default()),
             options,
         }
     }
 
-    fn run_cpu(&self, mut fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
-        cpu_options.build_thread_pool().install(|| {
-            fast_image.par_apply_fn_to_lin_srgba(|pixel, _x, _y| {
+    fn process(&self, mut fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+        fast_image.par_apply_fn_to_lin_srgba(
+            |pixel, _x, _y| {
                 self.options.function.apply_to_pixel(pixel)
-            });
-        });
+            },
+            Some(progress),
+        );
 
         fast_image
-    }
-
-    fn run_gpu(&self, _fast_image: FastImage) -> FastImage {
-        unimplemented!()
-    }
-}
-
-impl Processor for RemappingProcessor {
-    fn set_execution_plan(&mut self, execution_plan: ExecutionPlan) -> PicturifyResult<()> {
-        self.execution_plan = execution_plan;
-        Ok(())
-    }
-
-    fn process(&self, fast_image: FastImage) -> FastImage {
-        match self.execution_plan {
-            ExecutionPlan::Cpu(options) => self.run_cpu(fast_image, options),
-            ExecutionPlan::Gpu => self.run_gpu(fast_image),
-        }
     }
 }

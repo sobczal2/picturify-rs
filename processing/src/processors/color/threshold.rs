@@ -1,9 +1,10 @@
-use crate::common::execution::{CpuOptions, ExecutionPlan, Processor};
-use picturify_core::error::PicturifyResult;
+use std::sync::{Arc, RwLock};
+use crate::common::execution::{Processor};
 use picturify_core::fast_image::apply_fn_to_pixels::{
     ApplyFnToImagePixels,
 };
 use picturify_core::fast_image::FastImage;
+use picturify_core::threading::progress::Progress;
 
 pub struct ThresholdProcessorOptions {
     pub red_threshold: u8,
@@ -22,34 +23,25 @@ impl Default for ThresholdProcessorOptions {
 }
 
 pub struct ThresholdProcessor {
-    execution_plan: ExecutionPlan,
     options: ThresholdProcessorOptions,
 }
 
-impl Default for ThresholdProcessor {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl ThresholdProcessor {
-    pub fn new() -> ThresholdProcessor {
+impl Processor<ThresholdProcessorOptions> for ThresholdProcessor {
+    fn new() -> Self {
         ThresholdProcessor {
-            execution_plan: ExecutionPlan::Cpu(Default::default()),
             options: Default::default(),
         }
     }
 
-    pub fn with_options(options: ThresholdProcessorOptions) -> ThresholdProcessor {
+    fn with_options(self, options: ThresholdProcessorOptions) -> Self {
         ThresholdProcessor {
-            execution_plan: ExecutionPlan::Cpu(Default::default()),
             options,
         }
     }
 
-    fn run_cpu(&self, mut fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
-        cpu_options.build_thread_pool().install(|| {
-            fast_image.par_apply_fn_to_image_pixel(|pixel, _x, _y| {
+    fn process(&self, mut fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+        fast_image.par_apply_fn_to_image_pixel(
+            |pixel, _x, _y| {
                 pixel.0[0] = if pixel.0[0] > self.options.red_threshold {
                     pixel.0[0]
                 } else {
@@ -65,27 +57,10 @@ impl ThresholdProcessor {
                 } else {
                     0
                 };
-            });
-        });
+            },
+            Some(progress),
+        );
 
         fast_image
-    }
-
-    fn run_gpu(&self, _fast_image: FastImage) -> FastImage {
-        unimplemented!()
-    }
-}
-
-impl Processor for ThresholdProcessor {
-    fn set_execution_plan(&mut self, execution_plan: ExecutionPlan) -> PicturifyResult<()> {
-        self.execution_plan = execution_plan;
-        Ok(())
-    }
-
-    fn process(&self, fast_image: FastImage) -> FastImage {
-        match self.execution_plan {
-            ExecutionPlan::Cpu(cpu_options) => self.run_cpu(fast_image, cpu_options),
-            ExecutionPlan::Gpu => self.run_gpu(fast_image),
-        }
     }
 }

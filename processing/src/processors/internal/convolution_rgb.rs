@@ -1,16 +1,13 @@
+use std::sync::{Arc, RwLock};
 use picturify_core::error::PicturifyResult;
 use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
 use picturify_core::fast_image::FastImage;
 use picturify_core::palette::LinSrgba;
+use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::{CpuOptions, ExecutionPlan, Processor};
+use crate::common::execution::{Processor};
 
-pub struct ConvolutionProcessor {
-    execution_plan: ExecutionPlan,
-    options: ConvolutionProcessorOptions,
-}
-
-pub struct ConvolutionProcessorOptions {
+pub struct ConvolutionRgbProcessorOptions {
     pub kernel: Vec<f32>,
     pub kernel_width: usize,
     pub kernel_height: usize,
@@ -19,50 +16,47 @@ pub struct ConvolutionProcessorOptions {
     pub use_fast_approximation: bool,
 }
 
-impl ConvolutionProcessor {
-    pub fn new(
-        kernel: Vec<f32>,
-        kernel_width: usize,
-        kernel_height: usize,
-        kernel_divisor: f32,
-        kernel_offset: f32,
-        use_fast_approximation: bool,
-    ) -> ConvolutionProcessor {
-        ConvolutionProcessor {
-            execution_plan: ExecutionPlan::Cpu(Default::default()),
-            options: ConvolutionProcessorOptions {
-                kernel,
-                kernel_width,
-                kernel_height,
-                kernel_divisor,
-                kernel_offset,
-                use_fast_approximation,
-            },
+impl Default for ConvolutionRgbProcessorOptions {
+    fn default() -> Self {
+        ConvolutionRgbProcessorOptions {
+            kernel: vec![0.0; 9],
+            kernel_width: 3,
+            kernel_height: 3,
+            kernel_divisor: 1.0,
+            kernel_offset: 0.0,
+            use_fast_approximation: true,
+        }
+    }
+}
+
+pub struct ConvolutionRgbProcessor {
+    options: ConvolutionRgbProcessorOptions,
+}
+
+impl Processor<ConvolutionRgbProcessorOptions> for ConvolutionRgbProcessor {
+    fn new() -> Self {
+        ConvolutionRgbProcessor {
+            options: Default::default(),
         }
     }
 
-    pub fn with_options(
-        convolution_processor_options: ConvolutionProcessorOptions,
-    ) -> ConvolutionProcessor {
-        ConvolutionProcessor {
-            execution_plan: ExecutionPlan::Cpu(Default::default()),
-            options: convolution_processor_options,
-        }
+    fn with_options(self, options: ConvolutionRgbProcessorOptions) -> Self {
+        ConvolutionRgbProcessor { options }
     }
 
-    fn run_cpu(&self, fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
+    fn process(&self, fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
         let width = fast_image.get_width();
         let height = fast_image.get_height();
 
         let mut new_image = fast_image.clone();
 
-        cpu_options.build_thread_pool().install(|| {
-            if self.options.use_fast_approximation {
-                new_image.par_apply_fn_to_image_pixel(|pixel, x, y| {
+        if self.options.use_fast_approximation {
+            new_image.par_apply_fn_to_image_pixel(
+                |pixel, x, y| {
                     if x < self.options.kernel_width / 2 || x >= width - self.options.kernel_width / 2 || y < self.options.kernel_height / 2 || y >= height - self.options.kernel_height / 2 {
                         return;
                     }
-                    
+
                     let mut result_red_f32 = 0f32;
                     let mut result_green_f32 = 0f32;
                     let mut result_blue_f32 = 0f32;
@@ -76,21 +70,24 @@ impl ConvolutionProcessor {
                             result_blue_f32 += image_pixel.0[2] as f32 / 255.0 * kernel_value;
                         }
                     }
-                    
+
                     result_red_f32 = result_red_f32 / self.options.kernel_divisor + self.options.kernel_offset;
                     result_green_f32 = result_green_f32 / self.options.kernel_divisor + self.options.kernel_offset;
                     result_blue_f32 = result_blue_f32 / self.options.kernel_divisor + self.options.kernel_offset;
-                    
+
                     let result_red = (result_red_f32 * 255.0).clamp(0.0, 255.0).round() as u8;
                     let result_green = (result_green_f32 * 255.0).clamp(0.0, 255.0).round() as u8;
                     let result_blue = (result_blue_f32 * 255.0).clamp(0.0, 255.0).round() as u8;
-                    
+
                     pixel.0[0] = result_red;
                     pixel.0[1] = result_green;
                     pixel.0[2] = result_blue;
-                });
-            } else {
-                new_image.par_apply_fn_to_lin_srgba(|pixel, x, y| {
+                },
+                Some(progress),
+            );
+        } else {
+            new_image.par_apply_fn_to_lin_srgba(
+                |pixel, x, y| {
                     if x < self.options.kernel_width / 2 || x >= width - self.options.kernel_width / 2 || y < self.options.kernel_height / 2 || y >= height - self.options.kernel_height / 2 {
                         return pixel;
                     }
@@ -108,23 +105,11 @@ impl ConvolutionProcessor {
 
                     new_pixel = new_pixel / self.options.kernel_divisor + self.options.kernel_offset;
                     new_pixel
-                });
-            }
-        });
+                },
+                Some(progress),
+            );
+        }
 
         new_image
-    }
-}
-
-impl Processor for ConvolutionProcessor {
-    fn set_execution_plan(&mut self, execution_plan: ExecutionPlan) -> PicturifyResult<()> {
-        self.execution_plan = execution_plan;
-        Ok(())
-    }
-    fn process(&self, fast_image: FastImage) -> FastImage {
-        match self.execution_plan {
-            ExecutionPlan::Cpu(cpu_options) => self.run_cpu(fast_image, cpu_options),
-            ExecutionPlan::Gpu => unimplemented!(),
-        }
     }
 }

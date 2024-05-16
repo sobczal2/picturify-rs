@@ -1,10 +1,12 @@
-use crate::common::execution::{CpuOptions, ExecutionPlan, Processor};
+use crate::common::execution::{Processor};
 use picturify_core::error::PicturifyResult;
 use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToPalettePixels;
 use picturify_core::fast_image::FastImage;
 use picturify_core::fast_image::util::{cord_2d_to_1d, image_rgba_to_palette_srgba};
 use picturify_core::palette::{Hsva, IntoColor};
 use std::ops::Range;
+use std::sync::{Arc, RwLock};
+use picturify_core::threading::progress::Progress;
 
 pub struct KuwaharaProcessorOptions {
     pub radius: usize,
@@ -17,50 +19,39 @@ impl Default for KuwaharaProcessorOptions {
 }
 
 pub struct KuwaharaProcessor {
-    execution_plan: ExecutionPlan,
     options: KuwaharaProcessorOptions,
 }
 
-impl Default for KuwaharaProcessor {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl KuwaharaProcessor {
-    pub fn new() -> KuwaharaProcessor {
+impl Processor<KuwaharaProcessorOptions> for KuwaharaProcessor {
+    fn new() -> Self {
         KuwaharaProcessor {
-            execution_plan: ExecutionPlan::Cpu(Default::default()),
             options: Default::default(),
         }
     }
 
-    pub fn with_options(options: KuwaharaProcessorOptions) -> KuwaharaProcessor {
-        KuwaharaProcessor {
-            execution_plan: ExecutionPlan::Cpu(Default::default()),
-            options,
-        }
+    fn with_options(self, options: KuwaharaProcessorOptions) -> Self {
+        KuwaharaProcessor { options }
     }
 
-    fn run_cpu(&self, mut fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
+    fn process(&self, mut fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
         let width = fast_image.get_width();
         let height = fast_image.get_height();
 
         let radius = self.options.radius;
 
-        cpu_options.build_thread_pool().install(|| {
-            let mut value_array = vec![0.0; width * height];
+        let mut value_array = vec![0.0; width * height];
 
-            value_array
-                .iter_mut()
-                .zip(fast_image.pixels())
-                .for_each(|(value, pixel)| {
-                    let rgba = image_rgba_to_palette_srgba(*pixel);
-                    let hsva: Hsva = rgba.into_color();
-                    *value = hsva.value;
-                });
+        value_array
+            .iter_mut()
+            .zip(fast_image.pixels())
+            .for_each(|(value, pixel)| {
+                let rgba = image_rgba_to_palette_srgba(*pixel);
+                let hsva: Hsva = rgba.into_color();
+                *value = hsva.value;
+            });
 
-            fast_image.par_apply_fn_to_pixel(|pixel: Hsva, x, y| {
+        fast_image.par_apply_fn_to_pixel(
+            |pixel: Hsva, x, y| {
                 if x < radius || y < radius || x >= width - radius || y >= height - radius {
                     return pixel;
                 }
@@ -101,11 +92,11 @@ impl KuwaharaProcessor {
                     quadrant_3_variance,
                     quadrant_4_variance,
                 ]
-                .iter()
-                .enumerate()
-                .min_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
-                .unwrap()
-                .0;
+                    .iter()
+                    .enumerate()
+                    .min_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
+                    .unwrap()
+                    .0;
 
                 let (range_x, range_y) = match min_quadrant {
                     0 => quadrant1_ranges,
@@ -118,28 +109,11 @@ impl KuwaharaProcessor {
                 let mean = calculate_mean(&value_array, &range_x, &range_y, width);
 
                 Hsva::new(pixel.hue, pixel.saturation, mean, pixel.alpha)
-            });
+            },
+            Some(progress),
+        );
 
-            fast_image
-        })
-    }
-
-    fn run_gpu(&self, _fast_image: FastImage) -> FastImage {
-        unimplemented!()
-    }
-}
-
-impl Processor for KuwaharaProcessor {
-    fn set_execution_plan(&mut self, execution_plan: ExecutionPlan) -> PicturifyResult<()> {
-        self.execution_plan = execution_plan;
-        Ok(())
-    }
-
-    fn process(&self, fast_image: FastImage) -> FastImage {
-        match self.execution_plan {
-            ExecutionPlan::Cpu(options) => self.run_cpu(fast_image, options),
-            ExecutionPlan::Gpu => self.run_gpu(fast_image),
-        }
+        fast_image
     }
 }
 
@@ -162,7 +136,7 @@ fn calculate_variance(
     }
 
     let mean = sum / count as f32;
-    
+
     (sum_squared - mean * mean) / count as f32
 }
 
@@ -182,6 +156,6 @@ fn calculate_mean(
         }
     }
 
-    
+
     sum / count as f32
 }

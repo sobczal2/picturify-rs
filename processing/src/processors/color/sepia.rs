@@ -1,48 +1,43 @@
-use picturify_core::error::PicturifyResult;
+use std::sync::{Arc, RwLock};
 use picturify_core::fast_image::apply_fn_to_pixels::{
     ApplyFnToImagePixels, ApplyFnToPalettePixels,
 };
 use picturify_core::fast_image::FastImage;
+use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::{CpuOptions, ExecutionPlan, Processor};
+use crate::common::execution::{Processor};
 
-#[derive(Default)]
 pub struct SepiaProcessorOptions {
     pub use_fast_approximation: bool,
 }
 
-
-
-pub struct SepiaProcessor {
-    execution_plan: ExecutionPlan,
-    options: SepiaProcessorOptions,
-}
-
-impl Default for SepiaProcessor {
+impl Default for SepiaProcessorOptions {
     fn default() -> Self {
-        Self::new()
+        SepiaProcessorOptions {
+            use_fast_approximation: true,
+        }
     }
 }
 
-impl SepiaProcessor {
-    pub fn new() -> SepiaProcessor {
+pub struct SepiaProcessor {
+    options: SepiaProcessorOptions,
+}
+
+impl Processor<SepiaProcessorOptions> for SepiaProcessor {
+    fn new() -> Self {
         SepiaProcessor {
-            execution_plan: ExecutionPlan::Cpu(Default::default()),
             options: Default::default(),
         }
     }
 
-    pub fn with_options(options: SepiaProcessorOptions) -> SepiaProcessor {
-        SepiaProcessor {
-            execution_plan: ExecutionPlan::Cpu(Default::default()),
-            options,
-        }
+    fn with_options(self, options: SepiaProcessorOptions) -> Self {
+        SepiaProcessor { options }
     }
 
-    fn run_cpu(&self, mut fast_image: FastImage, cpu_options: CpuOptions) -> FastImage {
-        cpu_options.build_thread_pool().install(|| {
-            if self.options.use_fast_approximation {
-                fast_image.par_apply_fn_to_image_pixel(|pixel, _x, _y| {
+    fn process(&self, mut fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+        return if self.options.use_fast_approximation {
+            fast_image.par_apply_fn_to_image_pixel(
+                |pixel, _x, _y| {
                     let r = pixel.0[0] as f32;
                     let g = pixel.0[1] as f32;
                     let b = pixel.0[2] as f32;
@@ -54,9 +49,13 @@ impl SepiaProcessor {
                     pixel.0[0] = new_r.round() as u8;
                     pixel.0[1] = new_g.round() as u8;
                     pixel.0[2] = new_b.round() as u8;
-                });
-            } else {
-                fast_image.par_apply_fn_to_lin_srgba(|mut pixel, _x, _y| {
+                },
+                Some(progress),
+            );
+            fast_image
+        } else {
+            fast_image.par_apply_fn_to_lin_srgba(
+                |mut pixel, _x, _y| {
                     let r = pixel.red;
                     let g = pixel.green;
                     let b = pixel.blue;
@@ -70,28 +69,10 @@ impl SepiaProcessor {
                     pixel.blue = new_b;
 
                     pixel
-                });
-            }
-        });
-
-        fast_image
-    }
-
-    fn run_gpu(&self, _fast_image: FastImage) -> FastImage {
-        unimplemented!()
-    }
-}
-
-impl Processor for SepiaProcessor {
-    fn set_execution_plan(&mut self, execution_plan: ExecutionPlan) -> PicturifyResult<()> {
-        self.execution_plan = execution_plan;
-        Ok(())
-    }
-
-    fn process(&self, fast_image: FastImage) -> FastImage {
-        match self.execution_plan {
-            ExecutionPlan::Cpu(options) => self.run_cpu(fast_image, options),
-            ExecutionPlan::Gpu => self.run_gpu(fast_image),
-        }
+                },
+                Some(progress),
+            );
+            fast_image
+        };
     }
 }

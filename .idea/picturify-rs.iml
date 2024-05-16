@@ -10,6 +10,8 @@
       <sourceFolder url="file://$MODULE_DIR$/gui/src-tauri/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/pipeline/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/macros/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cuda-cpu/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cuda/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.idea/copilot/chatSessions" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
