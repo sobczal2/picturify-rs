@@ -22,8 +22,12 @@ impl Pipeline for SepiaPipeline {
     fn run(
         &self,
         fast_image: FastImage,
-        pipeline_progress: Arc<RwLock<PipelineProgress>>,
+        pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
     ) -> FastImage {
+        let pipeline_progress = pipeline_progress.unwrap_or_else(|| {
+            Arc::new(RwLock::new(PipelineProgress::new()))
+        });
+        
         let mut pipeline_progress_write = pipeline_progress.write().unwrap();
         pipeline_progress_write.setup_combined(1);
         pipeline_progress_write.new_individual("Sepia".to_string());

@@ -6,6 +6,6 @@ pub trait Pipeline {
     fn run(
         &self,
         fast_image: FastImage,
-        pipeline_progress: Arc<RwLock<PipelineProgress>>,
+        pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
     ) -> FastImage;
 }

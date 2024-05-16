@@ -14,6 +14,6 @@ impl Command for SobelRgbCommand {
     }
 
     fn name() -> &'static str {
-        "sobel_rgb"
+        "sobel-rgb"
     }
 }

@@ -113,7 +113,7 @@ impl MoviePipe {
             let now = Instant::now();
             frame_count += 1;
             let image = FastImage::from_rgba_vec(width as usize, height as usize, buffer.clone());
-            let progress = Arc::new(RwLock::new(PipelineProgress::new()));
+            let progress = Some(Arc::new(RwLock::new(PipelineProgress::new())));
             let processed_image = self.pipeline.run(image, progress);
             ffmpeg_stdin
                 .write_all(&processed_image.to_rgba_vec())

@@ -27,7 +27,7 @@ impl CommandHandler for SobelCommandHandler {
             run_progress_bar_for_pipeline(pipeline_progress_clone);
         });
         
-        let result_image = sobel_pipeline.run(image, pipeline_progress.clone());
+        let result_image = sobel_pipeline.run(image, Some(pipeline_progress.clone()));
         
         handle.join().expect("Failed to join thread");
         

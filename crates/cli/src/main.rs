@@ -1,7 +1,7 @@
 use std::time::Instant;
 use crate::commands::common::picturify::PicturifyCommand;
 use crate::handlers::common::image::ImageCommandHandler;
-use log::{error, info, LevelFilter};
+use log::{error, info, LevelFilter, warn};
 use simplelog::*;
 use crate::commands::common::command::Command;
 use crate::error::CliPicturifyError;
@@ -68,5 +68,5 @@ fn welcome() {
 
 #[cfg(target_os = "windows")]
 fn welcome() {
-    info!("Welcome to Picturify CLI. Consider switching to a Unix-based system for sanity reasons");
+    warn!("Welcome to Picturify CLI. You are using Windows, please reconsider your life choices.");
 }
