@@ -1,9 +1,11 @@
-use crate::commands::color::negative::NegativeCommand;
-use crate::commands::color::sepia::SepiaCommand;
 use crate::commands::common::none::NoneCommand;
-use crate::commands::noise::kuwahara::KuwaharaCommand;
-use crate::commands::noise::median::MedianCommand;
 use clap::{Arg, Command};
+use crate::commands::image::color::negative::NegativeCommand;
+use crate::commands::image::color::sepia::SepiaCommand;
+use crate::commands::image::edge::sobel::SobelCommand;
+use crate::commands::image::edge::sobel_rgb::SobelRgbCommand;
+use crate::commands::image::noise::kuwahara::KuwaharaCommand;
+use crate::commands::image::noise::median::MedianCommand;
 
 pub struct ImageCommand;
 
@@ -22,11 +24,16 @@ impl ImageCommand {
                     .required(true),
             ])
             .subcommands([
+                NoneCommand::get(),
+                // color
                 SepiaCommand::get(),
                 NegativeCommand::get(),
-                NoneCommand::get(),
+                // noise
                 KuwaharaCommand::get(),
                 MedianCommand::get(),
+                // edge
+                SobelCommand::get(),
+                SobelRgbCommand::get(),
             ])
     }
 }

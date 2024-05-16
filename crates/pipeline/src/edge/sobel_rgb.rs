@@ -8,7 +8,7 @@ use picturify_processing::processors::edge::sobel_rgb::{
 use std::sync::{Arc, RwLock};
 
 pub struct SobelRgbPipelineOptions {
-    use_fast_approximation: bool,
+    pub use_fast_approximation: bool,
 }
 
 pub struct SobelRgbPipeline {

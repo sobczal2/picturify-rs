@@ -1,12 +1,14 @@
-use crate::handlers::color::negative::NegativeCommandHandler;
-use crate::handlers::color::sepia::SepiaCommandHandler;
-use crate::handlers::noise::kuwahara::KuwaharaCommandHandler;
-use crate::handlers::noise::median::MedianCommandHandler;
 use clap::ArgMatches;
-use log::info;
+use log::{error, info};
 use picturify_core::fast_image::io::{ReadFromFile, WriteToFile};
 use picturify_core::fast_image::FastImage;
 use std::time::Instant;
+use crate::handlers::image::color::negative::NegativeCommandHandler;
+use crate::handlers::image::color::sepia::SepiaCommandHandler;
+use crate::handlers::image::edge::sobel::SobelCommandHandler;
+use crate::handlers::image::edge::sobel_rgb::SobelRgbCommandHandler;
+use crate::handlers::image::noise::kuwahara::KuwaharaCommandHandler;
+use crate::handlers::image::noise::median::MedianCommandHandler;
 
 pub struct ImageCommandHandler;
 
@@ -22,33 +24,46 @@ impl ImageCommandHandler {
         info!("Reading fast_image took {}ms", read_elapsed_ms);
 
         match arg_matches.subcommand() {
+            Some(("none", _args)) => {}
+            
+            // color
             Some(("sepia", args)) => {
-                let now = Instant::now();
-                image = SepiaCommandHandler::handle(image, args.clone());
-                let elapsed_ms = now.elapsed().as_millis();
-                info!("Sepia took {}ms", elapsed_ms);
+                image = Self::log_time("Sepia", || {
+                    SepiaCommandHandler::handle(image, args.clone())
+                });
             }
             Some(("negative", args)) => {
-                let now = Instant::now();
-                image = NegativeCommandHandler::handle(image, args.clone());
-                let elapsed_ms = now.elapsed().as_millis();
-                info!("Negative took {}ms", elapsed_ms);
+                image = Self::log_time("Negative", || {
+                    NegativeCommandHandler::handle(image, args.clone())
+                });
             }
+            
+            // noise
             Some(("kuwahara", args)) => {
-                let now = Instant::now();
-                image = KuwaharaCommandHandler::handle(image, args.clone());
-                let elapsed_ms = now.elapsed().as_millis();
-                info!("Kuwahara took {}ms", elapsed_ms);
+                image = Self::log_time("Kuwahara", || {
+                    KuwaharaCommandHandler::handle(image, args.clone())
+                });
             }
             Some(("median", args)) => {
-                let now = Instant::now();
-                image = MedianCommandHandler::handle(image, args.clone());
-                let elapsed_ms = now.elapsed().as_millis();
-                info!("Median took {}ms", elapsed_ms);
+                image = Self::log_time("Median", || {
+                    MedianCommandHandler::handle(image, args.clone())
+                });
             }
-            Some(("none", _args)) => {}
+            
+            // edge
+            Some(("sobel", args)) => {
+                image = Self::log_time("Sobel", || {
+                    SobelCommandHandler::handle(image, args.clone())
+                });
+            }
+            Some(("sobel_rgb", args)) => {
+                image = Self::log_time("Sobel RGB", || {
+                    SobelRgbCommandHandler::handle(image, args.clone())
+                });
+            }
             _ => {
-                panic!("Unknown subcommand");
+                error!("Command not found");
+                return;
             }
         }
 
@@ -59,5 +74,13 @@ impl ImageCommandHandler {
 
         let total_elapsed_ms = read_start.elapsed().as_millis();
         info!("Total time elapsed: {}ms", total_elapsed_ms);
+    }
+    
+    fn log_time<T, F: FnOnce() -> T>(name: &str, f: F) -> T {
+        let now = Instant::now();
+        let result = f();
+        let elapsed_ms = now.elapsed().as_millis();
+        info!("{} took {}ms", name, elapsed_ms);
+        result
     }
 }

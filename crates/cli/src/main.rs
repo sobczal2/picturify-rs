@@ -1,6 +1,6 @@
 use crate::commands::common::picturify::PicturifyCommand;
 use crate::handlers::common::image::ImageCommandHandler;
-use log::LevelFilter;
+use log::{error, info, LevelFilter};
 use simplelog::*;
 
 mod commands;
@@ -24,10 +24,10 @@ fn main() {
             ImageCommandHandler::handle(arg.clone());
         }
         Some(("movie", _)) => {
-            println!("Movie command");
+            info!("Movie command not implemented yet")
         }
         _ => {
-            println!("No command specified");
+            error!("No command specified")
         }
     }
 }

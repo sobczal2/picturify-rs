@@ -6,7 +6,7 @@ use picturify_processing::processors::edge::sobel::{SobelProcessor, SobelProcess
 use std::sync::{Arc, RwLock};
 
 pub struct SobelPipelineOptions {
-    use_fast_approximation: bool,
+    pub use_fast_approximation: bool,
 }
 
 pub struct SobelPipeline {
