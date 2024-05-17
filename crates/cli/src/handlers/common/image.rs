@@ -10,6 +10,7 @@ use crate::commands::image::edge::sobel_rgb::SobelRgbCommand;
 use crate::commands::image::noise::kuwahara::KuwaharaCommand;
 use crate::commands::image::noise::mean::MeanCommand;
 use crate::commands::image::noise::median::MedianCommand;
+use crate::commands::image::noise::sharpen::SharpenCommand;
 use crate::error::{CliPicturifyError, CliPicturifyResult};
 use crate::handlers::common::handler::CommandHandler;
 use crate::handlers::image::color::negative::NegativeCommandHandler;
@@ -20,6 +21,7 @@ use crate::handlers::image::edge::sobel_rgb::SobelRgbCommandHandler;
 use crate::handlers::image::noise::kuwahara::KuwaharaCommandHandler;
 use crate::handlers::image::noise::mean::MeanCommandHandler;
 use crate::handlers::image::noise::median::MedianCommandHandler;
+use crate::handlers::image::noise::sharpen::SharpenCommandHandler;
 
 pub struct ImageCommandHandler;
 
@@ -29,12 +31,20 @@ impl CommandHandler for ImageCommandHandler {
             Some((name, args)) => {
                 let mut handlers: HashMap<&str, Rc<dyn Fn(ArgMatches) -> CliPicturifyResult<()>>> = HashMap::new();
 
+                // common
                 handlers.insert(NoneCommand::name(), Rc::new(NoneCommandHandler::handle));
+                
+                // color
                 handlers.insert(SepiaCommand::name(), Rc::new(SepiaCommandHandler::handle));
                 handlers.insert(NegativeCommand::name(), Rc::new(NegativeCommandHandler::handle));
+                
+                // noise
                 handlers.insert(KuwaharaCommand::name(), Rc::new(KuwaharaCommandHandler::handle));
                 handlers.insert(MedianCommand::name(), Rc::new(MedianCommandHandler::handle));
                 handlers.insert(MeanCommand::name(), Rc::new(MeanCommandHandler::handle));
+                handlers.insert(SharpenCommand::name(), Rc::new(SharpenCommandHandler::handle));
+                
+                // edge
                 handlers.insert(SobelCommand::name(), Rc::new(SobelCommandHandler::handle));
                 handlers.insert(SobelRgbCommand::name(), Rc::new(SobelRgbCommandHandler::handle));
 

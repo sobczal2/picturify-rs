@@ -7,6 +7,7 @@ use crate::commands::image::edge::sobel_rgb::SobelRgbCommand;
 use crate::commands::image::noise::kuwahara::KuwaharaCommand;
 use crate::commands::image::noise::mean::MeanCommand;
 use crate::commands::image::noise::median::MedianCommand;
+use crate::commands::image::noise::sharpen::SharpenCommand;
 
 pub struct ImageCommand;
 
@@ -15,14 +16,19 @@ impl Command for ImageCommand {
         clap::Command::new(Self::name())
             .about("Run image processing pipeline on an image")
             .subcommands(&[
+                // common
                 NoneCommand::get(),
+                
                 // color
                 SepiaCommand::get(),
                 NegativeCommand::get(),
+                
                 // noise
                 KuwaharaCommand::get(),
                 MedianCommand::get(),
                 MeanCommand::get(),
+                SharpenCommand::get(),
+                
                 // edge
                 SobelCommand::get(),
                 SobelRgbCommand::get(),

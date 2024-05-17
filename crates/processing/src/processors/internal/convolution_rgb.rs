@@ -74,6 +74,11 @@ impl Processor for ConvolutionRgbProcessor {
                         for j in 0..self.options.kernel_height {
                             let kernel_value =
                                 self.options.kernel[j * self.options.kernel_width + i];
+                            
+                            if kernel_value == 0.0 {
+                                continue;
+                            }
+                            
                             let image_pixel = fast_image.get_image_pixel(
                                 x + i - self.options.kernel_width / 2,
                                 y + j - self.options.kernel_height / 2,
@@ -118,6 +123,11 @@ impl Processor for ConvolutionRgbProcessor {
                         for j in 0..self.options.kernel_height {
                             let kernel_value =
                                 self.options.kernel[j * self.options.kernel_width + i];
+
+                            if kernel_value == 0.0 {
+                                continue;
+                            }
+                            
                             let image_pixel = fast_image.get_lin_srgba_pixel(
                                 x + i - self.options.kernel_width / 2,
                                 y + j - self.options.kernel_height / 2,
@@ -129,6 +139,11 @@ impl Processor for ConvolutionRgbProcessor {
 
                     new_pixel =
                         new_pixel / self.options.kernel_divisor + self.options.kernel_offset;
+                    
+                    new_pixel.red = new_pixel.red.clamp(0.0, 1.0);
+                    new_pixel.green = new_pixel.green.clamp(0.0, 1.0);
+                    new_pixel.blue = new_pixel.blue.clamp(0.0, 1.0);
+                    
                     new_pixel
                 },
                 Some(progress),
