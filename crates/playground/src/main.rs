@@ -1,12 +1,11 @@
-use picturify_core::fast_image::io::{ReadFromFile, WriteToFile};
-use picturify_core::fast_image::FastImage;
-use std::sync::{Arc, Mutex, RwLock};
-use std::thread::spawn;
+use std::sync::{Arc, RwLock};
+use std::time::Instant;
 
+use picturify_core::fast_image::FastImage;
+use picturify_core::fast_image::io::{ReadFromFile, WriteToFile};
 use picturify_core::threading::progress::Progress;
 use picturify_processing::common::execution::{Processor, WithOptions};
-use picturify_processing::processors::edge::sobel::{SobelProcessor, SobelProcessorOptions};
-use std::time::Instant;
+use picturify_processing::processors::color::grayscale::{GrayscaleProcessor, GrayscaleProcessorOptions, GrayscaleStrategy};
 
 fn main() {
     run_image();
@@ -50,41 +49,18 @@ fn run_movie() {
 }
 
 fn run_image() {
-    let fast_image = *FastImage::read_from_file("/home/sobczal/Downloads/ryan.jpg").unwrap();
+    let fast_image = *FastImage::read_from_file("/home/sobczal/Downloads/large.jpg").unwrap();
 
-    let processor = SobelProcessor::new().with_options(SobelProcessorOptions {
+    let processor = GrayscaleProcessor::new().with_options(GrayscaleProcessorOptions {
+        strategy: GrayscaleStrategy::Luminosity,
         use_fast_approximation: false,
     });
-
-    let progress = Arc::new(RwLock::new(Progress::new()));
-    let progress_clone = progress.clone();
-    let finished = Arc::new(Mutex::new(false));
-    let finished_clone = finished.clone();
-
-    let thread = spawn(move || {
-        while !*finished_clone.lock().unwrap() {
-            {
-                let read_progress = progress_clone.read().expect("Failed to lock progress");
-                println!(
-                    "Progress: {}/{}",
-                    read_progress.get(),
-                    read_progress.get_max()
-                );
-            }
-            std::thread::sleep(std::time::Duration::from_millis(10));
-        }
-    });
-
+    
     let start = Instant::now();
-    let fast_image = processor.process(fast_image, progress);
+    let fast_image = processor.process(fast_image, Arc::new(RwLock::new(Progress::new())));
     let duration = start.elapsed();
-    println!("Time elapsed in expensive_function() is: {:?}", duration);
-    {
-        let mut finished_locked = finished.lock().unwrap();
-        *finished_locked = true;
-    }
-    thread.join().unwrap();
+    println!("Time elapsed in grayscale is: {:?}", duration);
     fast_image
-        .write_to_file("/home/sobczal/Downloads/ryan_mean.png")
+        .write_to_file("/home/sobczal/Downloads/output.png")
         .unwrap();
 }

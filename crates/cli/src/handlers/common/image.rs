@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use clap::ArgMatches;
 use crate::commands::common::command::Command;
+use crate::commands::image::color::grayscale::GrayscaleCommand;
 use crate::commands::image::color::negative::NegativeCommand;
 use crate::commands::image::color::sepia::SepiaCommand;
 use crate::commands::image::common::none::NoneCommand;
@@ -13,6 +14,7 @@ use crate::commands::image::noise::median::MedianCommand;
 use crate::commands::image::noise::sharpen::SharpenCommand;
 use crate::error::{CliPicturifyError, CliPicturifyResult};
 use crate::handlers::common::handler::CommandHandler;
+use crate::handlers::image::color::grayscale::GrayscaleCommandHandler;
 use crate::handlers::image::color::negative::NegativeCommandHandler;
 use crate::handlers::image::color::sepia::SepiaCommandHandler;
 use crate::handlers::image::common::none::NoneCommandHandler;
@@ -37,6 +39,7 @@ impl CommandHandler for ImageCommandHandler {
                 // color
                 handlers.insert(SepiaCommand::name(), Rc::new(SepiaCommandHandler::handle));
                 handlers.insert(NegativeCommand::name(), Rc::new(NegativeCommandHandler::handle));
+                handlers.insert(GrayscaleCommand::name(), Rc::new(GrayscaleCommandHandler::handle));
                 
                 // noise
                 handlers.insert(KuwaharaCommand::name(), Rc::new(KuwaharaCommandHandler::handle));
