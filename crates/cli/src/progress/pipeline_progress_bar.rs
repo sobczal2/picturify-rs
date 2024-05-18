@@ -16,7 +16,7 @@ pub fn run_progress_bar_for_pipeline(pipeline_progress: Arc<RwLock<PipelineProgr
     while !pipeline_progress.read().unwrap().is_finished() {
         let current_step = pipeline_progress.read().unwrap().get_combined_value();
         let current_name = pipeline_progress.read().unwrap().get_current_individual_name();
-        let current_percentage = pipeline_progress.read().unwrap().get_current_individual_percentage(current_name.clone());
+        let current_percentage = pipeline_progress.read().unwrap().get_current_individual_percentage();
         bar.set_message(format!("[step: {}/{}] {}", current_step + 1, steps, current_name));
         bar.set_position(current_percentage as u64);
         sleep(std::time::Duration::from_millis(10));

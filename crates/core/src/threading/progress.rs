@@ -1,8 +1,7 @@
 use std::sync::atomic::{AtomicU32, Ordering};
-use std::sync::Arc;
 
 pub struct Progress {
-    value: Arc<AtomicU32>,
+    value: AtomicU32,
     max_value: u32,
     on_increment: Option<Box<dyn Fn() + Send + Sync>>,
 }
@@ -10,7 +9,7 @@ pub struct Progress {
 impl Progress {
     pub fn new() -> Self {
         Progress {
-            value: Arc::new(AtomicU32::new(0)),
+            value: AtomicU32::new(0),
             max_value: 0,
             on_increment: None,
         }
