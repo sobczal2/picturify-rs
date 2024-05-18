@@ -15,8 +15,10 @@ pub struct KuwaharaCommandHandler;
 impl CommandHandler for KuwaharaCommandHandler {
     fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
+        let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
         let radius = args.get_one::<usize>(ArgType::Radius.to_id()).unwrap();
         let negative_pipeline = KuwaharaPipeline::new(KuwaharaPipelineOptions {
+            fast: fast.clone(),
             radius: radius.clone(),
         });
 

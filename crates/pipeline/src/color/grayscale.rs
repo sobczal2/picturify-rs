@@ -7,7 +7,7 @@ use crate::pipeline::Pipeline;
 
 pub struct GrayscalePipelineOptions {
     pub strategy: GrayscaleStrategy,
-    pub use_fast_approximation: bool,
+    pub fast: bool,
 }
 
 pub struct GrayscalePipeline {
@@ -20,6 +20,8 @@ impl GrayscalePipeline {
     }
 }
 
+const GRAYSCALE_PROCESSOR_NAME: &str = "Grayscale";
+
 impl Pipeline for GrayscalePipeline {
     fn run(
         &self,
@@ -31,13 +33,13 @@ impl Pipeline for GrayscalePipeline {
         });
 
         let mut pipeline_progress_write = pipeline_progress.write().unwrap();
+        pipeline_progress_write.new_individual(GRAYSCALE_PROCESSOR_NAME.to_string());
         pipeline_progress_write.setup_combined(1);
-        pipeline_progress_write.new_individual("Grayscale".to_string());
         drop(pipeline_progress_write);
 
         let processor = GrayscaleProcessor::new().with_options(GrayscaleProcessorOptions {
             strategy: self.options.strategy,
-            use_fast_approximation: self.options.use_fast_approximation,
+            use_fast_approximation: self.options.fast,
         });
         let final_image = processor.process(
             fast_image,

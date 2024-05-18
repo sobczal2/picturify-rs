@@ -9,6 +9,42 @@ pub enum EnlargementStrategy {
     Constant(Srgba),
 }
 
+pub struct EnlargementBorder {
+    pub top: usize,
+    pub right: usize,
+    pub bottom: usize,
+    pub left: usize,
+}
+
+impl EnlargementBorder {
+    pub fn new(top: usize, right: usize, bottom: usize, left: usize) -> Self {
+        EnlargementBorder {
+            top,
+            right,
+            bottom,
+            left,
+        }
+    }
+    
+    pub fn from_all(all: usize) -> Self {
+        EnlargementBorder {
+            top: all,
+            right: all,
+            bottom: all,
+            left: all,
+        }
+    }
+    
+    pub fn from_x_y(x: usize, y: usize) -> Self {
+        EnlargementBorder {
+            top: y,
+            right: x,
+            bottom: y,
+            left: x,
+        }
+    }
+}
+
 pub struct EnlargementProcessor {
     options: EnlargementProcessorOptions,
 }
@@ -16,14 +52,19 @@ pub struct EnlargementProcessor {
 impl Default for EnlargementProcessorOptions {
     fn default() -> Self {
         EnlargementProcessorOptions {
-            border: 0,
+            border: EnlargementBorder {
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0,
+            },
             strategy: EnlargementStrategy::Constant(Srgba::new(0f32, 0f32, 0f32, 0f32)),
         }
     }
 }
 
 pub struct EnlargementProcessorOptions {
-    pub border: usize,
+    pub border: EnlargementBorder,
     pub strategy: EnlargementStrategy,
 }
 
@@ -43,8 +84,8 @@ impl WithOptions<EnlargementProcessorOptions> for EnlargementProcessor {
 
 impl Processor for EnlargementProcessor {
     fn process(&self, fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
-        let new_width = fast_image.get_width() + self.options.border * 2;
-        let new_height = fast_image.get_height() + self.options.border * 2;
+        let new_width = fast_image.get_width() + self.options.border.left + self.options.border.right;
+        let new_height = fast_image.get_height() + self.options.border.top + self.options.border.bottom;
 
         let mut new_image = FastImage::empty(new_width, new_height);
 
@@ -52,15 +93,15 @@ impl Processor for EnlargementProcessor {
             EnlargementStrategy::Constant(pixel) => {
                 new_image.par_apply_fn_to_pixel(
                     |_, x, y| {
-                        if x < self.options.border
-                            || x >= new_width - self.options.border
-                            || y < self.options.border
-                            || y >= new_height - self.options.border
+                        if x < self.options.border.left
+                            || x >= new_width - self.options.border.right
+                            || y < self.options.border.top
+                            || y >= new_height - self.options.border.bottom
                         {
                             pixel
                         } else {
                             fast_image
-                                .get_srgba_pixel(x - self.options.border, y - self.options.border)
+                                .get_srgba_pixel(x - self.options.border.left, y - self.options.border.top)
                         }
                     },
                     Some(progress),

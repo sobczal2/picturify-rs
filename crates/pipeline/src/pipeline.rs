@@ -5,7 +5,7 @@ use std::sync::{Arc, RwLock};
 pub trait Pipeline {
     fn run(
         &self,
-        fast_image: FastImage,
+        image: FastImage,
         pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
     ) -> FastImage;
 }

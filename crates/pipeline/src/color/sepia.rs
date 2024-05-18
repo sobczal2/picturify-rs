@@ -18,6 +18,8 @@ impl SepiaPipeline {
     }
 }
 
+const SEPIA_PROCESSOR_NAME: &str = "Sepia";
+
 impl Pipeline for SepiaPipeline {
     fn run(
         &self,
@@ -29,8 +31,8 @@ impl Pipeline for SepiaPipeline {
         });
         
         let mut pipeline_progress_write = pipeline_progress.write().unwrap();
+        pipeline_progress_write.new_individual(SEPIA_PROCESSOR_NAME.to_string());
         pipeline_progress_write.setup_combined(1);
-        pipeline_progress_write.new_individual("Sepia".to_string());
         drop(pipeline_progress_write);
 
         let processor = SepiaProcessor::new();

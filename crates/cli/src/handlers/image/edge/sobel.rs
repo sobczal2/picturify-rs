@@ -15,9 +15,9 @@ pub struct SobelCommandHandler;
 impl CommandHandler for SobelCommandHandler {
     fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
-        let use_fast_approximation = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
+        let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
         let sobel_pipeline = SobelPipeline::new(SobelPipelineOptions {
-            use_fast_approximation: use_fast_approximation.clone(),
+            fast: fast.clone(),
         });
         
         let pipeline_progress = Arc::new(RwLock::new(PipelineProgress::new()));

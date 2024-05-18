@@ -1,6 +1,7 @@
 use std::time::Instant;
 use crate::commands::common::picturify::PicturifyCommand;
 use crate::handlers::common::image::ImageCommandHandler;
+#[allow(unused_imports)]
 use log::{error, info, LevelFilter, warn};
 use simplelog::*;
 use crate::commands::common::command::Command;

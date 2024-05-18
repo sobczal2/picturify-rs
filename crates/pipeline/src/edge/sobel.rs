@@ -6,10 +6,10 @@ use picturify_processing::processors::edge::sobel::{SobelProcessor, SobelProcess
 use std::sync::{Arc, RwLock};
 use picturify_core::palette::Srgba;
 use picturify_processing::processors::geometry::crop::{CropProcessor, CropProcessorOptions};
-use picturify_processing::processors::geometry::enlargement::{EnlargementProcessor, EnlargementProcessorOptions, EnlargementStrategy};
+use picturify_processing::processors::geometry::enlargement::{EnlargementBorder, EnlargementProcessor, EnlargementProcessorOptions, EnlargementStrategy};
 
 pub struct SobelPipelineOptions {
-    pub use_fast_approximation: bool,
+    pub fast: bool,
 }
 
 pub struct SobelPipeline {
@@ -28,7 +28,7 @@ impl Pipeline for SobelPipeline {
         image: FastImage,
         pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
     ) -> FastImage {
-        match self.options.use_fast_approximation {
+        match self.options.fast {
             true => self.run_fast(image, pipeline_progress),
             false => self.run_slow(image, pipeline_progress),
         }
@@ -50,8 +50,8 @@ impl SobelPipeline {
         });
 
         let mut pipeline_progress_write = pipeline_progress.write().unwrap();
-        pipeline_progress_write.setup_combined(1);
         pipeline_progress_write.new_individual(SOBEL_PROCESSOR_NAME.to_string());
+        pipeline_progress_write.setup_combined(1);
         drop(pipeline_progress_write);
 
         let sobel_processor = SobelProcessor::new().with_options(SobelProcessorOptions {
@@ -86,7 +86,7 @@ impl SobelPipeline {
         drop(pipeline_progress_write);
 
         let enlargement_processor = EnlargementProcessor::new().with_options(EnlargementProcessorOptions {
-            border: 1,
+            border: EnlargementBorder::from_all(1),
             strategy: EnlargementStrategy::Constant(Srgba::new(0f32, 0f32, 0f32, 0f32)),
         });
         let image = enlargement_processor.process(

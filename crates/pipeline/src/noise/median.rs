@@ -1,12 +1,16 @@
 use crate::common::pipeline_progress::PipelineProgress;
 use crate::pipeline::Pipeline;
 use picturify_core::fast_image::FastImage;
-use picturify_processing::common::execution::{Processor, WithOptions};
-use picturify_processing::processors::noise::median::{MedianProcessor, MedianProcessorOptions};
 use std::sync::{Arc, RwLock};
+use picturify_core::palette::Srgba;
+use picturify_processing::common::execution::{Processor, WithOptions};
+use picturify_processing::processors::geometry::crop::{CropProcessor, CropProcessorOptions};
+use picturify_processing::processors::geometry::enlargement::{EnlargementBorder, EnlargementProcessor, EnlargementProcessorOptions, EnlargementStrategy};
+use picturify_processing::processors::noise::median::{MedianProcessor, MedianProcessorOptions};
 
 pub struct MedianPipelineOptions {
     pub radius: usize,
+    pub fast: bool,
 }
 
 pub struct MedianPipeline {
@@ -22,7 +26,24 @@ impl MedianPipeline {
 impl Pipeline for MedianPipeline {
     fn run(
         &self,
-        fast_image: FastImage,
+        image: FastImage,
+        pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
+    ) -> FastImage {
+        match self.options.fast {
+            true => self.run_fast(image, pipeline_progress),
+            false => self.run_slow(image, pipeline_progress),
+        }
+    }
+}
+
+const ENLARGEMENT_PROCESSOR_NAME: &str = "Enlargement";
+const MEDIAN_PROCESSOR_NAME: &str = "Median";
+const CROP_PROCESSOR_NAME: &str = "Crop";
+
+impl MedianPipeline {
+    fn run_fast(
+        &self,
+        image: FastImage,
         pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
     ) -> FastImage {
         let pipeline_progress = pipeline_progress.unwrap_or_else(|| {
@@ -30,21 +51,79 @@ impl Pipeline for MedianPipeline {
         });
 
         let mut pipeline_progress_write = pipeline_progress.write().unwrap();
+        pipeline_progress_write.new_individual(MEDIAN_PROCESSOR_NAME.to_string());
         pipeline_progress_write.setup_combined(1);
-        pipeline_progress_write.new_individual("Median".to_string());
         drop(pipeline_progress_write);
 
         let processor = MedianProcessor::new().with_options(MedianProcessorOptions {
             radius: self.options.radius,
         });
-        let final_image = processor.process(
-            fast_image,
+        let image = processor.process(
+            image,
             pipeline_progress
                 .read()
                 .unwrap()
                 .get_current_individual_progress(),
         );
         pipeline_progress.write().unwrap().increment_combined();
-        final_image
+        image
+    }
+    
+    fn run_slow(
+        &self,
+        image: FastImage,
+        pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
+    ) -> FastImage {
+        let pipeline_progress = pipeline_progress.unwrap_or_else(|| {
+            Arc::new(RwLock::new(PipelineProgress::new()))
+        });
+
+        let mut pipeline_progress_write = pipeline_progress.write().unwrap();
+        pipeline_progress_write.new_individual(ENLARGEMENT_PROCESSOR_NAME.to_string());
+        pipeline_progress_write.new_individual(MEDIAN_PROCESSOR_NAME.to_string());
+        pipeline_progress_write.new_individual(CROP_PROCESSOR_NAME.to_string());
+        pipeline_progress_write.setup_combined(3);
+        drop(pipeline_progress_write);
+
+        let enlargement_processor = EnlargementProcessor::new().with_options(EnlargementProcessorOptions {
+            border: EnlargementBorder::from_all(self.options.radius),
+            strategy: EnlargementStrategy::Constant(Srgba::new(0f32, 0f32, 0f32, 0f32)),
+        });
+        let image = enlargement_processor.process(
+            image,
+            pipeline_progress
+                .read()
+                .unwrap()
+                .get_current_individual_progress(),
+        );
+        pipeline_progress.write().unwrap().increment_combined();
+
+        let mean_processor = MedianProcessor::new().with_options(MedianProcessorOptions {
+            radius: self.options.radius,
+        });
+        let image = mean_processor.process(
+            image,
+            pipeline_progress
+                .read()
+                .unwrap()
+                .get_current_individual_progress(),
+        );
+        pipeline_progress.write().unwrap().increment_combined();
+
+        let crop_processor = CropProcessor::new().with_options(CropProcessorOptions {
+            x: self.options.radius,
+            y: self.options.radius,
+            width: image.get_width() - 2 * self.options.radius,
+            height: image.get_height() - 2 * self.options.radius,
+        });
+        let image = crop_processor.process(
+            image,
+            pipeline_progress
+                .read()
+                .unwrap()
+                .get_current_individual_progress(),
+        );
+        pipeline_progress.write().unwrap().increment_combined();
+        image
     }
 }

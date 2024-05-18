@@ -15,9 +15,9 @@ pub struct SobelRgbCommandHandler;
 impl CommandHandler for SobelRgbCommandHandler {
     fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
-        let use_fast_approximation = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
+        let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
         let sobel_rgb_pipeline = SobelRgbPipeline::new(SobelRgbPipelineOptions {
-            use_fast_approximation: use_fast_approximation.clone(),
+            fast: fast.clone(),
         });
         
         let pipeline_progress = Arc::new(RwLock::new(PipelineProgress::new()));

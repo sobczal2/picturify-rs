@@ -18,6 +18,8 @@ impl NegativePipeline {
     }
 }
 
+const NEGATIVE_PROCESSOR_NAME: &str = "Negative";
+
 impl Pipeline for NegativePipeline {
     fn run(
         &self,
@@ -29,8 +31,8 @@ impl Pipeline for NegativePipeline {
         });
         
         let mut pipeline_progress_write = pipeline_progress.write().unwrap();
+        pipeline_progress_write.new_individual(NEGATIVE_PROCESSOR_NAME.to_string());
         pipeline_progress_write.setup_combined(1);
-        pipeline_progress_write.new_individual("Negative".to_string());
         drop(pipeline_progress_write);
 
         let processor = NegativeProcessor::new();

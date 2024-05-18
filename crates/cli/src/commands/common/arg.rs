@@ -1,4 +1,4 @@
-use clap::{Arg, Command, value_parser};
+use clap::{Arg, ArgAction, Command, value_parser};
 use picturify_processing::processors::color::grayscale::GrayscaleStrategy;
 
 pub enum ArgType {
@@ -33,6 +33,7 @@ impl ArgType {
             ArgType::Fast => Arg::new(self.to_id())
                 .short('f')
                 .long("fast")
+                .action(ArgAction::SetTrue)
                 .help("Use faster, but less accurate approximation of the algorithm")
                 .default_value("false")
                 .value_parser(value_parser!(bool)),
@@ -50,7 +51,7 @@ impl ArgType {
             ArgType::Input => "input",
             ArgType::Output => "output",
             ArgType::Radius => "radius",
-            ArgType::Fast => "use-fast-approximation",
+            ArgType::Fast => "fast",
             ArgType::GrayscaleStrategy => "grayscale-strategy",
         }
     }

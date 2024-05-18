@@ -16,10 +16,10 @@ impl CommandHandler for MeanCommandHandler {
     fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
         let radius = args.get_one::<usize>(ArgType::Radius.to_id()).unwrap();
-        let use_fast_approximation = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
+        let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
         let negative_pipeline = MeanPipeline::new(MeanPipelineOptions {
             radius: radius.clone(),
-            use_fast_approximation: use_fast_approximation.clone(),
+            fast: fast.clone(),
         });
 
         let pipeline_progress = Arc::new(RwLock::new(PipelineProgress::new()));
