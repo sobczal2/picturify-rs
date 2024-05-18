@@ -4,6 +4,7 @@ use std::sync::Arc;
 pub struct Progress {
     value: Arc<AtomicU32>,
     max_value: u32,
+    on_increment: Option<Box<dyn Fn() + Send + Sync>>,
 }
 
 impl Progress {
@@ -11,6 +12,7 @@ impl Progress {
         Progress {
             value: Arc::new(AtomicU32::new(0)),
             max_value: 0,
+            on_increment: None,
         }
     }
 
@@ -21,6 +23,9 @@ impl Progress {
 
     pub fn increment(&self) {
         self.value.fetch_add(1, Ordering::SeqCst);
+        if let Some(on_increment) = &self.on_increment {
+            on_increment();
+        }
     }
 
     pub fn get(&self) -> u32 {
@@ -29,5 +34,12 @@ impl Progress {
 
     pub fn get_max(&self) -> u32 {
         self.max_value
+    }
+    pub fn get_percentage(&self) -> f32 {
+        (self.get() as f32 / self.get_max() as f32) * 100.0
+    }
+    
+    pub fn set_on_increment<F: Fn() + Send + Sync + 'static>(&mut self, on_increment: F) {
+        self.on_increment = Some(Box::new(on_increment));
     }
 }

@@ -17,7 +17,7 @@ impl CommandHandler for GrayscaleCommandHandler {
     fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
         let strategy = args.get_one::<GrayscaleStrategy>(ArgType::GrayscaleStrategy.to_id()).unwrap();
-        let use_fast_approximation = args.get_one::<bool>(ArgType::UseFastApproximation.to_id()).unwrap();
+        let use_fast_approximation = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
         let grayscale_pipeline = GrayscalePipeline::new(GrayscalePipelineOptions {
             strategy: strategy.clone(),
             use_fast_approximation: use_fast_approximation.clone(),

@@ -44,7 +44,7 @@ impl Pipeline for KuwaharaPipeline {
             pipeline_progress
                 .read()
                 .unwrap()
-                .get_individual_progress("Kuwahara".to_string()),
+                .get_current_individual_progress(),
         );
         pipeline_progress.write().unwrap().increment_combined();
         final_image

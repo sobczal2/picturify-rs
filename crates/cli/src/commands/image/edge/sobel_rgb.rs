@@ -7,7 +7,7 @@ impl Command for SobelRgbCommand {
     fn get() -> clap::Command {
         let cmd = clap::Command::new(Self::name())
             .arg(
-                ArgType::UseFastApproximation.to_arg(),
+                ArgType::Fast.to_arg(),
             )
             .about("Run sobel rgb processing pipeline on an fast_image");
         add_input_output_args(cmd)

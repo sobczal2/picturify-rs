@@ -10,7 +10,7 @@ impl Command for GrayscaleCommand {
                 ArgType::GrayscaleStrategy.to_arg(),
             )
             .arg(
-                ArgType::UseFastApproximation.to_arg(),
+                ArgType::Fast.to_arg(),
             )
             .about("Run grayscale processing pipeline on the image");
         add_input_output_args(cmd)

@@ -42,7 +42,7 @@ impl Pipeline for MedianPipeline {
             pipeline_progress
                 .read()
                 .unwrap()
-                .get_individual_progress("Median".to_string()),
+                .get_current_individual_progress(),
         );
         pipeline_progress.write().unwrap().increment_combined();
         final_image

@@ -53,7 +53,7 @@ impl Processor for SobelProcessor {
         progress
             .write()
             .expect("Failed to lock progress")
-            .setup(height as u32);
+            .setup((height * 2) as u32);
         magnitude_vec
             .iter_mut()
             .enumerate()
@@ -117,6 +117,11 @@ impl Processor for SobelProcessor {
 
         let min_magnitude = *min_magnitude.lock().unwrap();
         let max_magnitude = *max_magnitude.lock().unwrap();
+        
+        let inner_progress = Arc::new(RwLock::new(Progress::new()));
+        inner_progress.write().unwrap().set_on_increment(move || {
+            progress.write().unwrap().increment();
+        });
 
         if self.options.use_fast_approximation {
             fast_image.par_apply_fn_to_image_pixel(
@@ -133,7 +138,7 @@ impl Processor for SobelProcessor {
                     pixel[1] = magnitude;
                     pixel[2] = magnitude;
                 },
-                Some(progress),
+                Some(inner_progress),
             );
         } else {
             fast_image.par_apply_fn_to_lin_srgba(
@@ -150,7 +155,7 @@ impl Processor for SobelProcessor {
 
                     pixel
                 },
-                Some(progress),
+                Some(inner_progress),
             );
         }
 

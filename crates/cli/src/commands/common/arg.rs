@@ -5,7 +5,7 @@ pub enum ArgType {
     Input,
     Output,
     Radius,
-    UseFastApproximation,
+    Fast,
     GrayscaleStrategy,
 }
 
@@ -30,10 +30,10 @@ impl ArgType {
                 .help("Radius of the filter")
                 .default_value("3")
                 .value_parser(value_parser!(usize)),
-            ArgType::UseFastApproximation => Arg::new(self.to_id())
+            ArgType::Fast => Arg::new(self.to_id())
                 .short('f')
-                .long("use-fast-approximation")
-                .help("Use fast approximation for filter")
+                .long("fast")
+                .help("Use faster, but less accurate approximation of the algorithm")
                 .default_value("false")
                 .value_parser(value_parser!(bool)),
             ArgType::GrayscaleStrategy => Arg::new(self.to_id())
@@ -50,7 +50,7 @@ impl ArgType {
             ArgType::Input => "input",
             ArgType::Output => "output",
             ArgType::Radius => "radius",
-            ArgType::UseFastApproximation => "use-fast-approximation",
+            ArgType::Fast => "use-fast-approximation",
             ArgType::GrayscaleStrategy => "grayscale-strategy",
         }
     }

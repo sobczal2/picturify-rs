@@ -6,6 +6,7 @@ use picturify_core::fast_image::io::{ReadFromFile, WriteToFile};
 use picturify_core::threading::progress::Progress;
 use picturify_processing::common::execution::{Processor, WithOptions};
 use picturify_processing::processors::color::grayscale::{GrayscaleProcessor, GrayscaleProcessorOptions, GrayscaleStrategy};
+use picturify_processing::processors::geometry::crop::{CropProcessor, CropProcessorOptions};
 
 fn main() {
     run_image();
@@ -51,9 +52,11 @@ fn run_movie() {
 fn run_image() {
     let fast_image = *FastImage::read_from_file("/home/sobczal/Downloads/large.jpg").unwrap();
 
-    let processor = GrayscaleProcessor::new().with_options(GrayscaleProcessorOptions {
-        strategy: GrayscaleStrategy::Luminosity,
-        use_fast_approximation: false,
+    let processor = CropProcessor::new().with_options(CropProcessorOptions {
+        x: 100,
+        y: 100,
+        width: 2000,
+        height: 2000,
     });
     
     let start = Instant::now();

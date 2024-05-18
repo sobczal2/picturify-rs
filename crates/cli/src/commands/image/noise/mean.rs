@@ -10,7 +10,7 @@ impl Command for MeanCommand {
                 ArgType::Radius.to_arg(),
             )
             .arg(
-                ArgType::UseFastApproximation.to_arg(),
+                ArgType::Fast.to_arg(),
             )
             .about("Run mean processing pipeline on an fast_image");
         add_input_output_args(cmd)

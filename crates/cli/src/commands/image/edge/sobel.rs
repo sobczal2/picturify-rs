@@ -7,7 +7,7 @@ impl Command for SobelCommand {
     fn get() -> clap::Command {
         let cmd = clap::Command::new(Self::name())
             .arg(
-                ArgType::UseFastApproximation.to_arg(),
+                ArgType::Fast.to_arg(),
             )
             .about("Run sobel processing pipeline on the image");
         add_input_output_args(cmd)
