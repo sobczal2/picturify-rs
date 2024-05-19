@@ -4,7 +4,7 @@ use std::sync::{Arc, RwLock};
 pub struct PipelineProgress {
     combined_progress: Progress,
     individual_progresses: Vec<(String, Arc<RwLock<Progress>>)>,
-    ready: bool
+    ready: bool,
 }
 
 impl PipelineProgress {
@@ -12,11 +12,11 @@ impl PipelineProgress {
         Self {
             combined_progress: Progress::new(),
             individual_progresses: Vec::new(),
-            ready: false
+            ready: false,
         }
     }
 
-    pub fn setup_combined(&mut self, max_value: u32) {
+    pub fn setup_combined(&mut self, max_value: usize) {
         self.combined_progress.setup(max_value);
         self.ready = true;
     }
@@ -35,20 +35,20 @@ impl PipelineProgress {
         self.individual_progresses[current_index].1.clone()
     }
 
-    pub fn get_combined_value(&self) -> u32 {
+    pub fn get_combined_value(&self) -> usize {
         self.combined_progress.get()
     }
 
-    pub fn get_combined_max(&self) -> u32 {
+    pub fn get_combined_max(&self) -> usize {
         self.combined_progress.get_max()
     }
 
-    pub fn get_current_individual_value(&self) -> u32 {
+    pub fn get_current_individual_value(&self) -> usize {
         let progress = self.get_current_individual_progress();
         progress.clone().read().unwrap().get()
     }
 
-    pub fn get_current_individual_max(&self) -> u32 {
+    pub fn get_current_individual_max(&self) -> usize {
         let progress = self.get_current_individual_progress();
         progress.clone().read().unwrap().get_max()
     }
@@ -62,11 +62,16 @@ impl PipelineProgress {
         let current_index = self.combined_progress.get() as usize;
         self.individual_progresses[current_index].0.clone()
     }
-    
+
+    pub fn get_last_individual_name(&self) -> String {
+        let last_index = self.individual_progresses.len() - 1;
+        self.individual_progresses[last_index].0.clone()
+    }
+
     pub fn is_ready(&self) -> bool {
         self.ready
     }
-    
+
     pub fn is_finished(&self) -> bool {
         self.get_combined_value() == self.get_combined_max()
     }

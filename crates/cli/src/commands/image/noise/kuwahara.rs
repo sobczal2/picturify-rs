@@ -6,12 +6,8 @@ pub struct KuwaharaCommand;
 impl Command for KuwaharaCommand {
     fn get() -> clap::Command {
         let cmd = clap::Command::new(Self::name())
-            .arg(
-                ArgType::Radius.to_arg(),
-            )
-            .arg(
-                ArgType::Fast.to_arg(),
-            )
+            .arg(ArgType::Radius.to_arg())
+            .arg(ArgType::Fast.to_arg())
             .about("Run kuwahara processing pipeline on the image");
         add_input_output_args(cmd)
     }

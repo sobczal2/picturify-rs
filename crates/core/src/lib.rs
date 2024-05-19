@@ -1,3 +1,4 @@
+pub mod conversions;
 pub mod error;
 pub mod fast_image;
 pub mod threading;

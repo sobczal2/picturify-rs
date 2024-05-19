@@ -1,4 +1,5 @@
 use crate::common::execution::{Processor, WithOptions};
+use crate::helpers::kernels::ConvolutionKernel;
 use crate::processors::internal::convolution_rgb::{
     ConvolutionRgbProcessor, ConvolutionRgbProcessorOptions,
 };
@@ -42,14 +43,9 @@ impl Processor for MeanProcessor {
     fn process(&self, fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
         let radius = self.options.radius;
 
-        let kernel = vec![1.0; (2 * radius + 1) * (2 * radius + 1)];
         let processor =
             ConvolutionRgbProcessor::new().with_options(ConvolutionRgbProcessorOptions {
-                kernel,
-                kernel_width: 2 * radius + 1,
-                kernel_height: 2 * radius + 1,
-                kernel_divisor: (2 * radius + 1) as f32 * (2 * radius + 1) as f32,
-                kernel_offset: 0.0,
+                kernel: ConvolutionKernel::new_mean(radius),
                 use_fast_approximation: self.options.use_fast_approximation,
             });
         processor.process(fast_image, progress)

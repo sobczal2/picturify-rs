@@ -1,7 +1,6 @@
 use crate::common::execution::{Processor, WithOptions};
-use picturify_core::fast_image::apply_fn_to_pixels::{
-    ApplyFnToImagePixels, ApplyFnToPalettePixels,
-};
+use crate::helpers::kernels::{create_sobel_kernel_x, create_sobel_kernel_y};
+use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels, Offset};
 use picturify_core::fast_image::FastImage;
 use picturify_core::rayon::prelude::*;
 use picturify_core::threading::progress::Progress;
@@ -22,10 +21,6 @@ impl Default for SobelRgbProcessorOptions {
 pub struct SobelRgbProcessor {
     options: SobelRgbProcessorOptions,
 }
-
-const SOBEL_KERNEL_X: [[f32; 3]; 3] = [[-1.0, 0.0, 1.0], [-2.0, 0.0, 2.0], [-1.0, 0.0, 1.0]];
-
-const SOBEL_KERNEL_Y: [[f32; 3]; 3] = [[-1.0, -2.0, -1.0], [0.0, 0.0, 0.0], [1.0, 2.0, 1.0]];
 
 impl SobelRgbProcessor {
     pub fn new() -> Self {
@@ -58,10 +53,13 @@ impl Processor for SobelRgbProcessor {
         let green_max_magnitude = Arc::new(Mutex::new(f32::MIN));
         let blue_max_magnitude = Arc::new(Mutex::new(f32::MIN));
 
+        let sobel_kernel_x = create_sobel_kernel_x();
+        let sobel_kernel_y = create_sobel_kernel_y();
+
         progress
             .write()
             .expect("Failed to lock progress")
-            .setup(height as u32);
+            .setup((height - 2) * 2);
         red_magnitude_vec
             .iter_mut()
             .zip(green_magnitude_vec.iter_mut())
@@ -115,12 +113,12 @@ impl Processor for SobelRgbProcessor {
                                         blue = pixel.blue;
                                     }
 
-                                    red_magnitude_x += SOBEL_KERNEL_X[j][i] * red;
-                                    red_magnitude_y += SOBEL_KERNEL_Y[j][i] * red;
-                                    green_magnitude_x += SOBEL_KERNEL_X[j][i] * green;
-                                    green_magnitude_y += SOBEL_KERNEL_Y[j][i] * green;
-                                    blue_magnitude_x += SOBEL_KERNEL_X[j][i] * blue;
-                                    blue_magnitude_y += SOBEL_KERNEL_Y[j][i] * blue;
+                                    red_magnitude_x += sobel_kernel_x[j][i] * red;
+                                    red_magnitude_y += sobel_kernel_y[j][i] * red;
+                                    green_magnitude_x += sobel_kernel_x[j][i] * green;
+                                    green_magnitude_y += sobel_kernel_y[j][i] * green;
+                                    blue_magnitude_x += sobel_kernel_x[j][i] * blue;
+                                    blue_magnitude_y += sobel_kernel_y[j][i] * blue;
                                 }
                             }
 
@@ -192,13 +190,17 @@ impl Processor for SobelRgbProcessor {
         let green_max_magnitude = *green_max_magnitude.lock().unwrap();
         let blue_min_magnitude = *blue_min_magnitude.lock().unwrap();
         let blue_max_magnitude = *blue_max_magnitude.lock().unwrap();
+        
+        let offset = Offset {
+            skip_rows: 1,
+            take_rows: height - 2,
+            skip_columns: 1,
+            take_columns: width - 2,
+        };
 
         if self.options.use_fast_approximation {
-            fast_image.par_apply_fn_to_image_pixel(
+            fast_image.par_apply_fn_to_image_pixel_with_offset(
                 |pixel, x, y| {
-                    if x == 0 || y == 0 || x == width - 1 || y == height - 1 {
-                        return;
-                    }
                     let red_magnitude = red_magnitude_vec[y - 1][x - 1];
                     let green_magnitude = green_magnitude_vec[y - 1][x - 1];
                     let blue_magnitude = blue_magnitude_vec[y - 1][x - 1];
@@ -220,13 +222,11 @@ impl Processor for SobelRgbProcessor {
                     pixel[2] = blue_magnitude;
                 },
                 Some(progress),
+                offset,
             );
         } else {
-            fast_image.par_apply_fn_to_lin_srgba(
+            fast_image.par_apply_fn_to_lin_srgba_with_offset(
                 |mut pixel, x, y| {
-                    if x == 0 || y == 0 || x == width - 1 || y == height - 1 {
-                        return pixel;
-                    }
                     let red_magnitude = red_magnitude_vec[y - 1][x - 1];
                     let green_magnitude = green_magnitude_vec[y - 1][x - 1];
                     let blue_magnitude = blue_magnitude_vec[y - 1][x - 1];
@@ -244,6 +244,7 @@ impl Processor for SobelRgbProcessor {
                     pixel
                 },
                 Some(progress),
+                offset,
             );
         }
 

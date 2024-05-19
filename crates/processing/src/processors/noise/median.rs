@@ -44,7 +44,7 @@ impl Processor for MedianProcessor {
         progress
             .write()
             .expect("Failed to lock progress")
-            .setup((height - 2 * radius) as u32);
+            .setup(height - 2 * radius);
         new_fast_image
             .rows_mut()
             .enumerate()

@@ -5,6 +5,13 @@ use palette::rgb::Rgb;
 use palette::{Clamp, IntoColor, LinSrgba, Srgba, WithAlpha};
 use std::sync::{Arc, RwLock};
 
+pub struct Offset {
+    pub skip_rows: usize,
+    pub take_rows: usize,
+    pub skip_columns: usize,
+    pub take_columns: usize,
+}
+
 pub trait ApplyFnToPalettePixels {
     fn apply_fn_to_srgba<F>(&mut self, f: F, progress: Option<Arc<RwLock<Progress>>>)
     where
@@ -59,6 +66,94 @@ pub trait ApplyFnToPalettePixels {
     {
         self.par_apply_fn_to_srgba(|pixel, x, y| run_on_srgba_pixel(pixel, x, y, &f), progress);
     }
+
+    fn apply_fn_to_srgba_with_offset<F>(
+        &mut self,
+        f: F,
+        progress: Option<Arc<RwLock<Progress>>>,
+        offset: Offset,
+    ) where
+        F: Fn(Srgba, usize, usize) -> Srgba;
+
+    fn apply_fn_to_linsrgba_with_offset<F>(
+        &mut self,
+        f: F,
+        progress: Option<Arc<RwLock<Progress>>>,
+        offset: Offset,
+    ) where
+        F: Fn(LinSrgba, usize, usize) -> LinSrgba,
+    {
+        self.apply_fn_to_srgba_with_offset(
+            |pixel, x, y| {
+                let linsrgba = pixel.into_linear();
+                let new_linsrgba = f(linsrgba, x, y);
+                new_linsrgba.into()
+            },
+            progress,
+            offset,
+        );
+    }
+
+    fn apply_fn_to_pixel_with_offset<F, P>(
+        &mut self,
+        f: F,
+        progress: Option<Arc<RwLock<Progress>>>,
+        offset: Offset,
+    ) where
+        F: Fn(P, usize, usize) -> P + Send + Sync,
+        P: FromColorUnclamped<Rgb> + Clamp + WithAlpha<f32>,
+        Rgb: FromColorUnclamped<<P as WithAlpha<f32>>::Color>,
+    {
+        self.apply_fn_to_srgba_with_offset(
+            |pixel, x, y| run_on_srgba_pixel(pixel, x, y, &f),
+            progress,
+            offset,
+        );
+    }
+
+    fn par_apply_fn_to_srgba_with_offset<F>(
+        &mut self,
+        f: F,
+        progress: Option<Arc<RwLock<Progress>>>,
+        offset: Offset,
+    ) where
+        F: Fn(Srgba, usize, usize) -> Srgba + Send + Sync;
+
+    fn par_apply_fn_to_lin_srgba_with_offset<F>(
+        &mut self,
+        f: F,
+        progress: Option<Arc<RwLock<Progress>>>,
+        offset: Offset,
+    ) where
+        F: Fn(LinSrgba, usize, usize) -> LinSrgba + Send + Sync,
+    {
+        self.par_apply_fn_to_srgba_with_offset(
+            |pixel, x, y| {
+                let linsrgba: LinSrgba = pixel.into_linear();
+                let new_linsrgba = f(linsrgba, x, y);
+                new_linsrgba.into()
+            },
+            progress,
+            offset,
+        );
+    }
+
+    fn par_apply_fn_to_pixel_with_offset<F, P>(
+        &mut self,
+        f: F,
+        progress: Option<Arc<RwLock<Progress>>>,
+        offset: Offset,
+    ) where
+        F: Fn(P, usize, usize) -> P + Send + Sync,
+        P: FromColorUnclamped<Rgb> + Clamp + WithAlpha<f32>,
+        Rgb: FromColorUnclamped<<P as WithAlpha<f32>>::Color>,
+    {
+        self.par_apply_fn_to_srgba_with_offset(
+            |pixel, x, y| run_on_srgba_pixel(pixel, x, y, &f),
+            progress,
+            offset,
+        );
+    }
 }
 
 fn run_on_srgba_pixel<F, P>(pixel: Srgba, x: usize, y: usize, f: F) -> Srgba
@@ -80,5 +175,21 @@ pub trait ApplyFnToImagePixels {
 
     fn par_apply_fn_to_image_pixel<F>(&mut self, f: F, progress: Option<Arc<RwLock<Progress>>>)
     where
+        F: Fn(&mut Rgba<u8>, usize, usize) + Send + Sync;
+
+    fn apply_fn_to_image_pixel_with_offset<F>(
+        &mut self,
+        f: F,
+        progress: Option<Arc<RwLock<Progress>>>,
+        offset: Offset,
+    ) where
+        F: Fn(&mut Rgba<u8>, usize, usize);
+
+    fn par_apply_fn_to_image_pixel_with_offset<F>(
+        &mut self,
+        f: F,
+        progress: Option<Arc<RwLock<Progress>>>,
+        offset: Offset,
+    ) where
         F: Fn(&mut Rgba<u8>, usize, usize) + Send + Sync;
 }

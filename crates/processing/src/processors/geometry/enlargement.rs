@@ -5,15 +5,28 @@ use picturify_core::palette::Srgba;
 use picturify_core::threading::progress::Progress;
 use std::sync::{Arc, RwLock};
 
+#[derive(Copy, Clone)]
 pub enum EnlargementStrategy {
     Constant(Srgba),
 }
 
+#[derive(Copy, Clone)]
 pub struct EnlargementBorder {
     pub top: usize,
     pub right: usize,
     pub bottom: usize,
     pub left: usize,
+}
+
+impl Default for EnlargementBorder {
+    fn default() -> Self {
+        EnlargementBorder {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+        }
+    }
 }
 
 impl EnlargementBorder {
@@ -25,7 +38,7 @@ impl EnlargementBorder {
             left,
         }
     }
-    
+
     pub fn from_all(all: usize) -> Self {
         EnlargementBorder {
             top: all,
@@ -34,7 +47,7 @@ impl EnlargementBorder {
             left: all,
         }
     }
-    
+
     pub fn from_x_y(x: usize, y: usize) -> Self {
         EnlargementBorder {
             top: y,
@@ -52,17 +65,13 @@ pub struct EnlargementProcessor {
 impl Default for EnlargementProcessorOptions {
     fn default() -> Self {
         EnlargementProcessorOptions {
-            border: EnlargementBorder {
-                top: 0,
-                right: 0,
-                bottom: 0,
-                left: 0,
-            },
+            border: Default::default(),
             strategy: EnlargementStrategy::Constant(Srgba::new(0f32, 0f32, 0f32, 0f32)),
         }
     }
 }
 
+#[derive(Copy, Clone)]
 pub struct EnlargementProcessorOptions {
     pub border: EnlargementBorder,
     pub strategy: EnlargementStrategy,
@@ -84,8 +93,10 @@ impl WithOptions<EnlargementProcessorOptions> for EnlargementProcessor {
 
 impl Processor for EnlargementProcessor {
     fn process(&self, fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
-        let new_width = fast_image.get_width() + self.options.border.left + self.options.border.right;
-        let new_height = fast_image.get_height() + self.options.border.top + self.options.border.bottom;
+        let new_width =
+            fast_image.get_width() + self.options.border.left + self.options.border.right;
+        let new_height =
+            fast_image.get_height() + self.options.border.top + self.options.border.bottom;
 
         let mut new_image = FastImage::empty(new_width, new_height);
 
@@ -100,8 +111,10 @@ impl Processor for EnlargementProcessor {
                         {
                             pixel
                         } else {
-                            fast_image
-                                .get_srgba_pixel(x - self.options.border.left, y - self.options.border.top)
+                            fast_image.get_srgba_pixel(
+                                x - self.options.border.left,
+                                y - self.options.border.top,
+                            )
                         }
                     },
                     Some(progress),

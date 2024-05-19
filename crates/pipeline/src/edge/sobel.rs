@@ -1,12 +1,19 @@
+use std::sync::{Arc, RwLock};
+
+use picturify_core::fast_image::FastImage;
+use picturify_core::palette::Srgba;
+use picturify_processing::common::execution::WithOptions;
+use picturify_processing::processors::edge::sobel::{SobelProcessor, SobelProcessorOptions};
+use picturify_processing::processors::geometry::crop::{CropBorder, CropProcessorOptions};
+use picturify_processing::processors::geometry::enlargement::{
+    EnlargementBorder, EnlargementProcessorOptions, EnlargementStrategy,
+};
+
+use crate::common::enlargement_crop_pipeline::{
+    EnlargementCropPipeline, EnlargementCropPipelineOptions,
+};
 use crate::common::pipeline_progress::PipelineProgress;
 use crate::pipeline::Pipeline;
-use picturify_core::fast_image::FastImage;
-use picturify_processing::common::execution::{Processor, WithOptions};
-use picturify_processing::processors::edge::sobel::{SobelProcessor, SobelProcessorOptions};
-use std::sync::{Arc, RwLock};
-use picturify_core::palette::Srgba;
-use picturify_processing::processors::geometry::crop::{CropProcessor, CropProcessorOptions};
-use picturify_processing::processors::geometry::enlargement::{EnlargementBorder, EnlargementProcessor, EnlargementProcessorOptions, EnlargementStrategy};
 
 pub struct SobelPipelineOptions {
     pub fast: bool,
@@ -22,108 +29,32 @@ impl SobelPipeline {
     }
 }
 
+const SOBEL_PROCESSOR_NAME: &str = "Sobel";
+
 impl Pipeline for SobelPipeline {
     fn run(
         &self,
         image: FastImage,
         pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
     ) -> FastImage {
-        match self.options.fast {
-            true => self.run_fast(image, pipeline_progress),
-            false => self.run_slow(image, pipeline_progress),
-        }
-    }
-}
-
-const ENLARGEMENT_PROCESSOR_NAME: &str = "Enlargement";
-const SOBEL_PROCESSOR_NAME: &str = "Sobel";
-const CROP_PROCESSOR_NAME: &str = "Crop";
-
-impl SobelPipeline {
-    fn run_fast(
-        &self,
-        image: FastImage,
-        pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
-    ) -> FastImage {
-        let pipeline_progress = pipeline_progress.unwrap_or_else(|| {
-            Arc::new(RwLock::new(PipelineProgress::new()))
+        let processor = SobelProcessor::new().with_options(SobelProcessorOptions {
+            use_fast_approximation: self.options.fast,
+        });
+        let width = image.get_width();
+        let height = image.get_height();
+        let pipeline = EnlargementCropPipeline::new(EnlargementCropPipelineOptions {
+            fast: self.options.fast,
+            processor_name: SOBEL_PROCESSOR_NAME.to_string(),
+            processor: Box::new(processor),
+            enlargement_processor_options: EnlargementProcessorOptions {
+                strategy: EnlargementStrategy::Constant(Srgba::new(0.0, 0.0, 0.0, 1.0)),
+                border: EnlargementBorder::from_all(1),
+            },
+            crop_processor_options: CropProcessorOptions {
+                crop_border: CropBorder::new(width, height, 1, 1),
+            },
         });
 
-        let mut pipeline_progress_write = pipeline_progress.write().unwrap();
-        pipeline_progress_write.new_individual(SOBEL_PROCESSOR_NAME.to_string());
-        pipeline_progress_write.setup_combined(1);
-        drop(pipeline_progress_write);
-
-        let sobel_processor = SobelProcessor::new().with_options(SobelProcessorOptions {
-            use_fast_approximation: true,
-        });
-        let image = sobel_processor.process(
-            image,
-            pipeline_progress
-                .read()
-                .unwrap()
-                .get_current_individual_progress(),
-        );
-        pipeline_progress.write().unwrap().increment_combined();
-
-        image
-    }
-    
-    fn run_slow(
-        &self,
-        image: FastImage,
-        pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
-    ) -> FastImage {
-        let pipeline_progress = pipeline_progress.unwrap_or_else(|| {
-            Arc::new(RwLock::new(PipelineProgress::new()))
-        });
-
-        let mut pipeline_progress_write = pipeline_progress.write().unwrap();
-        pipeline_progress_write.new_individual(ENLARGEMENT_PROCESSOR_NAME.to_string());
-        pipeline_progress_write.new_individual(SOBEL_PROCESSOR_NAME.to_string());
-        pipeline_progress_write.new_individual(CROP_PROCESSOR_NAME.to_string());
-        pipeline_progress_write.setup_combined(3);
-        drop(pipeline_progress_write);
-
-        let enlargement_processor = EnlargementProcessor::new().with_options(EnlargementProcessorOptions {
-            border: EnlargementBorder::from_all(1),
-            strategy: EnlargementStrategy::Constant(Srgba::new(0f32, 0f32, 0f32, 0f32)),
-        });
-        let image = enlargement_processor.process(
-            image,
-            pipeline_progress
-                .read()
-                .unwrap()
-                .get_current_individual_progress(),
-        );
-        pipeline_progress.write().unwrap().increment_combined();
-
-        let sobel_processor = SobelProcessor::new().with_options(SobelProcessorOptions {
-            use_fast_approximation: false,
-        });
-        let image = sobel_processor.process(
-            image,
-            pipeline_progress
-                .read()
-                .unwrap()
-                .get_current_individual_progress(),
-        );
-        pipeline_progress.write().unwrap().increment_combined();
-
-        let crop_processor = CropProcessor::new().with_options(CropProcessorOptions {
-            x: 1,
-            y: 1,
-            width: image.get_width() - 2,
-            height: image.get_height() - 2,
-        });
-        let image = crop_processor.process(
-            image,
-            pipeline_progress
-                .read()
-                .unwrap()
-                .get_current_individual_progress(),
-        );
-        pipeline_progress.write().unwrap().increment_combined();
-        image
+        pipeline.run(image, pipeline_progress)
     }
 }

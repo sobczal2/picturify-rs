@@ -1,19 +1,20 @@
-use std::time::Instant;
-use crate::commands::common::picturify::PicturifyCommand;
-use crate::handlers::common::image::ImageCommandHandler;
-#[allow(unused_imports)]
-use log::{error, info, LevelFilter, warn};
-use simplelog::*;
 use crate::commands::common::command::Command;
+use crate::commands::common::picturify::PicturifyCommand;
 use crate::error::CliPicturifyError;
 use crate::handlers::common::handler::CommandHandler;
+use crate::handlers::common::image::ImageCommandHandler;
 use crate::handlers::common::movie::MovieCommandHandler;
+#[allow(unused_imports)]
+use log::{error, info, warn, LevelFilter};
+use picturify_core::rayon::ThreadPoolBuilder;
+use simplelog::*;
+use std::time::Instant;
 
 mod commands;
+mod error;
 mod handlers;
 mod metadata;
 mod progress;
-mod error;
 
 fn main() {
     #[cfg(debug_assertions)]
@@ -23,7 +24,7 @@ fn main() {
         TerminalMode::Mixed,
         ColorChoice::Auto,
     )
-        .unwrap();
+    .unwrap();
 
     #[cfg(not(debug_assertions))]
     TermLogger::init(
@@ -32,6 +33,11 @@ fn main() {
         TerminalMode::Mixed,
         ColorChoice::Auto,
     )
+    .unwrap();
+
+    ThreadPoolBuilder::new()
+        .num_threads(1)
+        .build_global()
         .unwrap();
 
     welcome();
@@ -40,25 +46,24 @@ fn main() {
     let matches = PicturifyCommand::get().get_matches();
 
     let result = match matches.subcommand() {
-        Some(("image", args)) => {
-            ImageCommandHandler::handle(args.clone())
-        }
-        Some(("movie", args)) => {
-            MovieCommandHandler::handle(args.clone())
-        }
+        Some(("image", args)) => ImageCommandHandler::handle(args.clone()),
+        Some(("movie", args)) => MovieCommandHandler::handle(args.clone()),
         _ => {
             error!("No command specified");
             Err(CliPicturifyError::MissingCommand)
         }
     };
-    
+
     if let Err(e) = result {
         error!("{}", e);
     }
-    
+
     let duration = start.elapsed();
     match duration.as_secs() {
-        0 => info!("Damn, that was fast! Execution time: {}ms", duration.as_millis()),
+        0 => info!(
+            "Damn, that was fast! Execution time: {}ms",
+            duration.as_millis()
+        ),
         _ => info!("Execution time: {}s", duration.as_secs()),
     }
 }

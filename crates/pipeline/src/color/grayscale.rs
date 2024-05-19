@@ -1,9 +1,11 @@
-use std::sync::{Arc, RwLock};
-use picturify_core::fast_image::FastImage;
-use picturify_processing::common::execution::{Processor, WithOptions};
-use picturify_processing::processors::color::grayscale::{GrayscaleProcessor, GrayscaleProcessorOptions, GrayscaleStrategy};
 use crate::common::pipeline_progress::PipelineProgress;
 use crate::pipeline::Pipeline;
+use picturify_core::fast_image::FastImage;
+use picturify_processing::common::execution::{Processor, WithOptions};
+use picturify_processing::processors::color::grayscale::{
+    GrayscaleProcessor, GrayscaleProcessorOptions, GrayscaleStrategy,
+};
+use std::sync::{Arc, RwLock};
 
 pub struct GrayscalePipelineOptions {
     pub strategy: GrayscaleStrategy,
@@ -28,9 +30,8 @@ impl Pipeline for GrayscalePipeline {
         fast_image: FastImage,
         pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
     ) -> FastImage {
-        let pipeline_progress = pipeline_progress.unwrap_or_else(|| {
-            Arc::new(RwLock::new(PipelineProgress::new()))
-        });
+        let pipeline_progress =
+            pipeline_progress.unwrap_or_else(|| Arc::new(RwLock::new(PipelineProgress::new())));
 
         let mut pipeline_progress_write = pipeline_progress.write().unwrap();
         pipeline_progress_write.new_individual(GRAYSCALE_PROCESSOR_NAME.to_string());

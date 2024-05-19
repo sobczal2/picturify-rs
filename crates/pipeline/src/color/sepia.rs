@@ -26,10 +26,9 @@ impl Pipeline for SepiaPipeline {
         fast_image: FastImage,
         pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
     ) -> FastImage {
-        let pipeline_progress = pipeline_progress.unwrap_or_else(|| {
-            Arc::new(RwLock::new(PipelineProgress::new()))
-        });
-        
+        let pipeline_progress =
+            pipeline_progress.unwrap_or_else(|| Arc::new(RwLock::new(PipelineProgress::new())));
+
         let mut pipeline_progress_write = pipeline_progress.write().unwrap();
         pipeline_progress_write.new_individual(SEPIA_PROCESSOR_NAME.to_string());
         pipeline_progress_write.setup_combined(1);

@@ -1,4 +1,4 @@
-use clap::{Arg, ArgAction, Command, value_parser};
+use clap::{value_parser, Arg, ArgAction, Command};
 use picturify_processing::processors::color::grayscale::GrayscaleStrategy;
 
 pub enum ArgType {
@@ -7,6 +7,7 @@ pub enum ArgType {
     Radius,
     Fast,
     GrayscaleStrategy,
+    Sigma,
 }
 
 impl ArgType {
@@ -43,9 +44,15 @@ impl ArgType {
                 .help("Grayscale strategy")
                 .default_value("luminosity")
                 .value_parser(value_parser!(GrayscaleStrategy)),
+            ArgType::Sigma => Arg::new(self.to_id())
+                .short('s')
+                .long("sigma")
+                .help("Sigma value")
+                .default_value("1.0")
+                .value_parser(value_parser!(f32)),
         }
     }
-    
+
     pub fn to_id(&self) -> &'static str {
         match self {
             ArgType::Input => "input",
@@ -53,6 +60,7 @@ impl ArgType {
             ArgType::Radius => "radius",
             ArgType::Fast => "fast",
             ArgType::GrayscaleStrategy => "grayscale-strategy",
+            ArgType::Sigma => "sigma",
         }
     }
 }

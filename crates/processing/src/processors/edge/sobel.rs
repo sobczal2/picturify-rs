@@ -1,7 +1,6 @@
 use crate::common::execution::{Processor, WithOptions};
-use picturify_core::fast_image::apply_fn_to_pixels::{
-    ApplyFnToImagePixels, ApplyFnToPalettePixels,
-};
+use crate::helpers::kernels::{create_sobel_kernel_x, create_sobel_kernel_y};
+use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels, Offset};
 use picturify_core::fast_image::FastImage;
 use picturify_core::rayon::prelude::*;
 use picturify_core::threading::progress::Progress;
@@ -22,10 +21,6 @@ impl Default for SobelProcessorOptions {
 pub struct SobelProcessor {
     options: SobelProcessorOptions,
 }
-
-const SOBEL_KERNEL_X: [[f32; 3]; 3] = [[-1.0, 0.0, 1.0], [-2.0, 0.0, 2.0], [-1.0, 0.0, 1.0]];
-
-const SOBEL_KERNEL_Y: [[f32; 3]; 3] = [[-1.0, -2.0, -1.0], [0.0, 0.0, 0.0], [1.0, 2.0, 1.0]];
 
 impl SobelProcessor {
     pub fn new() -> Self {
@@ -50,10 +45,13 @@ impl Processor for SobelProcessor {
         let min_magnitude = Arc::new(Mutex::new(f32::MAX));
         let max_magnitude = Arc::new(Mutex::new(f32::MIN));
 
+        let sobel_kernel_x = create_sobel_kernel_x();
+        let sobel_kernel_y = create_sobel_kernel_y();
+
         progress
             .write()
             .expect("Failed to lock progress")
-            .setup((height * 2) as u32);
+            .setup((height - 2) * 2);
         magnitude_vec
             .iter_mut()
             .enumerate()
@@ -89,8 +87,8 @@ impl Processor for SobelProcessor {
                                 blue = pixel.blue;
                             }
 
-                            magnitude_x += SOBEL_KERNEL_X[j][i] * (red + green + blue) / 3.0;
-                            magnitude_y += SOBEL_KERNEL_Y[j][i] * (red + green + blue) / 3.0;
+                            magnitude_x += sobel_kernel_x[j][i] * (red + green + blue) / 3.0;
+                            magnitude_y += sobel_kernel_y[j][i] * (red + green + blue) / 3.0;
                         }
                     }
 
@@ -117,18 +115,22 @@ impl Processor for SobelProcessor {
 
         let min_magnitude = *min_magnitude.lock().unwrap();
         let max_magnitude = *max_magnitude.lock().unwrap();
-        
+
         let inner_progress = Arc::new(RwLock::new(Progress::new()));
         inner_progress.write().unwrap().set_on_increment(move || {
             progress.write().unwrap().increment();
         });
+        
+        let offset = Offset {
+            skip_rows: 1,
+            take_rows: height - 2,
+            skip_columns: 1,
+            take_columns: width - 2,
+        };
 
         if self.options.use_fast_approximation {
-            fast_image.par_apply_fn_to_image_pixel(
+            fast_image.par_apply_fn_to_image_pixel_with_offset(
                 |pixel, x, y| {
-                    if x == 0 || y == 0 || x == width - 1 || y == height - 1 {
-                        return;
-                    }
                     let magnitude = magnitude_vec[y - 1][x - 1];
                     let magnitude =
                         ((magnitude - min_magnitude) / (max_magnitude - min_magnitude)) * 255.0;
@@ -139,13 +141,11 @@ impl Processor for SobelProcessor {
                     pixel[2] = magnitude;
                 },
                 Some(inner_progress),
+                offset,
             );
         } else {
-            fast_image.par_apply_fn_to_lin_srgba(
+            fast_image.par_apply_fn_to_lin_srgba_with_offset(
                 |mut pixel, x, y| {
-                    if x == 0 || y == 0 || x == width - 1 || y == height - 1 {
-                        return pixel;
-                    }
                     let magnitude = magnitude_vec[y - 1][x - 1];
                     let magnitude = (magnitude - min_magnitude) / (max_magnitude - min_magnitude);
 
@@ -156,6 +156,7 @@ impl Processor for SobelProcessor {
                     pixel
                 },
                 Some(inner_progress),
+                offset,
             );
         }
 

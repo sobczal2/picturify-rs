@@ -3,11 +3,11 @@ use std::io::{Read, Write};
 use std::process::{Command, Stdio};
 use std::sync::{Arc, RwLock};
 
+use crate::error::{MoviePicturifyError, MoviePicturifyResult};
+use crate::progress::{MovieProgress, ProgressStage};
 use picturify_core::fast_image::FastImage;
 use picturify_pipeline::common::pipeline_progress::PipelineProgress;
 use picturify_pipeline::pipeline::Pipeline;
-use crate::error::{MoviePicturifyError, MoviePicturifyResult};
-use crate::progress::{MovieProgress, ProgressStage};
 
 pub struct MoviePipe;
 
@@ -16,7 +16,7 @@ impl MoviePipe {
         source: String,
         destination: String,
         pipeline: Box<dyn Pipeline>,
-        progress: Arc<RwLock<MovieProgress>>
+        progress: Arc<RwLock<MovieProgress>>,
     ) -> MoviePicturifyResult<()> {
         progress.read().unwrap().set_stage(ProgressStage::Probe);
         let ffprobe_output = Command::new("ffprobe")
@@ -39,13 +39,33 @@ impl MoviePipe {
         if iter.clone().count() != 4 {
             return Err(MoviePicturifyError::FfprobeFailed);
         }
-        let width: u32 = iter.next().unwrap().parse().map_err(|_| MoviePicturifyError::FfprobeFailed)?;
-        let height: u32 = iter.next().unwrap().parse().map_err(|_| MoviePicturifyError::FfprobeFailed)?;
+        let width: u32 = iter
+            .next()
+            .unwrap()
+            .parse()
+            .map_err(|_| MoviePicturifyError::FfprobeFailed)?;
+        let height: u32 = iter
+            .next()
+            .unwrap()
+            .parse()
+            .map_err(|_| MoviePicturifyError::FfprobeFailed)?;
         let mut framerate_iter = iter.next().unwrap().split('/');
-        let framerate_numerator: f32 = framerate_iter.next().unwrap().parse::<f32>().map_err(|_| MoviePicturifyError::FfprobeFailed)?;
-        let framerate_denominator: f32 = framerate_iter.next().unwrap().parse::<f32>().map_err(|_| MoviePicturifyError::FfprobeFailed)?;
+        let framerate_numerator: f32 = framerate_iter
+            .next()
+            .unwrap()
+            .parse::<f32>()
+            .map_err(|_| MoviePicturifyError::FfprobeFailed)?;
+        let framerate_denominator: f32 = framerate_iter
+            .next()
+            .unwrap()
+            .parse::<f32>()
+            .map_err(|_| MoviePicturifyError::FfprobeFailed)?;
         let framerate = framerate_numerator / framerate_denominator;
-        let frame_count: u32 = iter.next().unwrap().parse().map_err(|_| MoviePicturifyError::FfprobeFailed)?;
+        let frame_count = iter
+            .next()
+            .unwrap()
+            .parse()
+            .map_err(|_| MoviePicturifyError::FfprobeFailed)?;
 
         progress.read().unwrap().setup(frame_count);
 
@@ -113,7 +133,9 @@ impl MoviePipe {
         }
 
         ffmpeg_process.stdin = Some(ffmpeg_stdin);
-        ffmpeg_process.wait().map_err(|_| MoviePicturifyError::FfmpegFailed)?;
+        ffmpeg_process
+            .wait()
+            .map_err(|_| MoviePicturifyError::FfmpegFailed)?;
 
         progress.read().unwrap().set_stage(ProgressStage::Merge);
         let mut add_audio = Command::new("ffmpeg")
@@ -136,11 +158,13 @@ impl MoviePipe {
             .spawn()
             .map_err(|_| MoviePicturifyError::FfmpegNotFound)?;
 
-        add_audio.wait().map_err(|_| MoviePicturifyError::FfmpegFailed)?;
+        add_audio
+            .wait()
+            .map_err(|_| MoviePicturifyError::FfmpegFailed)?;
         remove_file(intermediete_file).map_err(|_| MoviePicturifyError::FfmpegFailed)?;
 
         progress.read().unwrap().set_stage(ProgressStage::Finish);
-        
+
         Ok(())
     }
 }

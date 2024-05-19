@@ -1,8 +1,11 @@
-use std::sync::{Arc, RwLock};
+use crate::common::execution::{Processor, WithOptions};
+use crate::helpers::kernels::ConvolutionKernel;
+use crate::processors::internal::convolution_rgb::{
+    ConvolutionRgbProcessor, ConvolutionRgbProcessorOptions,
+};
 use picturify_core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
-use crate::common::execution::{Processor, WithOptions};
-use crate::processors::internal::convolution_rgb::{ConvolutionRgbProcessor, ConvolutionRgbProcessorOptions};
+use std::sync::{Arc, RwLock};
 
 pub struct SharpenProcessorOptions {
     pub use_fast_approximation: bool,
@@ -36,15 +39,9 @@ impl WithOptions<SharpenProcessorOptions> for SharpenProcessor {
 
 impl Processor for SharpenProcessor {
     fn process(&self, fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
-
-        let kernel = vec![0.0, -1.0, 0.0, -1.0, 5.0, -1.0, 0.0, -1.0, 0.0];
         let processor =
             ConvolutionRgbProcessor::new().with_options(ConvolutionRgbProcessorOptions {
-                kernel,
-                kernel_width: 3,
-                kernel_height: 3,
-                kernel_divisor: 1.0,
-                kernel_offset: 0.0,
+                kernel: ConvolutionKernel::new_sharpen(),
                 use_fast_approximation: self.options.use_fast_approximation,
             });
         processor.process(fast_image, progress)

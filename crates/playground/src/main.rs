@@ -1,12 +1,3 @@
-use std::sync::{Arc, RwLock};
-use std::time::Instant;
-
-use picturify_core::fast_image::FastImage;
-use picturify_core::fast_image::io::{ReadFromFile, WriteToFile};
-use picturify_core::threading::progress::Progress;
-use picturify_processing::common::execution::{Processor, WithOptions};
-use picturify_processing::processors::color::grayscale::{GrayscaleProcessor, GrayscaleProcessorOptions, GrayscaleStrategy};
-use picturify_processing::processors::geometry::crop::{CropProcessor, CropProcessorOptions};
 
 fn main() {
     run_image();
@@ -50,20 +41,20 @@ fn run_movie() {
 }
 
 fn run_image() {
-    let fast_image = *FastImage::read_from_file("/home/sobczal/Downloads/large.jpg").unwrap();
-
-    let processor = CropProcessor::new().with_options(CropProcessorOptions {
-        x: 100,
-        y: 100,
-        width: 2000,
-        height: 2000,
-    });
-    
-    let start = Instant::now();
-    let fast_image = processor.process(fast_image, Arc::new(RwLock::new(Progress::new())));
-    let duration = start.elapsed();
-    println!("Time elapsed in grayscale is: {:?}", duration);
-    fast_image
-        .write_to_file("/home/sobczal/Downloads/output.png")
-        .unwrap();
+    // let fast_image = *FastImage::read_from_file("/home/sobczal/Downloads/large.jpg").unwrap();
+    // 
+    // let processor = CropProcessor::new().with_options(CropProcessorOptions {
+    //     x: 100,
+    //     y: 100,
+    //     width: 2000,
+    //     height: 2000,
+    // });
+    // 
+    // let start = Instant::now();
+    // let fast_image = processor.process(fast_image, Arc::new(RwLock::new(Progress::new())));
+    // let duration = start.elapsed();
+    // println!("Time elapsed in grayscale is: {:?}", duration);
+    // fast_image
+    //     .write_to_file("/home/sobczal/Downloads/output.png")
+    //     .unwrap();
 }
