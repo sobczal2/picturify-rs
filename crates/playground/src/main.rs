@@ -1,4 +1,3 @@
-
 fn main() {
     run_image();
     // run_movie();
@@ -42,14 +41,14 @@ fn run_movie() {
 
 fn run_image() {
     // let fast_image = *FastImage::read_from_file("/home/sobczal/Downloads/large.jpg").unwrap();
-    // 
+    //
     // let processor = CropProcessor::new().with_options(CropProcessorOptions {
     //     x: 100,
     //     y: 100,
     //     width: 2000,
     //     height: 2000,
     // });
-    // 
+    //
     // let start = Instant::now();
     // let fast_image = processor.process(fast_image, Arc::new(RwLock::new(Progress::new())));
     // let duration = start.elapsed();

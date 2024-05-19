@@ -60,7 +60,7 @@ impl Processor for ConvolutionRgbProcessor {
             skip_columns: half_kernel_width,
             take_columns: width - 2 * half_kernel_width,
         };
-        
+
         new_image.par_apply_fn_to_image_pixel_with_offset(
             |pixel, x, y| {
                 *pixel = match self.options.use_fast_approximation {

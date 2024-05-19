@@ -1,6 +1,8 @@
 use crate::common::execution::{Processor, WithOptions};
 use crate::helpers::kernels::{create_sobel_kernel_x, create_sobel_kernel_y};
-use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels, Offset};
+use picturify_core::fast_image::apply_fn_to_pixels::{
+    ApplyFnToImagePixels, ApplyFnToPalettePixels, Offset,
+};
 use picturify_core::fast_image::FastImage;
 use picturify_core::rayon::prelude::*;
 use picturify_core::threading::progress::Progress;
@@ -190,7 +192,7 @@ impl Processor for SobelRgbProcessor {
         let green_max_magnitude = *green_max_magnitude.lock().unwrap();
         let blue_min_magnitude = *blue_min_magnitude.lock().unwrap();
         let blue_max_magnitude = *blue_max_magnitude.lock().unwrap();
-        
+
         let offset = Offset {
             skip_rows: 1,
             take_rows: height - 2,

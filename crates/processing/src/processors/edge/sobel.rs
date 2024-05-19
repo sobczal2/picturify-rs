@@ -1,6 +1,8 @@
 use crate::common::execution::{Processor, WithOptions};
 use crate::helpers::kernels::{create_sobel_kernel_x, create_sobel_kernel_y};
-use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels, Offset};
+use picturify_core::fast_image::apply_fn_to_pixels::{
+    ApplyFnToImagePixels, ApplyFnToPalettePixels, Offset,
+};
 use picturify_core::fast_image::FastImage;
 use picturify_core::rayon::prelude::*;
 use picturify_core::threading::progress::Progress;
@@ -120,7 +122,7 @@ impl Processor for SobelProcessor {
         inner_progress.write().unwrap().set_on_increment(move || {
             progress.write().unwrap().increment();
         });
-        
+
         let offset = Offset {
             skip_rows: 1,
             take_rows: height - 2,

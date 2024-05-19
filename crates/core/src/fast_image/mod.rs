@@ -12,9 +12,7 @@ use rayon::prelude::*;
 use std::sync::{Arc, RwLock};
 
 use crate::error::PicturifyResult;
-use crate::fast_image::apply_fn_to_pixels::{
-    ApplyFnToImagePixels, ApplyFnToPalettePixels, Offset,
-};
+use crate::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels, Offset};
 use crate::fast_image::io::{ReadFromFile, WriteToFile};
 use crate::fast_image::read_pixels::ReadPixels;
 use crate::threading::progress::Progress;
