@@ -105,8 +105,8 @@ impl FastImage {
 // Slower implementation, use if you need to work with the pixel's color space
 impl ApplyFnToPalettePixels for FastImage {
     fn apply_fn_to_srgba<F>(&mut self, f: F, progress: Option<Arc<RwLock<Progress>>>)
-    where
-        F: Fn(Srgba, usize, usize) -> Srgba,
+        where
+            F: Fn(Srgba, usize, usize) -> Srgba,
     {
         if let Some(progress) = progress {
             let max_value = self.get_height();
@@ -133,8 +133,8 @@ impl ApplyFnToPalettePixels for FastImage {
     }
 
     fn par_apply_fn_to_srgba<F>(&mut self, f: F, progress: Option<Arc<RwLock<Progress>>>)
-    where
-        F: Fn(Srgba, usize, usize) -> Srgba + Send + Sync,
+        where
+            F: Fn(Srgba, usize, usize) -> Srgba + Send + Sync,
     {
         if let Some(progress) = progress {
             let max_value = self.get_height();
@@ -269,32 +269,22 @@ impl ApplyFnToPalettePixels for FastImage {
     }
 }
 
+#[inline(always)]
 fn run_on_srgba_pixel<F>(pixel: &mut Rgba<u8>, x: usize, y: usize, f: F)
-where
-    F: Fn(Srgba, usize, usize) -> Srgba,
+    where
+        F: Fn(Srgba, usize, usize) -> Srgba,
 {
-    let r = pixel[0] as f32 / 255.0;
-    let g = pixel[1] as f32 / 255.0;
-    let b = pixel[2] as f32 / 255.0;
-    let a = pixel[3] as f32 / 255.0;
 
-    let srgba = Srgba::new(r, g, b, a);
+    let srgba = rgba_to_srgba(*pixel);
     let new_srgba = f(srgba, x, y);
-
-    let r = (new_srgba.red * 255.0).round() as u8;
-    let g = (new_srgba.green * 255.0).round() as u8;
-    let b = (new_srgba.blue * 255.0).round() as u8;
-    let a = (new_srgba.alpha * 255.0).round() as u8;
-
-    let new_pixel = Rgba::<u8>::from([r, g, b, a]);
-    *pixel = new_pixel;
+    *pixel = srgba_to_rgba(new_srgba);
 }
 
 // Speedy implementation, use if you don't need to work with the pixel's color space
 impl ApplyFnToImagePixels for FastImage {
     fn apply_fn_to_image_pixel<F>(&mut self, f: F, progress: Option<Arc<RwLock<Progress>>>)
-    where
-        F: Fn(&mut Rgba<u8>, usize, usize),
+        where
+            F: Fn(&mut Rgba<u8>, usize, usize),
     {
         if let Some(progress) = progress {
             let max_value = self.get_height();
@@ -321,8 +311,8 @@ impl ApplyFnToImagePixels for FastImage {
     }
 
     fn par_apply_fn_to_image_pixel<F>(&mut self, f: F, progress: Option<Arc<RwLock<Progress>>>)
-    where
-        F: Fn(&mut Rgba<u8>, usize, usize) + Send + Sync,
+        where
+            F: Fn(&mut Rgba<u8>, usize, usize) + Send + Sync,
     {
         if let Some(progress) = progress {
             let max_value = self.get_height();
@@ -457,8 +447,8 @@ impl ApplyFnToImagePixels for FastImage {
 
 impl ReadPixels for FastImage {
     fn read_srgba_pixel<F>(&self, f: F, progress: Option<Arc<RwLock<Progress>>>)
-    where
-        F: Fn(Srgba, usize, usize),
+        where
+            F: Fn(Srgba, usize, usize),
     {
         if let Some(progress) = progress {
             let max_value = self.get_height();
@@ -481,8 +471,8 @@ impl ReadPixels for FastImage {
     }
 
     fn par_read_srgba_pixel<F>(&self, f: F, progress: Option<Arc<RwLock<Progress>>>)
-    where
-        F: Fn(Srgba, usize, usize) + Send + Sync,
+        where
+            F: Fn(Srgba, usize, usize) + Send + Sync,
     {
         if let Some(progress) = progress {
             let max_value = self.get_height();
@@ -513,17 +503,13 @@ impl ReadPixels for FastImage {
     }
 }
 
+#[inline(always)]
 fn read_srgba_pixel_process_row<F>(f: &F, row: EnumeratePixels<Rgba<u8>>)
-where
-    F: Fn(Srgba, usize, usize),
+    where
+        F: Fn(Srgba, usize, usize),
 {
     row.into_iter().for_each(|(x, y, pixel)| {
-        let r = pixel[0] as f32 / 255.0;
-        let g = pixel[1] as f32 / 255.0;
-        let b = pixel[2] as f32 / 255.0;
-        let a = pixel[3] as f32 / 255.0;
-
-        let srgba = Srgba::new(r, g, b, a);
+        let srgba = rgba_to_srgba(*pixel);
         f(srgba, x as usize, y as usize);
     });
 }

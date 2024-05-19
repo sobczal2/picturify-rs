@@ -1,5 +1,5 @@
 use crate::common::execution::{Processor, WithOptions};
-use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToPalettePixels;
+use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToPalettePixels, Offset};
 use picturify_core::fast_image::util::{cord_2d_to_1d, image_rgba_to_palette_srgba};
 use picturify_core::fast_image::FastImage;
 use picturify_core::palette::{Hsva, IntoColor};
@@ -52,13 +52,16 @@ impl Processor for KuwaharaProcessor {
                 let hsva: Hsva = rgba.into_color();
                 *value = hsva.value;
             });
+        
+        let offset = Offset{
+            skip_rows: radius,
+            take_rows: height - radius * 2,
+            skip_columns: radius,
+            take_columns: width - radius * 2,
+        };
 
-        fast_image.par_apply_fn_to_pixel(
+        fast_image.par_apply_fn_to_pixel_with_offset(
             |pixel: Hsva, x, y| {
-                if x < radius || y < radius || x >= width - radius || y >= height - radius {
-                    return pixel;
-                }
-
                 let quadrant1_ranges = (x - radius..x, y - radius..y);
                 let quadrant2_ranges = (x..x + radius, y - radius..y);
                 let quadrant3_ranges = (x - radius..x, y..y + radius);
@@ -114,6 +117,7 @@ impl Processor for KuwaharaProcessor {
                 Hsva::new(pixel.hue, pixel.saturation, mean, pixel.alpha)
             },
             Some(progress),
+            offset,
         );
 
         fast_image

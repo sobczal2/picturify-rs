@@ -156,6 +156,7 @@ pub trait ApplyFnToPalettePixels {
     }
 }
 
+#[inline(always)]
 fn run_on_srgba_pixel<F, P>(pixel: Srgba, x: usize, y: usize, f: F) -> Srgba
 where
     F: Fn(P, usize, usize) -> P,
