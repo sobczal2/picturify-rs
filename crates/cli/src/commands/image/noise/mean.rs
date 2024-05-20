@@ -8,7 +8,7 @@ impl Command for MeanCommand {
         let cmd = clap::Command::new(Self::name())
             .arg(ArgType::Radius.to_arg())
             .arg(ArgType::Fast.to_arg())
-            .about("Run mean processing pipeline on an fast_image");
+            .about("Run mean processing pipeline on an image");
         add_input_output_args(cmd)
     }
 

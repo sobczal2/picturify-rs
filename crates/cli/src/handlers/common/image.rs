@@ -5,6 +5,7 @@ use crate::commands::image::color::sepia::SepiaCommand;
 use crate::commands::image::common::none::NoneCommand;
 use crate::commands::image::edge::sobel::SobelCommand;
 use crate::commands::image::edge::sobel_rgb::SobelRgbCommand;
+use crate::commands::image::noise::bilateral::BilateralCommand;
 use crate::commands::image::noise::gaussian_blur::GaussianBlurCommand;
 use crate::commands::image::noise::kuwahara::KuwaharaCommand;
 use crate::commands::image::noise::mean::MeanCommand;
@@ -18,6 +19,7 @@ use crate::handlers::image::color::sepia::SepiaCommandHandler;
 use crate::handlers::image::common::none::NoneCommandHandler;
 use crate::handlers::image::edge::sobel::SobelCommandHandler;
 use crate::handlers::image::edge::sobel_rgb::SobelRgbCommandHandler;
+use crate::handlers::image::noise::bilateral::BilateralCommandHandler;
 use crate::handlers::image::noise::gaussian_blur::GaussianBlurCommandHandler;
 use crate::handlers::image::noise::kuwahara::KuwaharaCommandHandler;
 use crate::handlers::image::noise::mean::MeanCommandHandler;
@@ -64,6 +66,10 @@ impl CommandHandler for ImageCommandHandler {
                 handlers.insert(
                     GaussianBlurCommand::name(),
                     Rc::new(GaussianBlurCommandHandler::handle),
+                );
+                handlers.insert(
+                    BilateralCommand::name(),
+                    Rc::new(BilateralCommandHandler::handle),
                 );
 
                 // edge

@@ -34,12 +34,12 @@ impl WithOptions<MedianProcessorOptions> for MedianProcessor {
 }
 
 impl Processor for MedianProcessor {
-    fn process(&self, fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
-        let width = fast_image.get_width();
-        let height = fast_image.get_height();
+    fn process(&self, image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+        let width = image.get_width();
+        let height = image.get_height();
         let radius = self.options.radius;
 
-        let mut new_fast_image = fast_image.clone();
+        let mut new_fast_image = image.clone();
 
         progress
             .write()
@@ -63,7 +63,7 @@ impl Processor for MedianProcessor {
                 let radius_i32 = radius as i32;
                 for window_x in -radius_i32..=radius_i32 {
                     for window_y in -radius_i32..=radius_i32 {
-                        let pixel = fast_image.get_image_pixel(
+                        let pixel = image.get_image_pixel(
                             (radius_i32 + window_x) as usize,
                             (y as i32 + window_y) as usize,
                         );
@@ -86,7 +86,7 @@ impl Processor for MedianProcessor {
                         pixel[2] = current_blue_median;
 
                         for window_y in -radius_i32..=radius_i32 {
-                            let pixel = fast_image.get_image_pixel(
+                            let pixel = image.get_image_pixel(
                                 (x as i32 - radius_i32) as usize,
                                 (y as i32 + window_y) as usize,
                             );

@@ -27,7 +27,7 @@ const GRAYSCALE_PROCESSOR_NAME: &str = "Grayscale";
 impl Pipeline for GrayscalePipeline {
     fn run(
         &self,
-        fast_image: FastImage,
+        image: FastImage,
         pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
     ) -> FastImage {
         let pipeline_progress =
@@ -43,7 +43,7 @@ impl Pipeline for GrayscalePipeline {
             use_fast_approximation: self.options.fast,
         });
         let final_image = processor.process(
-            fast_image,
+            image,
             pipeline_progress
                 .read()
                 .unwrap()

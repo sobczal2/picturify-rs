@@ -38,9 +38,9 @@ impl WithOptions<SepiaProcessorOptions> for SepiaProcessor {
 }
 
 impl Processor for SepiaProcessor {
-    fn process(&self, mut fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, mut image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
         return if self.options.use_fast_approximation {
-            fast_image.par_apply_fn_to_image_pixel(
+            image.par_apply_fn_to_image_pixel(
                 |pixel, _x, _y| {
                     let r = pixel.0[0] as f32;
                     let g = pixel.0[1] as f32;
@@ -56,9 +56,9 @@ impl Processor for SepiaProcessor {
                 },
                 Some(progress),
             );
-            fast_image
+            image
         } else {
-            fast_image.par_apply_fn_to_lin_srgba(
+            image.par_apply_fn_to_lin_srgba(
                 |mut pixel, _x, _y| {
                     let r = pixel.red;
                     let g = pixel.green;
@@ -76,7 +76,7 @@ impl Processor for SepiaProcessor {
                 },
                 Some(progress),
             );
-            fast_image
+            image
         };
     }
 }

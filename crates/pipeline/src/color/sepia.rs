@@ -23,7 +23,7 @@ const SEPIA_PROCESSOR_NAME: &str = "Sepia";
 impl Pipeline for SepiaPipeline {
     fn run(
         &self,
-        fast_image: FastImage,
+        image: FastImage,
         pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
     ) -> FastImage {
         let pipeline_progress =
@@ -36,7 +36,7 @@ impl Pipeline for SepiaPipeline {
 
         let processor = SepiaProcessor::new();
         let final_image = processor.process(
-            fast_image,
+            image,
             pipeline_progress
                 .read()
                 .unwrap()

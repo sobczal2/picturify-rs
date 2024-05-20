@@ -42,7 +42,7 @@ impl WithOptions<GaussianBlurProcessorOptions> for GaussianBlurProcessor {
 }
 
 impl Processor for GaussianBlurProcessor {
-    fn process(&self, fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
         let radius = self.options.radius;
         let sigma = self.options.sigma;
 
@@ -52,6 +52,6 @@ impl Processor for GaussianBlurProcessor {
                 use_fast_approximation: self.options.use_fast_approximation,
             });
 
-        processor.process(fast_image, progress)
+        processor.process(image, progress)
     }
 }

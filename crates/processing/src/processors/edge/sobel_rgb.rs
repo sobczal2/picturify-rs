@@ -39,9 +39,9 @@ impl WithOptions<SobelRgbProcessorOptions> for SobelRgbProcessor {
 }
 
 impl Processor for SobelRgbProcessor {
-    fn process(&self, mut fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
-        let width = fast_image.get_width();
-        let height = fast_image.get_height();
+    fn process(&self, mut image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+        let width = image.get_width();
+        let height = image.get_height();
 
         let mut red_magnitude_vec = vec![vec![0.0; width - 2]; height - 2];
         let mut green_magnitude_vec = vec![vec![0.0; width - 2]; height - 2];
@@ -102,14 +102,12 @@ impl Processor for SobelRgbProcessor {
                                     let green: f32;
                                     let blue: f32;
                                     if self.options.use_fast_approximation {
-                                        let pixel =
-                                            fast_image.get_image_pixel(x + i - 1, y + j - 1);
+                                        let pixel = image.get_image_pixel(x + i - 1, y + j - 1);
                                         red = pixel[0] as f32 / 255.0;
                                         green = pixel[1] as f32 / 255.0;
                                         blue = pixel[2] as f32 / 255.0;
                                     } else {
-                                        let pixel =
-                                            fast_image.get_lin_srgba_pixel(x + i - 1, y + j - 1);
+                                        let pixel = image.get_lin_srgba_pixel(x + i - 1, y + j - 1);
                                         red = pixel.red;
                                         green = pixel.green;
                                         blue = pixel.blue;
@@ -201,7 +199,7 @@ impl Processor for SobelRgbProcessor {
         };
 
         if self.options.use_fast_approximation {
-            fast_image.par_apply_fn_to_image_pixel_with_offset(
+            image.par_apply_fn_to_image_pixel_with_offset(
                 |pixel, x, y| {
                     let red_magnitude = red_magnitude_vec[y - 1][x - 1];
                     let green_magnitude = green_magnitude_vec[y - 1][x - 1];
@@ -227,7 +225,7 @@ impl Processor for SobelRgbProcessor {
                 offset,
             );
         } else {
-            fast_image.par_apply_fn_to_lin_srgba_with_offset(
+            image.par_apply_fn_to_lin_srgba_with_offset(
                 |mut pixel, x, y| {
                     let red_magnitude = red_magnitude_vec[y - 1][x - 1];
                     let green_magnitude = green_magnitude_vec[y - 1][x - 1];
@@ -250,6 +248,6 @@ impl Processor for SobelRgbProcessor {
             );
         }
 
-        fast_image
+        image
     }
 }

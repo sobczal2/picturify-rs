@@ -68,7 +68,7 @@ impl WithOptions<GrayscaleProcessorOptions> for GrayscaleProcessor {
 }
 
 impl Processor for GrayscaleProcessor {
-    fn process(&self, mut fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, mut image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
         if self.options.use_fast_approximation {
             let function = match self.options.strategy {
                 GrayscaleStrategy::Average => {
@@ -81,7 +81,7 @@ impl Processor for GrayscaleProcessor {
                     GrayscaleProcessor::luminosity_processing_function_fast()
                 }
             };
-            fast_image.par_apply_fn_to_image_pixel(function, Some(progress));
+            image.par_apply_fn_to_image_pixel(function, Some(progress));
         } else {
             let function = match self.options.strategy {
                 GrayscaleStrategy::Average => GrayscaleProcessor::average_processing_function(),
@@ -90,9 +90,9 @@ impl Processor for GrayscaleProcessor {
                     GrayscaleProcessor::luminosity_processing_function()
                 }
             };
-            fast_image.par_apply_fn_to_lin_srgba(function, Some(progress));
+            image.par_apply_fn_to_lin_srgba(function, Some(progress));
         }
-        fast_image
+        image
     }
 }
 

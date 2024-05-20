@@ -15,7 +15,7 @@ pub fn read_image(args: ArgMatches) -> CliPicturifyResult<FastImage> {
     let image = FastImage::read_from_file(input)?;
     let image = *image;
     let read_elapsed_ms = read_start.elapsed().as_millis();
-    debug!("Reading fast_image took {}ms", read_elapsed_ms);
+    debug!("Reading image took {}ms", read_elapsed_ms);
 
     Ok(image)
 }

@@ -23,7 +23,7 @@ const NEGATIVE_PROCESSOR_NAME: &str = "Negative";
 impl Pipeline for NegativePipeline {
     fn run(
         &self,
-        fast_image: FastImage,
+        image: FastImage,
         pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
     ) -> FastImage {
         let pipeline_progress =
@@ -36,7 +36,7 @@ impl Pipeline for NegativePipeline {
 
         let processor = NegativeProcessor::new();
         let final_image = processor.process(
-            fast_image,
+            image,
             pipeline_progress
                 .read()
                 .unwrap()

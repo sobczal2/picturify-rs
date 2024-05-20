@@ -67,7 +67,7 @@ impl WithOptions<CropProcessorOptions> for CropProcessor {
 }
 
 impl Processor for CropProcessor {
-    fn process(&self, fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
         let mut new_image = FastImage::empty(
             self.options.crop_border.width,
             self.options.crop_border.height,
@@ -75,7 +75,7 @@ impl Processor for CropProcessor {
 
         new_image.par_apply_fn_to_image_pixel(
             |pixel, x, y| {
-                let new_pixel = fast_image.get_image_pixel(
+                let new_pixel = image.get_image_pixel(
                     x + self.options.crop_border.x_offset,
                     y + self.options.crop_border.y_offset,
                 );

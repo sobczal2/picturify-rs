@@ -41,11 +41,11 @@ impl WithOptions<ConvolutionRgbProcessorOptions> for ConvolutionRgbProcessor {
 }
 
 impl Processor for ConvolutionRgbProcessor {
-    fn process(&self, fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
-        let width = fast_image.get_width();
-        let height = fast_image.get_height();
+    fn process(&self, image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+        let width = image.get_width();
+        let height = image.get_height();
 
-        let mut new_image = fast_image.clone();
+        let mut new_image = image.clone();
 
         let half_kernel_width = self.options.kernel.get_width() / 2;
         let half_kernel_height = self.options.kernel.get_height() / 2;
@@ -64,9 +64,9 @@ impl Processor for ConvolutionRgbProcessor {
         new_image.par_apply_fn_to_image_pixel_with_offset(
             |pixel, x, y| {
                 *pixel = match self.options.use_fast_approximation {
-                    true => self.options.kernel.convolve_rgb_fast(&fast_image, x, y),
+                    true => self.options.kernel.convolve_rgb_fast(&image, x, y),
                     false => {
-                        let lin_srgba = self.options.kernel.convolve_rgb_slow(&fast_image, x, y);
+                        let lin_srgba = self.options.kernel.convolve_rgb_slow(&image, x, y);
                         lin_srgba_to_rgba(lin_srgba)
                     }
                 }

@@ -37,9 +37,9 @@ impl WithOptions<NegativeProcessorOptions> for NegativeProcessor {
 }
 
 impl Processor for NegativeProcessor {
-    fn process(&self, mut fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, mut image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
         if self.options.use_fast_approximation {
-            fast_image.par_apply_fn_to_image_pixel(
+            image.par_apply_fn_to_image_pixel(
                 |pixel, _x, _y| {
                     for i in 0..3 {
                         pixel.0[i] = 255 - pixel.0[i];
@@ -48,7 +48,7 @@ impl Processor for NegativeProcessor {
                 Some(progress),
             );
         } else {
-            fast_image.par_apply_fn_to_lin_srgba(
+            image.par_apply_fn_to_lin_srgba(
                 |pixel, _x, _y| {
                     let mut pixel = pixel;
                     pixel.red = 1.0 - pixel.red;
@@ -60,6 +60,6 @@ impl Processor for NegativeProcessor {
             );
         }
 
-        fast_image
+        image
     }
 }

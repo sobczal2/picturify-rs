@@ -1,3 +1,4 @@
+use crate::helpers::functions::gaussian_2d;
 use picturify_core::fast_image::FastImage;
 use picturify_core::image::Rgba;
 use picturify_core::palette::LinSrgba;
@@ -48,7 +49,7 @@ impl ConvolutionKernel {
                 let x = i as f32 - radius as f32;
                 let y = j as f32 - radius as f32;
 
-                let value = (-(x * x + y * y) / two_sigma_squared).exp();
+                let value = gaussian_2d(x, y, two_sigma_squared);
                 values[i][j] = value;
                 sum += value;
             }
@@ -78,7 +79,7 @@ impl ConvolutionKernel {
         self.values[y][x]
     }
 
-    pub fn convolve_rgb_fast(&self, fast_image: &FastImage, x: usize, y: usize) -> Rgba<u8> {
+    pub fn convolve_rgb_fast(&self, image: &FastImage, x: usize, y: usize) -> Rgba<u8> {
         let mut result_red_f32 = 0f32;
         let mut result_green_f32 = 0f32;
         let mut result_blue_f32 = 0f32;
@@ -91,7 +92,7 @@ impl ConvolutionKernel {
                     continue;
                 }
 
-                let image_pixel = fast_image
+                let image_pixel = image
                     .get_image_pixel(x + i - self.get_width() / 2, y + j - self.get_height() / 2);
                 result_red_f32 += image_pixel.0[0] as f32 * kernel_value;
                 result_green_f32 += image_pixel.0[1] as f32 * kernel_value;
@@ -99,7 +100,7 @@ impl ConvolutionKernel {
             }
         }
 
-        let result_alpha = fast_image.get_image_pixel(x, y).0[3];
+        let result_alpha = image.get_image_pixel(x, y).0[3];
 
         Rgba([
             result_red_f32.clamp(0.0, 255.0) as u8,
@@ -109,7 +110,7 @@ impl ConvolutionKernel {
         ])
     }
 
-    pub fn convolve_rgb_slow(&self, fast_image: &FastImage, x: usize, y: usize) -> LinSrgba {
+    pub fn convolve_rgb_slow(&self, image: &FastImage, x: usize, y: usize) -> LinSrgba {
         let mut result_red_f32 = 0f32;
         let mut result_green_f32 = 0f32;
         let mut result_blue_f32 = 0f32;
@@ -122,7 +123,7 @@ impl ConvolutionKernel {
                     continue;
                 }
 
-                let image_pixel = fast_image.get_lin_srgba_pixel(
+                let image_pixel = image.get_lin_srgba_pixel(
                     x + i - self.get_width() / 2,
                     y + j - self.get_height() / 2,
                 );
@@ -133,7 +134,7 @@ impl ConvolutionKernel {
             }
         }
 
-        let result_alpha = fast_image.get_lin_srgba_pixel(x, y).alpha;
+        let result_alpha = image.get_lin_srgba_pixel(x, y).alpha;
 
         LinSrgba::new(
             result_red_f32.clamp(0.0, 1.0),

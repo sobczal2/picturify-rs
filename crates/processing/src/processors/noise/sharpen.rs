@@ -38,12 +38,12 @@ impl WithOptions<SharpenProcessorOptions> for SharpenProcessor {
 }
 
 impl Processor for SharpenProcessor {
-    fn process(&self, fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
         let processor =
             ConvolutionRgbProcessor::new().with_options(ConvolutionRgbProcessorOptions {
                 kernel: ConvolutionKernel::new_sharpen(),
                 use_fast_approximation: self.options.use_fast_approximation,
             });
-        processor.process(fast_image, progress)
+        processor.process(image, progress)
     }
 }

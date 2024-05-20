@@ -39,8 +39,8 @@ impl WithOptions<ThresholdProcessorOptions> for ThresholdProcessor {
 }
 
 impl Processor for ThresholdProcessor {
-    fn process(&self, mut fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
-        fast_image.par_apply_fn_to_image_pixel(
+    fn process(&self, mut image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+        image.par_apply_fn_to_image_pixel(
             |pixel, _x, _y| {
                 pixel.0[0] = if pixel.0[0] > self.options.red_threshold {
                     pixel.0[0]
@@ -61,6 +61,6 @@ impl Processor for ThresholdProcessor {
             Some(progress),
         );
 
-        fast_image
+        image
     }
 }

@@ -40,7 +40,7 @@ impl WithOptions<MeanProcessorOptions> for MeanProcessor {
 }
 
 impl Processor for MeanProcessor {
-    fn process(&self, fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
         let radius = self.options.radius;
 
         let processor =
@@ -48,6 +48,6 @@ impl Processor for MeanProcessor {
                 kernel: ConvolutionKernel::new_mean(radius),
                 use_fast_approximation: self.options.use_fast_approximation,
             });
-        processor.process(fast_image, progress)
+        processor.process(image, progress)
     }
 }

@@ -3,7 +3,7 @@ use picturify_core::threading::progress::Progress;
 use std::sync::{Arc, RwLock};
 
 pub trait Processor {
-    fn process(&self, fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage;
+    fn process(&self, image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage;
 }
 
 pub trait WithOptions<TOptions> {

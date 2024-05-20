@@ -36,9 +36,9 @@ impl WithOptions<KuwaharaProcessorOptions> for KuwaharaProcessor {
 }
 
 impl Processor for KuwaharaProcessor {
-    fn process(&self, mut fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
-        let width = fast_image.get_width();
-        let height = fast_image.get_height();
+    fn process(&self, mut image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+        let width = image.get_width();
+        let height = image.get_height();
 
         let radius = self.options.radius;
 
@@ -46,21 +46,21 @@ impl Processor for KuwaharaProcessor {
 
         value_array
             .iter_mut()
-            .zip(fast_image.pixels())
+            .zip(image.pixels())
             .for_each(|(value, pixel)| {
                 let rgba = image_rgba_to_palette_srgba(*pixel);
                 let hsva: Hsva = rgba.into_color();
                 *value = hsva.value;
             });
-        
-        let offset = Offset{
+
+        let offset = Offset {
             skip_rows: radius,
             take_rows: height - radius * 2,
             skip_columns: radius,
             take_columns: width - radius * 2,
         };
 
-        fast_image.par_apply_fn_to_pixel_with_offset(
+        image.par_apply_fn_to_pixel_with_offset(
             |pixel: Hsva, x, y| {
                 let quadrant1_ranges = (x - radius..x, y - radius..y);
                 let quadrant2_ranges = (x..x + radius, y - radius..y);
@@ -120,7 +120,7 @@ impl Processor for KuwaharaProcessor {
             offset,
         );
 
-        fast_image
+        image
     }
 }
 

@@ -92,11 +92,9 @@ impl WithOptions<EnlargementProcessorOptions> for EnlargementProcessor {
 }
 
 impl Processor for EnlargementProcessor {
-    fn process(&self, fast_image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
-        let new_width =
-            fast_image.get_width() + self.options.border.left + self.options.border.right;
-        let new_height =
-            fast_image.get_height() + self.options.border.top + self.options.border.bottom;
+    fn process(&self, image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+        let new_width = image.get_width() + self.options.border.left + self.options.border.right;
+        let new_height = image.get_height() + self.options.border.top + self.options.border.bottom;
 
         let mut new_image = FastImage::empty(new_width, new_height);
 
@@ -111,7 +109,7 @@ impl Processor for EnlargementProcessor {
                         {
                             pixel
                         } else {
-                            fast_image.get_srgba_pixel(
+                            image.get_srgba_pixel(
                                 x - self.options.border.left,
                                 y - self.options.border.top,
                             )

@@ -5,6 +5,7 @@ use crate::commands::image::color::sepia::SepiaCommand;
 use crate::commands::image::common::none::NoneCommand;
 use crate::commands::image::edge::sobel::SobelCommand;
 use crate::commands::image::edge::sobel_rgb::SobelRgbCommand;
+use crate::commands::image::noise::bilateral::BilateralCommand;
 use crate::commands::image::noise::gaussian_blur::GaussianBlurCommand;
 use crate::commands::image::noise::kuwahara::KuwaharaCommand;
 use crate::commands::image::noise::mean::MeanCommand;
@@ -30,6 +31,7 @@ impl Command for ImageCommand {
                 MeanCommand::get(),
                 SharpenCommand::get(),
                 GaussianBlurCommand::get(),
+                BilateralCommand::get(),
                 // edge
                 SobelCommand::get(),
                 SobelRgbCommand::get(),

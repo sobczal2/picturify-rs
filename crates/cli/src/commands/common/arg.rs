@@ -8,6 +8,8 @@ pub enum ArgType {
     Fast,
     GrayscaleStrategy,
     Sigma,
+    SigmaSpatial,
+    SigmaIntensity,
 }
 
 impl ArgType {
@@ -50,6 +52,16 @@ impl ArgType {
                 .help("Sigma value")
                 .default_value("1.0")
                 .value_parser(value_parser!(f32)),
+            ArgType::SigmaSpatial => Arg::new(self.to_id())
+                .long("sigma-spatial")
+                .help("Sigma spatial value")
+                .default_value("1.0")
+                .value_parser(value_parser!(f32)),
+            ArgType::SigmaIntensity => Arg::new(self.to_id())
+                .long("sigma-intensity")
+                .help("Sigma intensity value")
+                .default_value("1.0")
+                .value_parser(value_parser!(f32)),
         }
     }
 
@@ -61,6 +73,8 @@ impl ArgType {
             ArgType::Fast => "fast",
             ArgType::GrayscaleStrategy => "grayscale-strategy",
             ArgType::Sigma => "sigma",
+            ArgType::SigmaSpatial => "sigma-spatial",
+            ArgType::SigmaIntensity => "sigma-intensity",
         }
     }
 }
