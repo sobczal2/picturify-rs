@@ -1,4 +1,5 @@
 use crate::commands::common::command::Command;
+use crate::commands::image::color::brightness::BrightnessCommand;
 use crate::commands::image::color::grayscale::GrayscaleCommand;
 use crate::commands::image::color::negative::NegativeCommand;
 use crate::commands::image::color::sepia::SepiaCommand;
@@ -25,6 +26,7 @@ impl Command for ImageCommand {
                 SepiaCommand::get(),
                 NegativeCommand::get(),
                 GrayscaleCommand::get(),
+                BrightnessCommand::get(),
                 // noise
                 KuwaharaCommand::get(),
                 MedianCommand::get(),

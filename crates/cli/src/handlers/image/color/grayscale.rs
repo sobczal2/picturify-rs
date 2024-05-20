@@ -21,8 +21,8 @@ impl CommandHandler for GrayscaleCommandHandler {
             .unwrap();
         let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
         let grayscale_pipeline = GrayscalePipeline::new(GrayscalePipelineOptions {
-            strategy: strategy.clone(),
-            fast: fast.clone(),
+            strategy: *strategy,
+            fast: *fast,
         });
 
         let pipeline_progress = Arc::new(RwLock::new(PipelineProgress::new()));

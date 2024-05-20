@@ -28,6 +28,8 @@ use crate::handlers::image::noise::sharpen::SharpenCommandHandler;
 use clap::ArgMatches;
 use std::collections::HashMap;
 use std::rc::Rc;
+use crate::commands::image::color::brightness::BrightnessCommand;
+use crate::handlers::image::color::brightness::BrightnessCommandHandler;
 
 pub struct ImageCommandHandler;
 
@@ -50,6 +52,10 @@ impl CommandHandler for ImageCommandHandler {
                 handlers.insert(
                     GrayscaleCommand::name(),
                     Rc::new(GrayscaleCommandHandler::handle),
+                );
+                handlers.insert(
+                    BrightnessCommand::name(),
+                    Rc::new(BrightnessCommandHandler::handle),
                 );
 
                 // noise

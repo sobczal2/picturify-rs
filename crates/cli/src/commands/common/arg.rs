@@ -10,6 +10,7 @@ pub enum ArgType {
     Sigma,
     SigmaSpatial,
     SigmaIntensity,
+    Factor,
 }
 
 impl ArgType {
@@ -62,6 +63,12 @@ impl ArgType {
                 .help("Sigma intensity value")
                 .default_value("1.0")
                 .value_parser(value_parser!(f32)),
+            ArgType::Factor => Arg::new(self.to_id())
+                .short('f')
+                .long("factor")
+                .help("Brightness factor")
+                .default_value("1.0")
+                .value_parser(value_parser!(f32)),
         }
     }
 
@@ -75,6 +82,7 @@ impl ArgType {
             ArgType::Sigma => "sigma",
             ArgType::SigmaSpatial => "sigma-spatial",
             ArgType::SigmaIntensity => "sigma-intensity",
+            ArgType::Factor => "factor",
         }
     }
 }

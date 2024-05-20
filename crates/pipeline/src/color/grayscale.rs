@@ -12,6 +12,15 @@ pub struct GrayscalePipelineOptions {
     pub fast: bool,
 }
 
+impl Default for GrayscalePipelineOptions {
+    fn default() -> Self {
+        GrayscalePipelineOptions {
+            strategy: GrayscaleStrategy::Average,
+            fast: false,
+        }
+    }
+}
+
 pub struct GrayscalePipeline {
     options: GrayscalePipelineOptions,
 }
