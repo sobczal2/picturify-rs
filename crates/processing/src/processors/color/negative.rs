@@ -49,8 +49,7 @@ impl Processor for NegativeProcessor {
             );
         } else {
             image.par_apply_fn_to_lin_srgba(
-                |pixel, _x, _y| {
-                    let mut pixel = pixel;
+                |mut pixel, _x, _y| {
                     pixel.red = 1.0 - pixel.red;
                     pixel.green = 1.0 - pixel.green;
                     pixel.blue = 1.0 - pixel.blue;

@@ -6,7 +6,7 @@ pub struct SepiaCommand;
 impl Command for SepiaCommand {
     fn get() -> clap::Command {
         let cmd =
-            clap::Command::new(Self::name()).about("Run sepia processing pipeline on the image");
+            clap::Command::new(Self::name()).about("Run sepia processing-bench pipeline on the image");
         add_input_output_args(cmd)
     }
 

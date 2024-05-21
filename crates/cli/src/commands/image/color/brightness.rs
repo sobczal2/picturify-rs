@@ -7,7 +7,7 @@ impl Command for BrightnessCommand {
     fn get() -> clap::Command {
         let cmd = clap::Command::new(Self::name())
             .arg(ArgType::Factor.to_arg())
-            .about("Run brightness processing pipeline on the image");
+            .about("Run brightness processing-bench pipeline on the image");
         add_input_output_args(cmd)
     }
 

@@ -10,7 +10,7 @@ impl Command for BilateralCommand {
             .arg(ArgType::Fast.to_arg())
             .arg(ArgType::SigmaSpatial.to_arg())
             .arg(ArgType::SigmaIntensity.to_arg())
-            .about("Run bilateral noise processing pipeline on the image");
+            .about("Run bilateral noise processing-bench pipeline on the image");
         add_input_output_args(cmd)
     }
 

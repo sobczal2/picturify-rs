@@ -2,7 +2,7 @@ const CLI_NAME: &str = "picturify-cli";
 const CLI_VERSION: &str = "0.1.0";
 const CORE_NAME: &str = "picturify-core";
 const CORE_VERSION: &str = "0.1.0";
-const PROCESSING_NAME: &str = "picturify-processing";
+const PROCESSING_NAME: &str = "picturify-processing-bench";
 const PROCESSING_VERSION: &str = "0.1.0";
 
 pub struct PicturifyMetadata {

@@ -7,7 +7,7 @@ impl Command for SobelRgbCommand {
     fn get() -> clap::Command {
         let cmd = clap::Command::new(Self::name())
             .arg(ArgType::Fast.to_arg())
-            .about("Run sobel rgb processing pipeline on an image");
+            .about("Run sobel rgb processing-bench pipeline on an image");
         add_input_output_args(cmd)
     }
 

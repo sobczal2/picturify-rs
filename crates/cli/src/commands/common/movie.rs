@@ -8,7 +8,7 @@ pub struct MovieCommand;
 impl Command for MovieCommand {
     fn get() -> clap::Command {
         clap::Command::new(Self::name())
-            .about("Run movie processing pipeline on a movie")
+            .about("Run movie processing-bench pipeline on a movie")
             .subcommands(&[
                 NegativeCommand::get(),
                 SobelCommand::get(),

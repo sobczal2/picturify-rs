@@ -1,0 +1,14 @@
+[package]
+name = "picturify-processing-benchmark"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+picturify-processing.workspace = true
+picturify-core.workspace = true
+criterion.workspace = true
+
+[[bench]]
+name = "processing-bench"
+path = "src/main.rs"
+harness = false

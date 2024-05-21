@@ -6,7 +6,7 @@ pub struct NegativeCommand;
 impl Command for NegativeCommand {
     fn get() -> clap::Command {
         let cmd =
-            clap::Command::new(Self::name()).about("Run negative processing pipeline on the image");
+            clap::Command::new(Self::name()).about("Run negative processing-bench pipeline on the image");
         add_input_output_args(cmd)
     }
 

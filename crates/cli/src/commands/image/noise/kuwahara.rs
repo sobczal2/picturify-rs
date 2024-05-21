@@ -8,7 +8,7 @@ impl Command for KuwaharaCommand {
         let cmd = clap::Command::new(Self::name())
             .arg(ArgType::Radius.to_arg())
             .arg(ArgType::Fast.to_arg())
-            .about("Run kuwahara processing pipeline on the image");
+            .about("Run kuwahara processing-bench pipeline on the image");
         add_input_output_args(cmd)
     }
 
