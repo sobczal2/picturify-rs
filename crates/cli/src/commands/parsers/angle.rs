@@ -1,8 +1,8 @@
 use std::ffi::OsStr;
 
-use clap::{Arg, Command, Error};
 use clap::builder::TypedValueParser;
 use clap::error::ErrorKind;
+use clap::{Arg, Command, Error};
 
 use picturify_core::common::angle::Angle;
 
@@ -19,8 +19,18 @@ impl TypedValueParser for AngleValueParser {
     type Value = Angle;
 
     #[allow(unused_variables)]
-    fn parse_ref(&self, cmd: &Command, arg: Option<&Arg>, value: &OsStr) -> Result<Self::Value, Error> {
+    fn parse_ref(
+        &self,
+        cmd: &Command,
+        arg: Option<&Arg>,
+        value: &OsStr,
+    ) -> Result<Self::Value, Error> {
         let value = value.to_str().unwrap();
-        value.parse::<Angle>().map_err(|_| Error::raw(ErrorKind::InvalidValue, "Invalid angle, expected format: <value>[rad|deg]\n"))
+        value.parse::<Angle>().map_err(|_| {
+            Error::raw(
+                ErrorKind::InvalidValue,
+                "Invalid angle, expected format: <value>[rad|deg]\n",
+            )
+        })
     }
 }

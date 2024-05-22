@@ -1,5 +1,3 @@
-use std::sync::{Arc, RwLock};
-
 use picturify_core::fast_image::FastImage;
 use picturify_core::palette::Srgba;
 use picturify_processing::common::execution::WithOptions;
@@ -37,11 +35,7 @@ impl BilateralPipeline {
 const BILATERAL_PROCESSOR_NAME: &str = "Bilateral";
 
 impl Pipeline for BilateralPipeline {
-    fn run(
-        &self,
-        image: FastImage,
-        pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
-    ) -> FastImage {
+    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
         let processor = BilateralProcessor::new().with_options(BilateralProcessorOptions {
             radius: self.options.radius,
             sigma_spatial: self.options.sigma_spatial,

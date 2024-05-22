@@ -1,7 +1,6 @@
 use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToImagePixels;
 use picturify_core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
-use std::sync::{Arc, RwLock};
 
 use crate::common::execution::{Processor, WithOptions};
 
@@ -67,7 +66,7 @@ impl WithOptions<CropProcessorOptions> for CropProcessor {
 }
 
 impl Processor for CropProcessor {
-    fn process(&self, image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, image: FastImage, progress: Progress) -> FastImage {
         let mut new_image = FastImage::empty(
             self.options.crop_border.width,
             self.options.crop_border.height,

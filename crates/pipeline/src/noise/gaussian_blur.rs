@@ -1,5 +1,3 @@
-use std::sync::{Arc, RwLock};
-
 use picturify_core::fast_image::FastImage;
 use picturify_core::palette::Srgba;
 use picturify_processing::common::execution::WithOptions;
@@ -36,11 +34,7 @@ impl GaussianBlurPipeline {
 const GAUSSIAN_BLUR_PROCESSOR_NAME: &str = "GaussianBlur";
 
 impl Pipeline for GaussianBlurPipeline {
-    fn run(
-        &self,
-        image: FastImage,
-        pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
-    ) -> FastImage {
+    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
         let processor = GaussianBlurProcessor::new().with_options(GaussianBlurProcessorOptions {
             radius: self.options.radius,
             sigma: self.options.sigma,

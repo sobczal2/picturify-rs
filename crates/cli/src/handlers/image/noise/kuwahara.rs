@@ -7,7 +7,6 @@ use clap::ArgMatches;
 use picturify_pipeline::common::pipeline_progress::PipelineProgress;
 use picturify_pipeline::noise::kuwahara::{KuwaharaPipeline, KuwaharaPipelineOptions};
 use picturify_pipeline::pipeline::Pipeline;
-use std::sync::{Arc, RwLock};
 use std::thread::spawn;
 
 pub struct KuwaharaCommandHandler;
@@ -22,7 +21,7 @@ impl CommandHandler for KuwaharaCommandHandler {
             radius: radius.clone(),
         });
 
-        let pipeline_progress = Arc::new(RwLock::new(PipelineProgress::new()));
+        let pipeline_progress = PipelineProgress::new();
         let pipeline_progress_clone = pipeline_progress.clone();
 
         let handle = spawn(move || {

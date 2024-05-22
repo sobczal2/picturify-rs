@@ -1,5 +1,3 @@
-use std::sync::{Arc, RwLock};
-
 use picturify_core::fast_image::FastImage;
 use picturify_core::palette::Srgba;
 use picturify_processing::common::execution::WithOptions;
@@ -33,11 +31,7 @@ impl MedianPipeline {
 const MEDIAN_PROCESSOR_NAME: &str = "Median";
 
 impl Pipeline for MedianPipeline {
-    fn run(
-        &self,
-        image: FastImage,
-        pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
-    ) -> FastImage {
+    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
         let processor = MedianProcessor::new().with_options(MedianProcessorOptions {
             radius: self.options.radius,
         });

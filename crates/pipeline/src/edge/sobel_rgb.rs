@@ -1,5 +1,3 @@
-use std::sync::{Arc, RwLock};
-
 use picturify_core::fast_image::FastImage;
 use picturify_core::palette::Srgba;
 use picturify_processing::common::execution::WithOptions;
@@ -34,11 +32,7 @@ impl SobelRgbPipeline {
 const SOBEL_RGB_PROCESSOR_NAME: &str = "SobelRgb";
 
 impl Pipeline for SobelRgbPipeline {
-    fn run(
-        &self,
-        image: FastImage,
-        pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
-    ) -> FastImage {
+    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
         let processor = SobelRgbProcessor::new().with_options(SobelRgbProcessorOptions {
             use_fast_approximation: self.options.fast,
         });

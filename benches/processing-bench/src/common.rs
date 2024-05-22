@@ -1,5 +1,5 @@
-use std::fmt::Display;
 use picturify_core::fast_image::FastImage;
+use std::fmt::Display;
 
 #[derive(Debug, Clone, Copy)]
 pub enum ImageResolution {
@@ -26,13 +26,17 @@ impl ImageResolution {
             ImageResolution::P720 => (1280, 720),
         }
     }
-    
+
     pub fn get_image(&self) -> FastImage {
         let (width, height) = self.get_resolution();
         FastImage::empty(width, height)
     }
-    
+
     pub fn get_resolutions() -> Vec<ImageResolution> {
-        vec![ImageResolution::P240, ImageResolution::P480, ImageResolution::P720]
+        vec![
+            ImageResolution::P240,
+            ImageResolution::P480,
+            ImageResolution::P720,
+        ]
     }
 }

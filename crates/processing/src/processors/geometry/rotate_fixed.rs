@@ -1,10 +1,9 @@
-use std::sync::{Arc, RwLock};
+use crate::common::execution::{Processor, WithOptions};
 use picturify_core::common::angle::Angle;
 use picturify_core::error::processing::ProcessingError;
 use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToImagePixels;
 use picturify_core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
-use crate::common::execution::{Processor, WithOptions};
 
 #[derive(Copy, Clone)]
 pub enum RotateFixedStrategy {
@@ -78,7 +77,7 @@ impl WithOptions<RoteteFixedProcessorOptions> for RotateFixedProcessor {
 }
 
 impl Processor for RotateFixedProcessor {
-    fn process(&self, image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, image: FastImage, progress: Progress) -> FastImage {
         let width = image.get_width();
         let height = image.get_height();
         let (new_width, new_height) = self.options.strategy.get_new_dimensions(width, height);
@@ -87,7 +86,10 @@ impl Processor for RotateFixedProcessor {
 
         new_image.par_apply_fn_to_image_pixel(
             |pixel, x, y| {
-                let (new_x, new_y) = self.options.strategy.rotate_pixel(x, y, new_width, new_height);
+                let (new_x, new_y) = self
+                    .options
+                    .strategy
+                    .rotate_pixel(x, y, new_width, new_height);
                 *pixel = image.get_image_pixel(new_x, new_y)
             },
             Some(progress),

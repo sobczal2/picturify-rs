@@ -2,7 +2,6 @@ use crate::common::execution::{Processor, WithOptions};
 use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToImagePixels;
 use picturify_core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
-use std::sync::{Arc, RwLock};
 
 pub struct ThresholdProcessorOptions {
     pub red_threshold: u8,
@@ -39,7 +38,7 @@ impl WithOptions<ThresholdProcessorOptions> for ThresholdProcessor {
 }
 
 impl Processor for ThresholdProcessor {
-    fn process(&self, mut image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, mut image: FastImage, progress: Progress) -> FastImage {
         image.par_apply_fn_to_image_pixel(
             |pixel, _x, _y| {
                 pixel.0[0] = if pixel.0[0] > self.options.red_threshold {

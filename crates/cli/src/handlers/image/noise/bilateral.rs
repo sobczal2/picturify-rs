@@ -7,7 +7,6 @@ use clap::ArgMatches;
 use picturify_pipeline::common::pipeline_progress::PipelineProgress;
 use picturify_pipeline::noise::bilateral::{BilateralPipeline, BilateralPipelineOptions};
 use picturify_pipeline::pipeline::Pipeline;
-use std::sync::{Arc, RwLock};
 
 pub struct BilateralCommandHandler;
 
@@ -27,7 +26,7 @@ impl CommandHandler for BilateralCommandHandler {
             sigma_intensity: sigma_intensity.clone(),
         });
 
-        let pipeline_progress = Arc::new(RwLock::new(PipelineProgress::new()));
+        let pipeline_progress = PipelineProgress::new();
         let pipeline_progress_clone = pipeline_progress.clone();
 
         let handle = std::thread::spawn(move || {

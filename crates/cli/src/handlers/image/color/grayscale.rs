@@ -8,7 +8,6 @@ use picturify_pipeline::color::grayscale::{GrayscalePipeline, GrayscalePipelineO
 use picturify_pipeline::common::pipeline_progress::PipelineProgress;
 use picturify_pipeline::pipeline::Pipeline;
 use picturify_processing::processors::color::grayscale::GrayscaleStrategy;
-use std::sync::{Arc, RwLock};
 use std::thread::spawn;
 
 pub struct GrayscaleCommandHandler;
@@ -25,7 +24,7 @@ impl CommandHandler for GrayscaleCommandHandler {
             fast: *fast,
         });
 
-        let pipeline_progress = Arc::new(RwLock::new(PipelineProgress::new()));
+        let pipeline_progress = PipelineProgress::new();
         let pipeline_progress_clone = pipeline_progress.clone();
 
         let handle = spawn(move || {

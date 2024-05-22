@@ -5,7 +5,6 @@ use crate::processors::internal::convolution_rgb::{
 };
 use picturify_core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
-use std::sync::{Arc, RwLock};
 
 pub struct MeanProcessorOptions {
     pub radius: usize,
@@ -40,7 +39,7 @@ impl WithOptions<MeanProcessorOptions> for MeanProcessor {
 }
 
 impl Processor for MeanProcessor {
-    fn process(&self, image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, image: FastImage, progress: Progress) -> FastImage {
         let radius = self.options.radius;
 
         let processor =

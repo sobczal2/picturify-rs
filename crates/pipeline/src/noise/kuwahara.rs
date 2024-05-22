@@ -1,5 +1,3 @@
-use std::sync::{Arc, RwLock};
-
 use picturify_core::fast_image::FastImage;
 use picturify_core::palette::Srgba;
 use picturify_processing::common::execution::WithOptions;
@@ -35,11 +33,7 @@ impl KuwaharaPipeline {
 const KUWAHARA_PROCESSOR_NAME: &str = "Kuwahara";
 
 impl Pipeline for KuwaharaPipeline {
-    fn run(
-        &self,
-        image: FastImage,
-        pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
-    ) -> FastImage {
+    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
         let processor = KuwaharaProcessor::new().with_options(KuwaharaProcessorOptions {
             radius: self.options.radius,
         });

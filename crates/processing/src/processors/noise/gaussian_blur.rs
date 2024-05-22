@@ -5,7 +5,6 @@ use crate::processors::internal::convolution_rgb::{
 };
 use picturify_core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
-use std::sync::{Arc, RwLock};
 
 pub struct GaussianBlurProcessorOptions {
     pub radius: usize,
@@ -42,7 +41,7 @@ impl WithOptions<GaussianBlurProcessorOptions> for GaussianBlurProcessor {
 }
 
 impl Processor for GaussianBlurProcessor {
-    fn process(&self, image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, image: FastImage, progress: Progress) -> FastImage {
         let radius = self.options.radius;
         let sigma = self.options.sigma;
 

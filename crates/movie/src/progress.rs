@@ -11,24 +11,24 @@ pub enum ProgressStage {
 }
 
 pub struct MovieProgress {
-    main_progress: Arc<RwLock<Progress>>,
+    main_progress: Progress,
     stage: Arc<RwLock<ProgressStage>>,
 }
 
 impl MovieProgress {
     pub fn new() -> Self {
         Self {
-            main_progress: Arc::new(RwLock::new(Progress::new())),
+            main_progress: Progress::new(),
             stage: Arc::new(RwLock::new(ProgressStage::Probe)),
         }
     }
 
     pub fn setup(&self, max_value: usize) {
-        self.main_progress.write().unwrap().setup(max_value);
+        self.main_progress.clone().setup(max_value);
     }
 
     pub fn increment(&self) {
-        self.main_progress.read().unwrap().increment();
+        self.main_progress.increment();
     }
 
     pub fn set_stage(&self, stage: ProgressStage) {
@@ -40,10 +40,10 @@ impl MovieProgress {
     }
 
     pub fn get(&self) -> usize {
-        self.main_progress.read().unwrap().get()
+        self.main_progress.get()
     }
 
     pub fn get_max(&self) -> usize {
-        self.main_progress.read().unwrap().get_max()
+        self.main_progress.get_max()
     }
 }

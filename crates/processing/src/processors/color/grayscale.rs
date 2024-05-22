@@ -8,7 +8,6 @@ use picturify_core::fast_image::FastImage;
 use picturify_core::image::Rgba;
 use picturify_core::palette::LinSrgba;
 use picturify_core::threading::progress::Progress;
-use std::sync::{Arc, RwLock};
 
 #[derive(Clone, Copy)]
 pub enum GrayscaleStrategy {
@@ -68,7 +67,7 @@ impl WithOptions<GrayscaleProcessorOptions> for GrayscaleProcessor {
 }
 
 impl Processor for GrayscaleProcessor {
-    fn process(&self, mut image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, mut image: FastImage, progress: Progress) -> FastImage {
         if self.options.use_fast_approximation {
             let function = match self.options.strategy {
                 GrayscaleStrategy::Average => {

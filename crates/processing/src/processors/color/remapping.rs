@@ -1,7 +1,6 @@
 use crate::common::execution::{Processor, WithOptions};
 use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToPalettePixels;
 use picturify_core::fast_image::FastImage;
-use std::sync::{Arc, RwLock};
 
 use picturify_core::palette::LinSrgba;
 use picturify_core::threading::progress::Progress;
@@ -94,7 +93,7 @@ impl WithOptions<RemappingProcessorOptions> for RemappingProcessor {
 }
 
 impl Processor for RemappingProcessor {
-    fn process(&self, mut image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, mut image: FastImage, progress: Progress) -> FastImage {
         image.par_apply_fn_to_lin_srgba(
             |pixel, _x, _y| self.options.function.apply_to_pixel(pixel),
             Some(progress),

@@ -5,7 +5,6 @@ use crate::processors::internal::convolution_rgb::{
 };
 use picturify_core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
-use std::sync::{Arc, RwLock};
 
 pub struct SharpenProcessorOptions {
     pub use_fast_approximation: bool,
@@ -38,7 +37,7 @@ impl WithOptions<SharpenProcessorOptions> for SharpenProcessor {
 }
 
 impl Processor for SharpenProcessor {
-    fn process(&self, image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, image: FastImage, progress: Progress) -> FastImage {
         let processor =
             ConvolutionRgbProcessor::new().with_options(ConvolutionRgbProcessorOptions {
                 kernel: ConvolutionKernel::new_sharpen(),

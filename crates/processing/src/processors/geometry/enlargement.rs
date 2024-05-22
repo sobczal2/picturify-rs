@@ -3,7 +3,6 @@ use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToPalettePixels;
 use picturify_core::fast_image::FastImage;
 use picturify_core::palette::Srgba;
 use picturify_core::threading::progress::Progress;
-use std::sync::{Arc, RwLock};
 
 #[derive(Copy, Clone)]
 pub enum EnlargementStrategy {
@@ -93,7 +92,7 @@ impl WithOptions<EnlargementProcessorOptions> for EnlargementProcessor {
 }
 
 impl Processor for EnlargementProcessor {
-    fn process(&self, image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, image: FastImage, progress: Progress) -> FastImage {
         let new_width = image.get_width() + self.options.border.left + self.options.border.right;
         let new_height = image.get_height() + self.options.border.top + self.options.border.bottom;
 

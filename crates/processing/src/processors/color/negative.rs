@@ -4,7 +4,6 @@ use picturify_core::fast_image::apply_fn_to_pixels::{
 };
 use picturify_core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
-use std::sync::{Arc, RwLock};
 
 pub struct NegativeProcessorOptions {
     pub use_fast_approximation: bool,
@@ -37,7 +36,7 @@ impl WithOptions<NegativeProcessorOptions> for NegativeProcessor {
 }
 
 impl Processor for NegativeProcessor {
-    fn process(&self, mut image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, mut image: FastImage, progress: Progress) -> FastImage {
         if self.options.use_fast_approximation {
             image.par_apply_fn_to_image_pixel(
                 |pixel, _x, _y| {

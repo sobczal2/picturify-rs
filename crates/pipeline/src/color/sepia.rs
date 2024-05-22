@@ -3,7 +3,6 @@ use crate::pipeline::Pipeline;
 use picturify_core::fast_image::FastImage;
 use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::color::sepia::SepiaProcessor;
-use std::sync::{Arc, RwLock};
 
 pub struct SepiaPipelineOptions {}
 
@@ -21,28 +20,16 @@ impl SepiaPipeline {
 const SEPIA_PROCESSOR_NAME: &str = "Sepia";
 
 impl Pipeline for SepiaPipeline {
-    fn run(
-        &self,
-        image: FastImage,
-        pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
-    ) -> FastImage {
-        let pipeline_progress =
-            pipeline_progress.unwrap_or_else(|| Arc::new(RwLock::new(PipelineProgress::new())));
+    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
+        let mut pipeline_progress = pipeline_progress.unwrap_or_else(|| PipelineProgress::new());
 
-        let mut pipeline_progress_write = pipeline_progress.write().unwrap();
-        pipeline_progress_write.new_individual(SEPIA_PROCESSOR_NAME.to_string());
-        pipeline_progress_write.setup_combined(1);
-        drop(pipeline_progress_write);
+        pipeline_progress.new_individual(SEPIA_PROCESSOR_NAME.to_string());
+        pipeline_progress.setup_combined(1);
 
         let processor = SepiaProcessor::new();
-        let final_image = processor.process(
-            image,
-            pipeline_progress
-                .read()
-                .unwrap()
-                .get_current_individual_progress(),
-        );
-        pipeline_progress.write().unwrap().increment_combined();
+        let final_image =
+            processor.process(image, pipeline_progress.get_current_individual_progress());
+        pipeline_progress.increment_combined();
         final_image
     }
 }

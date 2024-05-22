@@ -1,5 +1,3 @@
-use std::sync::{Arc, RwLock};
-
 use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, Offset};
 use picturify_core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
@@ -46,7 +44,7 @@ impl WithOptions<BilateralProcessorOptions> for BilateralProcessor {
 
 // TODO fix this
 impl Processor for BilateralProcessor {
-    fn process(&self, image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, image: FastImage, progress: Progress) -> FastImage {
         let height = image.get_height();
         let width = image.get_width();
 

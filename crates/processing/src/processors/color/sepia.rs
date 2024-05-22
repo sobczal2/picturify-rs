@@ -3,7 +3,6 @@ use picturify_core::fast_image::apply_fn_to_pixels::{
 };
 use picturify_core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
-use std::sync::{Arc, RwLock};
 
 use crate::common::execution::{Processor, WithOptions};
 
@@ -38,7 +37,7 @@ impl WithOptions<SepiaProcessorOptions> for SepiaProcessor {
 }
 
 impl Processor for SepiaProcessor {
-    fn process(&self, mut image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, mut image: FastImage, progress: Progress) -> FastImage {
         return if self.options.use_fast_approximation {
             image.par_apply_fn_to_image_pixel(
                 |pixel, _x, _y| {

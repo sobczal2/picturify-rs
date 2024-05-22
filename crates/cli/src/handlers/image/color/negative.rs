@@ -1,4 +1,3 @@
-use std::sync::{Arc, RwLock};
 use std::thread::spawn;
 
 use clap::ArgMatches;
@@ -19,7 +18,7 @@ impl CommandHandler for NegativeCommandHandler {
         let image = read_image(args.clone())?;
         let negative_pipeline = NegativePipeline::new(NegativePipelineOptions {});
 
-        let pipeline_progress = Arc::new(RwLock::new(PipelineProgress::new()));
+        let pipeline_progress = PipelineProgress::new();
         let pipeline_progress_clone = pipeline_progress.clone();
 
         let handle = spawn(move || {

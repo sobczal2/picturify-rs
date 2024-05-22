@@ -7,7 +7,6 @@ use clap::ArgMatches;
 use picturify_pipeline::common::pipeline_progress::PipelineProgress;
 use picturify_pipeline::edge::sobel_rgb::{SobelRgbPipeline, SobelRgbPipelineOptions};
 use picturify_pipeline::pipeline::Pipeline;
-use std::sync::{Arc, RwLock};
 use std::thread::spawn;
 
 pub struct SobelRgbCommandHandler;
@@ -19,7 +18,7 @@ impl CommandHandler for SobelRgbCommandHandler {
         let sobel_rgb_pipeline =
             SobelRgbPipeline::new(SobelRgbPipelineOptions { fast: fast.clone() });
 
-        let pipeline_progress = Arc::new(RwLock::new(PipelineProgress::new()));
+        let pipeline_progress = PipelineProgress::new();
         let pipeline_progress_clone = pipeline_progress.clone();
 
         let handle = spawn(move || {

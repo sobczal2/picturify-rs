@@ -1,5 +1,3 @@
-use std::sync::{Arc, RwLock};
-
 use picturify_core::conversions::image_palette_bridge::lin_srgba_to_rgba;
 use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, Offset};
 use picturify_core::fast_image::FastImage;
@@ -41,7 +39,7 @@ impl WithOptions<ConvolutionRgbProcessorOptions> for ConvolutionRgbProcessor {
 }
 
 impl Processor for ConvolutionRgbProcessor {
-    fn process(&self, image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, image: FastImage, mut progress: Progress) -> FastImage {
         let width = image.get_width();
         let height = image.get_height();
 
@@ -50,10 +48,7 @@ impl Processor for ConvolutionRgbProcessor {
         let half_kernel_width = self.options.kernel.get_width() / 2;
         let half_kernel_height = self.options.kernel.get_height() / 2;
 
-        progress
-            .write()
-            .unwrap()
-            .setup(height - 2 * half_kernel_height);
+        progress.setup(height - 2 * half_kernel_height);
         let offset = Offset {
             skip_rows: half_kernel_height,
             take_rows: height - 2 * half_kernel_height,

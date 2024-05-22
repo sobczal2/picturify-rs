@@ -7,7 +7,6 @@ use clap::ArgMatches;
 use picturify_pipeline::common::pipeline_progress::PipelineProgress;
 use picturify_pipeline::noise::sharpen::{SharpenPipeline, SharpenPipelineOptions};
 use picturify_pipeline::pipeline::Pipeline;
-use std::sync::{Arc, RwLock};
 use std::thread::spawn;
 
 pub struct SharpenCommandHandler;
@@ -18,7 +17,7 @@ impl CommandHandler for SharpenCommandHandler {
         let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
         let negative_pipeline = SharpenPipeline::new(SharpenPipelineOptions { fast: fast.clone() });
 
-        let pipeline_progress = Arc::new(RwLock::new(PipelineProgress::new()));
+        let pipeline_progress = PipelineProgress::new();
         let pipeline_progress_clone = pipeline_progress.clone();
 
         let handle = spawn(move || {

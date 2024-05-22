@@ -1,10 +1,11 @@
-use std::fmt::Display;
-use std::sync::{Arc, RwLock};
-use criterion::{BenchmarkId, Criterion, criterion_group};
+use crate::common::ImageResolution;
+use criterion::{criterion_group, BenchmarkId, Criterion};
 use picturify_core::threading::progress::Progress;
 use picturify_processing::common::execution::{Processor, WithOptions};
-use picturify_processing::processors::color::negative::{NegativeProcessor, NegativeProcessorOptions};
-use crate::common::ImageResolution;
+use picturify_processing::processors::color::negative::{
+    NegativeProcessor, NegativeProcessorOptions,
+};
+use std::fmt::Display;
 
 #[derive(Clone, Copy, Debug)]
 struct NegativeProcessorBenchmarkOptions {
@@ -26,22 +27,34 @@ fn negative_processor_benchmark(c: &mut Criterion) {
     let resolution_options = ImageResolution::get_resolutions();
     let use_fast_approximation_options = [true, false];
     let negative_processor_benchmark_options = resolution_options.iter().flat_map(|resolution| {
-        use_fast_approximation_options.iter().map(move |&use_fast_approximation| NegativeProcessorBenchmarkOptions {
-            resolution: *resolution,
-            use_fast_approximation,
-        })
+        use_fast_approximation_options
+            .iter()
+            .map(
+                move |&use_fast_approximation| NegativeProcessorBenchmarkOptions {
+                    resolution: *resolution,
+                    use_fast_approximation,
+                },
+            )
     });
     for option in negative_processor_benchmark_options {
-        group.bench_with_input(BenchmarkId::from_parameter(option), &option, |b, &options| {
-            b.iter(|| {
-                let image = options.resolution.get_image();
-                let processor = NegativeProcessor::new().with_options(NegativeProcessorOptions {
-                    use_fast_approximation: options.use_fast_approximation,
+        group.bench_with_input(
+            BenchmarkId::from_parameter(option),
+            &option,
+            |b, &options| {
+                b.iter(|| {
+                    let image = options.resolution.get_image();
+                    let processor =
+                        NegativeProcessor::new().with_options(NegativeProcessorOptions {
+                            use_fast_approximation: options.use_fast_approximation,
+                        });
+                    processor.process(image, Progress::new());
                 });
-                processor.process(image, Arc::new(RwLock::new(Progress::new())));
-            });
-        });
+            },
+        );
     }
 }
 
-criterion_group!(negative_processor_benchmark_group, negative_processor_benchmark);
+criterion_group!(
+    negative_processor_benchmark_group,
+    negative_processor_benchmark
+);

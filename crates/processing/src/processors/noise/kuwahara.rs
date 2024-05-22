@@ -5,7 +5,6 @@ use picturify_core::fast_image::FastImage;
 use picturify_core::palette::{Hsva, IntoColor};
 use picturify_core::threading::progress::Progress;
 use std::ops::Range;
-use std::sync::{Arc, RwLock};
 
 pub struct KuwaharaProcessorOptions {
     pub radius: usize,
@@ -36,7 +35,7 @@ impl WithOptions<KuwaharaProcessorOptions> for KuwaharaProcessor {
 }
 
 impl Processor for KuwaharaProcessor {
-    fn process(&self, mut image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, mut image: FastImage, progress: Progress) -> FastImage {
         let width = image.get_width();
         let height = image.get_height();
 

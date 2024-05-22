@@ -1,5 +1,3 @@
-use std::sync::{Arc, RwLock};
-
 use picturify_core::fast_image::FastImage;
 use picturify_core::palette::Srgba;
 use picturify_processing::common::execution::WithOptions;
@@ -33,11 +31,7 @@ impl MeanPipeline {
 const MEAN_PROCESSOR_NAME: &str = "Mean";
 
 impl Pipeline for MeanPipeline {
-    fn run(
-        &self,
-        image: FastImage,
-        pipeline_progress: Option<Arc<RwLock<PipelineProgress>>>,
-    ) -> FastImage {
+    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
         let processor = MeanProcessor::new().with_options(MeanProcessorOptions {
             radius: self.options.radius,
             use_fast_approximation: self.options.fast,

@@ -6,7 +6,7 @@ use picturify_core::fast_image::apply_fn_to_pixels::{
 use picturify_core::fast_image::FastImage;
 use picturify_core::rayon::prelude::*;
 use picturify_core::threading::progress::Progress;
-use std::sync::{Arc, Mutex, RwLock};
+use std::sync::{Arc, Mutex};
 
 pub struct SobelProcessorOptions {
     pub use_fast_approximation: bool,
@@ -39,7 +39,7 @@ impl WithOptions<SobelProcessorOptions> for SobelProcessor {
 }
 
 impl Processor for SobelProcessor {
-    fn process(&self, mut image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, mut image: FastImage, mut progress: Progress) -> FastImage {
         let width = image.get_width();
         let height = image.get_height();
 
@@ -50,19 +50,13 @@ impl Processor for SobelProcessor {
         let sobel_kernel_x = create_sobel_kernel_x();
         let sobel_kernel_y = create_sobel_kernel_y();
 
-        progress
-            .write()
-            .expect("Failed to lock progress")
-            .setup((height - 2) * 2);
+        progress.setup((height - 2) * 2);
         magnitude_vec
             .iter_mut()
             .enumerate()
             .par_bridge()
             .for_each(|(y_mag, row)| {
-                progress
-                    .read()
-                    .expect("Failed to lock progress")
-                    .increment();
+                progress.increment();
                 let mut row_min_magnitude = f32::MAX;
                 let mut row_max_magnitude = f32::MIN;
                 row.iter_mut().enumerate().for_each(|(x_mag, magnitude)| {
@@ -118,9 +112,9 @@ impl Processor for SobelProcessor {
         let min_magnitude = *min_magnitude.lock().unwrap();
         let max_magnitude = *max_magnitude.lock().unwrap();
 
-        let inner_progress = Arc::new(RwLock::new(Progress::new()));
-        inner_progress.write().unwrap().set_on_increment(move || {
-            progress.write().unwrap().increment();
+        let mut inner_progress = Progress::new();
+        inner_progress.set_on_increment(move || {
+            progress.increment();
         });
 
         let offset = Offset {

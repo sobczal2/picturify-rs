@@ -1,8 +1,8 @@
+pub mod common;
 pub mod conversions;
 pub mod error;
 pub mod fast_image;
 pub mod threading;
-pub mod common;
 
 pub use image;
 pub use palette;

@@ -1,10 +1,12 @@
 use crate::commands::common::command::Command;
+use crate::commands::image::color::brightness::BrightnessCommand;
 use crate::commands::image::color::grayscale::GrayscaleCommand;
 use crate::commands::image::color::negative::NegativeCommand;
 use crate::commands::image::color::sepia::SepiaCommand;
 use crate::commands::image::common::none::NoneCommand;
 use crate::commands::image::edge::sobel::SobelCommand;
 use crate::commands::image::edge::sobel_rgb::SobelRgbCommand;
+use crate::commands::image::geometry::rotate::RotateCommand;
 use crate::commands::image::noise::bilateral::BilateralCommand;
 use crate::commands::image::noise::gaussian_blur::GaussianBlurCommand;
 use crate::commands::image::noise::kuwahara::KuwaharaCommand;
@@ -13,12 +15,14 @@ use crate::commands::image::noise::median::MedianCommand;
 use crate::commands::image::noise::sharpen::SharpenCommand;
 use crate::error::{CliPicturifyError, CliPicturifyResult};
 use crate::handlers::common::handler::CommandHandler;
+use crate::handlers::image::color::brightness::BrightnessCommandHandler;
 use crate::handlers::image::color::grayscale::GrayscaleCommandHandler;
 use crate::handlers::image::color::negative::NegativeCommandHandler;
 use crate::handlers::image::color::sepia::SepiaCommandHandler;
 use crate::handlers::image::common::none::NoneCommandHandler;
 use crate::handlers::image::edge::sobel::SobelCommandHandler;
 use crate::handlers::image::edge::sobel_rgb::SobelRgbCommandHandler;
+use crate::handlers::image::geometry::rotate::RotateCommandHandler;
 use crate::handlers::image::noise::bilateral::BilateralCommandHandler;
 use crate::handlers::image::noise::gaussian_blur::GaussianBlurCommandHandler;
 use crate::handlers::image::noise::kuwahara::KuwaharaCommandHandler;
@@ -28,10 +32,6 @@ use crate::handlers::image::noise::sharpen::SharpenCommandHandler;
 use clap::ArgMatches;
 use std::collections::HashMap;
 use std::rc::Rc;
-use crate::commands::image::color::brightness::BrightnessCommand;
-use crate::commands::image::geometry::rotate::RotateCommand;
-use crate::handlers::image::color::brightness::BrightnessCommandHandler;
-use crate::handlers::image::geometry::rotate::RotateCommandHandler;
 
 pub struct ImageCommandHandler;
 
@@ -86,7 +86,7 @@ impl CommandHandler for ImageCommandHandler {
                     SobelRgbCommand::name(),
                     Rc::new(SobelRgbCommandHandler::handle),
                 );
-                
+
                 // geometry
                 handlers.insert(RotateCommand::name(), Rc::new(RotateCommandHandler::handle));
 

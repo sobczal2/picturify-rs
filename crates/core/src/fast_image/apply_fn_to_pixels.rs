@@ -3,7 +3,6 @@ use image::Rgba;
 use palette::convert::FromColorUnclamped;
 use palette::rgb::Rgb;
 use palette::{Clamp, IntoColor, LinSrgba, Srgba, WithAlpha};
-use std::sync::{Arc, RwLock};
 
 pub struct Offset {
     pub skip_rows: usize,
@@ -13,11 +12,11 @@ pub struct Offset {
 }
 
 pub trait ApplyFnToPalettePixels {
-    fn apply_fn_to_srgba<F>(&mut self, f: F, progress: Option<Arc<RwLock<Progress>>>)
+    fn apply_fn_to_srgba<F>(&mut self, f: F, progress: Option<Progress>)
     where
         F: Fn(Srgba, usize, usize) -> Srgba;
 
-    fn apply_fn_to_linsrgba<F>(&mut self, f: F, progress: Option<Arc<RwLock<Progress>>>)
+    fn apply_fn_to_linsrgba<F>(&mut self, f: F, progress: Option<Progress>)
     where
         F: Fn(LinSrgba, usize, usize) -> LinSrgba,
     {
@@ -31,7 +30,7 @@ pub trait ApplyFnToPalettePixels {
         );
     }
 
-    fn apply_fn_to_pixel<F, P>(&mut self, f: F, progress: Option<Arc<RwLock<Progress>>>)
+    fn apply_fn_to_pixel<F, P>(&mut self, f: F, progress: Option<Progress>)
     where
         F: Fn(P, usize, usize) -> P + Send + Sync,
         P: FromColorUnclamped<Rgb> + Clamp + WithAlpha<f32>,
@@ -40,11 +39,11 @@ pub trait ApplyFnToPalettePixels {
         self.apply_fn_to_srgba(|pixel, x, y| run_on_srgba_pixel(pixel, x, y, &f), progress);
     }
 
-    fn par_apply_fn_to_srgba<F>(&mut self, f: F, progress: Option<Arc<RwLock<Progress>>>)
+    fn par_apply_fn_to_srgba<F>(&mut self, f: F, progress: Option<Progress>)
     where
         F: Fn(Srgba, usize, usize) -> Srgba + Send + Sync;
 
-    fn par_apply_fn_to_lin_srgba<F>(&mut self, f: F, progress: Option<Arc<RwLock<Progress>>>)
+    fn par_apply_fn_to_lin_srgba<F>(&mut self, f: F, progress: Option<Progress>)
     where
         F: Fn(LinSrgba, usize, usize) -> LinSrgba + Send + Sync,
     {
@@ -58,7 +57,7 @@ pub trait ApplyFnToPalettePixels {
         );
     }
 
-    fn par_apply_fn_to_pixel<F, P>(&mut self, f: F, progress: Option<Arc<RwLock<Progress>>>)
+    fn par_apply_fn_to_pixel<F, P>(&mut self, f: F, progress: Option<Progress>)
     where
         F: Fn(P, usize, usize) -> P + Send + Sync,
         P: FromColorUnclamped<Rgb> + Clamp + WithAlpha<f32>,
@@ -70,7 +69,7 @@ pub trait ApplyFnToPalettePixels {
     fn apply_fn_to_srgba_with_offset<F>(
         &mut self,
         f: F,
-        progress: Option<Arc<RwLock<Progress>>>,
+        progress: Option<Progress>,
         offset: Offset,
     ) where
         F: Fn(Srgba, usize, usize) -> Srgba;
@@ -78,7 +77,7 @@ pub trait ApplyFnToPalettePixels {
     fn apply_fn_to_linsrgba_with_offset<F>(
         &mut self,
         f: F,
-        progress: Option<Arc<RwLock<Progress>>>,
+        progress: Option<Progress>,
         offset: Offset,
     ) where
         F: Fn(LinSrgba, usize, usize) -> LinSrgba,
@@ -97,7 +96,7 @@ pub trait ApplyFnToPalettePixels {
     fn apply_fn_to_pixel_with_offset<F, P>(
         &mut self,
         f: F,
-        progress: Option<Arc<RwLock<Progress>>>,
+        progress: Option<Progress>,
         offset: Offset,
     ) where
         F: Fn(P, usize, usize) -> P + Send + Sync,
@@ -114,7 +113,7 @@ pub trait ApplyFnToPalettePixels {
     fn par_apply_fn_to_srgba_with_offset<F>(
         &mut self,
         f: F,
-        progress: Option<Arc<RwLock<Progress>>>,
+        progress: Option<Progress>,
         offset: Offset,
     ) where
         F: Fn(Srgba, usize, usize) -> Srgba + Send + Sync;
@@ -122,7 +121,7 @@ pub trait ApplyFnToPalettePixels {
     fn par_apply_fn_to_lin_srgba_with_offset<F>(
         &mut self,
         f: F,
-        progress: Option<Arc<RwLock<Progress>>>,
+        progress: Option<Progress>,
         offset: Offset,
     ) where
         F: Fn(LinSrgba, usize, usize) -> LinSrgba + Send + Sync,
@@ -141,7 +140,7 @@ pub trait ApplyFnToPalettePixels {
     fn par_apply_fn_to_pixel_with_offset<F, P>(
         &mut self,
         f: F,
-        progress: Option<Arc<RwLock<Progress>>>,
+        progress: Option<Progress>,
         offset: Offset,
     ) where
         F: Fn(P, usize, usize) -> P + Send + Sync,
@@ -170,18 +169,18 @@ where
 }
 
 pub trait ApplyFnToImagePixels {
-    fn apply_fn_to_image_pixel<F>(&mut self, f: F, progress: Option<Arc<RwLock<Progress>>>)
+    fn apply_fn_to_image_pixel<F>(&mut self, f: F, progress: Option<Progress>)
     where
         F: Fn(&mut Rgba<u8>, usize, usize);
 
-    fn par_apply_fn_to_image_pixel<F>(&mut self, f: F, progress: Option<Arc<RwLock<Progress>>>)
+    fn par_apply_fn_to_image_pixel<F>(&mut self, f: F, progress: Option<Progress>)
     where
         F: Fn(&mut Rgba<u8>, usize, usize) + Send + Sync;
 
     fn apply_fn_to_image_pixel_with_offset<F>(
         &mut self,
         f: F,
-        progress: Option<Arc<RwLock<Progress>>>,
+        progress: Option<Progress>,
         offset: Offset,
     ) where
         F: Fn(&mut Rgba<u8>, usize, usize);
@@ -189,7 +188,7 @@ pub trait ApplyFnToImagePixels {
     fn par_apply_fn_to_image_pixel_with_offset<F>(
         &mut self,
         f: F,
-        progress: Option<Arc<RwLock<Progress>>>,
+        progress: Option<Progress>,
         offset: Offset,
     ) where
         F: Fn(&mut Rgba<u8>, usize, usize) + Send + Sync;

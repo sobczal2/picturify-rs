@@ -1,6 +1,6 @@
+use crate::commands::parsers::angle::AngleValueParser;
 use clap::{value_parser, Arg, ArgAction, Command};
 use picturify_processing::processors::color::grayscale::GrayscaleStrategy;
-use crate::commands::parsers::angle::AngleValueParser;
 
 pub enum ArgType {
     Input,
@@ -75,7 +75,7 @@ impl ArgType {
                 .short('a')
                 .long("angle")
                 .help("Angle value in radians or degrees (e.g. 90deg or 1.57rad)")
-                .default_value("0deg")
+                .default_value("90deg")
                 .value_parser(AngleValueParser::new()),
         }
     }

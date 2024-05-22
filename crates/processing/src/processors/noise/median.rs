@@ -3,7 +3,6 @@ use picturify_core::fast_image::FastImage;
 use picturify_core::rayon::prelude::*;
 use picturify_core::threading::progress::Progress;
 use std::collections::VecDeque;
-use std::sync::{Arc, RwLock};
 
 pub struct MedianProcessorOptions {
     pub radius: usize,
@@ -34,17 +33,14 @@ impl WithOptions<MedianProcessorOptions> for MedianProcessor {
 }
 
 impl Processor for MedianProcessor {
-    fn process(&self, image: FastImage, progress: Arc<RwLock<Progress>>) -> FastImage {
+    fn process(&self, image: FastImage, mut progress: Progress) -> FastImage {
         let width = image.get_width();
         let height = image.get_height();
         let radius = self.options.radius;
 
         let mut new_fast_image = image.clone();
 
-        progress
-            .write()
-            .expect("Failed to lock progress")
-            .setup(height - 2 * radius);
+        progress.setup(height - 2 * radius);
         new_fast_image
             .rows_mut()
             .enumerate()
@@ -52,10 +48,7 @@ impl Processor for MedianProcessor {
             .take(height - 2 * radius)
             .par_bridge()
             .for_each(|(y, row)| {
-                progress
-                    .read()
-                    .expect("Failed to lock progress")
-                    .increment();
+                progress.increment();
                 let mut red_window = VecDeque::with_capacity((2 * radius + 1) * (2 * radius + 1));
                 let mut green_window = VecDeque::with_capacity((2 * radius + 1) * (2 * radius + 1));
                 let mut blue_window = VecDeque::with_capacity((2 * radius + 1) * (2 * radius + 1));
