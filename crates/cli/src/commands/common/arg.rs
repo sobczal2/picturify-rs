@@ -1,6 +1,7 @@
 use crate::commands::parsers::angle::AngleValueParser;
 use clap::{value_parser, Arg, ArgAction, Command};
 use picturify_processing::processors::color::grayscale::GrayscaleStrategy;
+use crate::commands::parsers::crop_border::CropBorderValueParser;
 
 pub enum ArgType {
     Input,
@@ -13,6 +14,7 @@ pub enum ArgType {
     SigmaIntensity,
     Factor,
     Angle,
+    CropBorder,
 }
 
 impl ArgType {
@@ -77,6 +79,12 @@ impl ArgType {
                 .help("Angle value in radians or degrees (e.g. 90deg or 1.57rad)")
                 .default_value("90deg")
                 .value_parser(AngleValueParser::new()),
+            ArgType::CropBorder => Arg::new(self.to_id())
+                .short('c')
+                .long("crop")
+                .help("Crop border in format <width>x<height>+<x>+<y>")
+                .required(true)
+                .value_parser(CropBorderValueParser::new()),
         }
     }
 
@@ -92,6 +100,7 @@ impl ArgType {
             ArgType::SigmaIntensity => "sigma-intensity",
             ArgType::Factor => "factor",
             ArgType::Angle => "angle",
+            ArgType::CropBorder => "crop-border",
         }
     }
 }

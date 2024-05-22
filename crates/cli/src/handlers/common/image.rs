@@ -32,6 +32,8 @@ use crate::handlers::image::noise::sharpen::SharpenCommandHandler;
 use clap::ArgMatches;
 use std::collections::HashMap;
 use std::rc::Rc;
+use crate::commands::image::geometry::crop::CropCommand;
+use crate::handlers::image::geometry::crop::CropCommandHandler;
 
 pub struct ImageCommandHandler;
 
@@ -89,6 +91,7 @@ impl CommandHandler for ImageCommandHandler {
 
                 // geometry
                 handlers.insert(RotateCommand::name(), Rc::new(RotateCommandHandler::handle));
+                handlers.insert(CropCommand::name(), Rc::new(CropCommandHandler::handle));
 
                 if let Some(handler) = handlers.get(name) {
                     handler(args.clone())

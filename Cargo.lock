@@ -947,6 +947,7 @@ dependencies = [
  "picturify-movie",
  "picturify-pipeline",
  "picturify-processing",
+ "regex",
  "simplelog",
  "thiserror",
 ]
