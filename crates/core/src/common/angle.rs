@@ -1,5 +1,6 @@
 use crate::error::PicturifyError;
 use std::f32::consts::PI;
+use std::ops::Neg;
 use std::str::FromStr;
 
 #[derive(Debug, Copy, Clone)]
@@ -9,6 +10,14 @@ pub enum Angle {
 }
 
 impl Angle {
+    pub fn from_degrees(degrees: f32) -> Self {
+        Angle::Degrees(degrees)
+    }
+    
+    pub fn from_radians(radians: f32) -> Self {
+        Angle::Radians(radians)
+    }
+    
     pub fn to_radians(&self) -> f32 {
         match *self {
             Angle::Radians(radians) => radians,
@@ -21,6 +30,11 @@ impl Angle {
             Angle::Radians(radians) => radians.to_degrees() % 360.0,
             Angle::Degrees(degrees) => degrees,
         }
+    }
+    
+    pub fn to_sin_cos(&self) -> (f32, f32) {
+        let radians = self.to_radians();
+        (radians.sin(), radians.cos())
     }
 }
 
@@ -44,6 +58,17 @@ impl FromStr for Angle {
                 .parse::<f32>()
                 .map_err(|_| PicturifyError::ParseError("Invalid angle".to_string()))?;
             Ok(Angle::Radians(radians))
+        }
+    }
+}
+
+impl Neg for Angle {
+    type Output = Angle;
+
+    fn neg(self) -> Angle {
+        match self {
+            Angle::Radians(radians) => Angle::Radians(-radians),
+            Angle::Degrees(degrees) => Angle::Degrees(-degrees),
         }
     }
 }
