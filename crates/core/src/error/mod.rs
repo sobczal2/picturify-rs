@@ -14,4 +14,6 @@ pub enum PicturifyError {
     InvalidImageFormat,
     #[error("Processing error: {0}")]
     ProcessingError(#[from] processing::ProcessingError),
+    #[error("Parse error: {0}")]
+    ParseError(String),
 }

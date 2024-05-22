@@ -29,7 +29,9 @@ use clap::ArgMatches;
 use std::collections::HashMap;
 use std::rc::Rc;
 use crate::commands::image::color::brightness::BrightnessCommand;
+use crate::commands::image::geometry::rotate::RotateCommand;
 use crate::handlers::image::color::brightness::BrightnessCommandHandler;
+use crate::handlers::image::geometry::rotate::RotateCommandHandler;
 
 pub struct ImageCommandHandler;
 
@@ -84,6 +86,9 @@ impl CommandHandler for ImageCommandHandler {
                     SobelRgbCommand::name(),
                     Rc::new(SobelRgbCommandHandler::handle),
                 );
+                
+                // geometry
+                handlers.insert(RotateCommand::name(), Rc::new(RotateCommandHandler::handle));
 
                 if let Some(handler) = handlers.get(name) {
                     handler(args.clone())

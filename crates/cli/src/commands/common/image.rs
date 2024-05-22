@@ -6,6 +6,7 @@ use crate::commands::image::color::sepia::SepiaCommand;
 use crate::commands::image::common::none::NoneCommand;
 use crate::commands::image::edge::sobel::SobelCommand;
 use crate::commands::image::edge::sobel_rgb::SobelRgbCommand;
+use crate::commands::image::geometry::rotate::RotateCommand;
 use crate::commands::image::noise::bilateral::BilateralCommand;
 use crate::commands::image::noise::gaussian_blur::GaussianBlurCommand;
 use crate::commands::image::noise::kuwahara::KuwaharaCommand;
@@ -37,6 +38,8 @@ impl Command for ImageCommand {
                 // edge
                 SobelCommand::get(),
                 SobelRgbCommand::get(),
+                // geometry
+                RotateCommand::get(),
             ])
     }
 

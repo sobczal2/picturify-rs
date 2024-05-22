@@ -58,10 +58,6 @@ impl EnlargementBorder {
     }
 }
 
-pub struct EnlargementProcessor {
-    options: EnlargementProcessorOptions,
-}
-
 impl Default for EnlargementProcessorOptions {
     fn default() -> Self {
         EnlargementProcessorOptions {
@@ -77,6 +73,10 @@ pub struct EnlargementProcessorOptions {
     pub strategy: EnlargementStrategy,
 }
 
+pub struct EnlargementProcessor {
+    options: EnlargementProcessorOptions,
+}
+
 impl EnlargementProcessor {
     pub fn new() -> Self {
         EnlargementProcessor {
@@ -86,8 +86,9 @@ impl EnlargementProcessor {
 }
 
 impl WithOptions<EnlargementProcessorOptions> for EnlargementProcessor {
-    fn with_options(self, options: EnlargementProcessorOptions) -> Self {
-        EnlargementProcessor { options }
+    fn with_options(mut self, options: EnlargementProcessorOptions) -> Self {
+        self.options = options;
+        self
     }
 }
 

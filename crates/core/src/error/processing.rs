@@ -6,4 +6,6 @@ pub enum ProcessingError {
     ChannelSelectionNotSupported,
     #[error("Invalid channel selector")]
     InvalidChannelSelector,
+    #[error("Invalid angle")]
+    InvalidAngle,
 }

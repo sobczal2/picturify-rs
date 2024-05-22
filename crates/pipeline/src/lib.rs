@@ -3,3 +3,4 @@ pub mod common;
 pub mod edge;
 pub mod noise;
 pub mod pipeline;
+pub mod geometry;

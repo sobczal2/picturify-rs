@@ -1,5 +1,6 @@
 use clap::{value_parser, Arg, ArgAction, Command};
 use picturify_processing::processors::color::grayscale::GrayscaleStrategy;
+use crate::commands::parsers::angle::AngleValueParser;
 
 pub enum ArgType {
     Input,
@@ -11,6 +12,7 @@ pub enum ArgType {
     SigmaSpatial,
     SigmaIntensity,
     Factor,
+    Angle,
 }
 
 impl ArgType {
@@ -69,6 +71,12 @@ impl ArgType {
                 .help("Brightness factor")
                 .default_value("1.0")
                 .value_parser(value_parser!(f32)),
+            ArgType::Angle => Arg::new(self.to_id())
+                .short('a')
+                .long("angle")
+                .help("Angle value in radians or degrees (e.g. 90deg or 1.57rad)")
+                .default_value("0deg")
+                .value_parser(AngleValueParser::new()),
         }
     }
 
@@ -83,6 +91,7 @@ impl ArgType {
             ArgType::SigmaSpatial => "sigma-spatial",
             ArgType::SigmaIntensity => "sigma-intensity",
             ArgType::Factor => "factor",
+            ArgType::Angle => "angle",
         }
     }
 }
