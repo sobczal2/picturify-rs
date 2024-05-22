@@ -1,5 +1,7 @@
 use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToImagePixels;
 use picturify_core::fast_image::FastImage;
+use picturify_core::geometry::coord::Coord;
+use picturify_core::geometry::size::Size;
 use picturify_core::threading::progress::Progress;
 
 use crate::common::execution::{Processor, WithOptions};
@@ -31,6 +33,16 @@ impl CropBorder {
             x_offset,
             y_offset,
         }
+    }
+    
+    pub fn offset(&self) -> Coord {
+        (self.x_offset, self.y_offset).into()
+    }
+}
+
+impl From<CropBorder> for Size {
+    fn from(crop_border: CropBorder) -> Self {
+        Size::new(crop_border.width, crop_border.height)
     }
 }
 
@@ -67,17 +79,11 @@ impl WithOptions<CropProcessorOptions> for CropProcessor {
 
 impl Processor for CropProcessor {
     fn process(&self, image: FastImage, progress: Progress) -> FastImage {
-        let mut new_image = FastImage::empty(
-            self.options.crop_border.width,
-            self.options.crop_border.height,
-        );
+        let mut new_image = FastImage::empty(self.options.crop_border.into());
 
         new_image.par_apply_fn_to_image_pixel(
-            |pixel, x, y| {
-                let new_pixel = image.get_image_pixel(
-                    x + self.options.crop_border.x_offset,
-                    y + self.options.crop_border.y_offset,
-                );
+            |pixel, coord| {
+                let new_pixel = image.get_image_pixel(coord + self.options.crop_border.offset());
                 *pixel = new_pixel;
             },
             Some(progress),

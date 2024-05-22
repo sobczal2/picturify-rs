@@ -3,8 +3,8 @@ use std::ffi::OsStr;
 use clap::builder::TypedValueParser;
 use clap::error::ErrorKind;
 use clap::{Arg, Command, Error};
+use picturify_core::geometry::angle::Angle;
 
-use picturify_core::common::angle::Angle;
 
 #[derive(Debug, Copy, Clone)]
 pub struct AngleValueParser;

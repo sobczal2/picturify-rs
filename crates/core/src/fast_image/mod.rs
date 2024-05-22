@@ -9,13 +9,14 @@ use image::io::Reader;
 use image::{Rgba, RgbaImage};
 use palette::{LinSrgba, Srgba};
 use rayon::prelude::*;
-use log::info;
 
 use crate::error::PicturifyResult;
 use crate::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels, Offset};
 use crate::fast_image::io::{ReadFromFile, WriteToFile};
 use crate::fast_image::read_pixels::ReadPixels;
-use crate::threading::progress::Progress;
+use crate::geometry::coord::Coord;
+use crate::geometry::size::Size;
+use crate::threading::progress::{Progress, ProgressIteratorExt};
 
 #[derive(Debug, Clone)]
 pub struct FastImage {
@@ -23,15 +24,21 @@ pub struct FastImage {
 }
 
 impl FastImage {
-    pub fn empty(width: usize, height: usize) -> FastImage {
+    pub fn empty(size: Size) -> FastImage {
+        let (width, height) = size.into();
         FastImage {
-            inner: RgbaImage::new(width as u32, height as u32),
+            inner: RgbaImage::new(width, height),
         }
     }
 
-    pub fn from_rgba_vec(width: usize, height: usize, rgba_vec: Vec<u8>) -> FastImage {
+    pub fn from_rgba_vec(size: Size, rgba_vec: Vec<u8>) -> FastImage {
+        let (width, height) = size.into();
         FastImage {
-            inner: RgbaImage::from_raw(width as u32, height as u32, rgba_vec).unwrap(),
+            inner: RgbaImage::from_raw(
+                width,
+                height,
+                rgba_vec,
+            ).unwrap(),
         }
     }
 
@@ -42,47 +49,45 @@ impl FastImage {
 
 impl FastImage {
     #[inline(always)]
-    pub fn get_width(&self) -> usize {
-        self.inner.width() as usize
+    pub fn size(&self) -> Size {
+        (self.inner.width(), self.inner.height()).into()
     }
 
     #[inline(always)]
-    pub fn get_height(&self) -> usize {
-        self.inner.height() as usize
+    pub fn get_image_pixel(&self, coord: Coord) -> Rgba<u8> {
+        let (x, y) = coord.into();
+        *self.inner.get_pixel(x, y)
     }
 
     #[inline(always)]
-    pub fn get_image_pixel(&self, x: usize, y: usize) -> Rgba<u8> {
-        *self.inner.get_pixel(x as u32, y as u32)
-    }
-
-    #[inline(always)]
-    pub fn get_srgba_pixel(&self, x: usize, y: usize) -> Srgba {
-        let pixel = self.inner.get_pixel(x as u32, y as u32);
+    pub fn get_srgba_pixel(&self, coord: Coord) -> Srgba {
+        let (x, y) = coord.into();
+        let pixel = self.inner.get_pixel(x, y);
         rgba_to_srgba(*pixel)
     }
 
     #[inline(always)]
-    pub fn get_lin_srgba_pixel(&self, x: usize, y: usize) -> LinSrgba {
-        let pixel = self.get_srgba_pixel(x, y);
+    pub fn get_lin_srgba_pixel(&self, coord: Coord) -> LinSrgba {
+        let pixel = self.get_srgba_pixel(coord);
         pixel.into_linear()
     }
 
     #[inline(always)]
-    pub fn set_image_pixel(&mut self, x: usize, y: usize, pixel: Rgba<u8>) {
-        self.inner.put_pixel(x as u32, y as u32, pixel);
+    pub fn set_image_pixel(&mut self, coord: Coord, pixel: Rgba<u8>) {
+        let (x, y) = coord.into();
+        self.inner.put_pixel(x, y, pixel);
     }
 
     #[inline(always)]
-    pub fn set_srgba_pixel(&mut self, x: usize, y: usize, pixel: Srgba) {
+    pub fn set_srgba_pixel(&mut self, coord: Coord, pixel: Srgba) {
         let rgba = srgba_to_rgba(pixel);
-        self.inner.put_pixel(x as u32, y as u32, rgba);
+        self.set_image_pixel(coord, rgba);
     }
 
     #[inline(always)]
-    pub fn set_lin_srgba_pixel(&mut self, x: usize, y: usize, pixel: LinSrgba) {
+    pub fn set_lin_srgba_pixel(&mut self, coord: Coord, pixel: LinSrgba) {
         let srgba: Srgba = pixel.into();
-        self.set_srgba_pixel(x, y, srgba);
+        self.set_srgba_pixel(coord, srgba);
     }
 
     pub fn pixels(&self) -> Pixels<Rgba<u8>> {
@@ -105,43 +110,45 @@ impl FastImage {
 // Slower implementation, use if you need to work with the pixel's color space
 impl ApplyFnToPalettePixels for FastImage {
     fn apply_fn_to_srgba<F>(&mut self, f: F, progress: Option<Progress>)
-    where
-        F: Fn(Srgba, usize, usize) -> Srgba,
+        where
+            F: Fn(Srgba, Coord) -> Srgba,
     {
         if let Some(mut progress) = progress {
-            let max_value = self.get_height();
-            progress.setup(max_value);
-            let _ = &self.inner.enumerate_rows_mut().for_each(|(_, row)| {
-                progress.increment();
+            let (_, height) = self.size().into();
+            progress.setup(height);
+            let _ = &self.inner
+                .enumerate_rows_mut()
+                .progress(progress)
+                .for_each(|(_, row)| {
                 row.into_iter().for_each(|(x, y, pixel)| {
-                    run_on_srgba_pixel(pixel, x as usize, y as usize, &f);
+                    run_on_srgba_pixel(pixel, (x, y).into(), &f);
                 });
             });
         } else {
             let _ = &self.inner.enumerate_rows_mut().for_each(|(_, row)| {
                 row.into_iter().for_each(|(x, y, pixel)| {
-                    run_on_srgba_pixel(pixel, x as usize, y as usize, &f);
+                    run_on_srgba_pixel(pixel, (x, y).into(), &f);
                 });
             });
         }
     }
 
     fn par_apply_fn_to_srgba<F>(&mut self, f: F, progress: Option<Progress>)
-    where
-        F: Fn(Srgba, usize, usize) -> Srgba + Send + Sync,
+        where
+            F: Fn(Srgba, Coord) -> Srgba + Send + Sync,
     {
         if let Some(mut progress) = progress {
-            let max_value = self.get_height();
-            progress.setup(max_value);
+            let (_, height) = self.size().into();
+            progress.setup(height);
 
             let _ = self
                 .inner
                 .enumerate_rows_mut()
+                .progress(progress)
                 .par_bridge()
                 .for_each(|(_, row)| {
-                    progress.increment();
                     row.into_iter().for_each(|(x, y, pixel)| {
-                        run_on_srgba_pixel(pixel, x as usize, y as usize, &f);
+                        run_on_srgba_pixel(pixel, (x, y).into(), &f);
                     });
                 });
         } else {
@@ -151,15 +158,15 @@ impl ApplyFnToPalettePixels for FastImage {
                 .par_bridge()
                 .for_each(|(_, row)| {
                     row.into_iter().for_each(|(x, y, pixel)| {
-                        run_on_srgba_pixel(pixel, x as usize, y as usize, &f);
+                        run_on_srgba_pixel(pixel, (x, y).into(), &f);
                     });
                 });
         }
     }
 
     fn apply_fn_to_srgba_with_offset<F>(&mut self, f: F, progress: Option<Progress>, offset: Offset)
-    where
-        F: Fn(Srgba, usize, usize) -> Srgba,
+        where
+            F: Fn(Srgba, Coord) -> Srgba,
     {
         if let Some(mut progress) = progress {
             let max_value = offset.take_rows;
@@ -169,13 +176,13 @@ impl ApplyFnToPalettePixels for FastImage {
                 .enumerate_rows_mut()
                 .skip(offset.skip_rows)
                 .take(offset.take_rows)
+                .progress(progress)
                 .for_each(|(_, row)| {
-                    progress.increment();
                     row.into_iter()
                         .skip(offset.skip_columns)
                         .take(offset.take_columns)
                         .for_each(|(x, y, pixel)| {
-                            run_on_srgba_pixel(pixel, x as usize, y as usize, &f);
+                            run_on_srgba_pixel(pixel, (x, y).into(), &f);
                         });
                 });
         } else {
@@ -189,7 +196,7 @@ impl ApplyFnToPalettePixels for FastImage {
                         .skip(offset.skip_columns)
                         .take(offset.take_columns)
                         .for_each(|(x, y, pixel)| {
-                            run_on_srgba_pixel(pixel, x as usize, y as usize, &f);
+                            run_on_srgba_pixel(pixel, (x, y).into(), &f);
                         });
                 });
         }
@@ -201,7 +208,7 @@ impl ApplyFnToPalettePixels for FastImage {
         progress: Option<Progress>,
         offset: Offset,
     ) where
-        F: Fn(Srgba, usize, usize) -> Srgba + Send + Sync,
+        F: Fn(Srgba, Coord) -> Srgba + Send + Sync,
     {
         if let Some(mut progress) = progress {
             let max_value = offset.take_rows;
@@ -212,14 +219,14 @@ impl ApplyFnToPalettePixels for FastImage {
                 .enumerate_rows_mut()
                 .skip(offset.skip_rows)
                 .take(offset.take_rows)
+                .progress(progress)
                 .par_bridge()
                 .for_each(|(_, row)| {
-                    progress.increment();
                     row.into_iter()
                         .skip(offset.skip_columns)
                         .take(offset.take_columns)
                         .for_each(|(x, y, pixel)| {
-                            run_on_srgba_pixel(pixel, x as usize, y as usize, &f);
+                            run_on_srgba_pixel(pixel, (x, y).into(), &f);
                         });
                 });
         } else {
@@ -234,7 +241,7 @@ impl ApplyFnToPalettePixels for FastImage {
                         .skip(offset.skip_columns)
                         .take(offset.take_columns)
                         .for_each(|(x, y, pixel)| {
-                            run_on_srgba_pixel(pixel, x as usize, y as usize, &f);
+                            run_on_srgba_pixel(pixel, (x, y).into(), &f);
                         });
                 });
         }
@@ -242,55 +249,56 @@ impl ApplyFnToPalettePixels for FastImage {
 }
 
 #[inline(always)]
-fn run_on_srgba_pixel<F>(pixel: &mut Rgba<u8>, x: usize, y: usize, f: F)
-where
-    F: Fn(Srgba, usize, usize) -> Srgba,
+fn run_on_srgba_pixel<F>(pixel: &mut Rgba<u8>, coord: Coord, f: F)
+    where
+        F: Fn(Srgba, Coord) -> Srgba,
 {
     let srgba = rgba_to_srgba(*pixel);
-    let new_srgba = f(srgba, x, y);
+    let new_srgba = f(srgba, coord);
     *pixel = srgba_to_rgba(new_srgba);
 }
 
 // Speedy implementation, use if you don't need to work with the pixel's color space
 impl ApplyFnToImagePixels for FastImage {
     fn apply_fn_to_image_pixel<F>(&mut self, f: F, progress: Option<Progress>)
-    where
-        F: Fn(&mut Rgba<u8>, usize, usize),
+        where
+            F: Fn(&mut Rgba<u8>, Coord),
     {
         if let Some(mut progress) = progress {
-            let max_value = self.get_height();
-            progress.setup(max_value);
-            let _ = &self.inner.enumerate_rows_mut().for_each(|(_, row)| {
-                progress.increment();
+            let (_, height) = self.size().into();
+            progress.setup(height);
+            let _ = &self.inner
+                .enumerate_rows_mut()
+                .progress(progress)
+                .for_each(|(_, row)| {
                 row.into_iter().for_each(|(x, y, pixel)| {
-                    f(pixel, x as usize, y as usize);
+                    f(pixel, (x, y).into());
                 });
             });
         } else {
             let _ = &self.inner.enumerate_rows_mut().for_each(|(_, row)| {
                 row.into_iter().for_each(|(x, y, pixel)| {
-                    f(pixel, x as usize, y as usize);
+                    f(pixel, (x, y).into());
                 });
             });
         }
     }
 
     fn par_apply_fn_to_image_pixel<F>(&mut self, f: F, progress: Option<Progress>)
-    where
-        F: Fn(&mut Rgba<u8>, usize, usize) + Send + Sync,
+        where
+            F: Fn(&mut Rgba<u8>, Coord) + Send + Sync,
     {
         if let Some(mut progress) = progress {
-            let max_value = self.get_height();
-            progress.setup(max_value);
-            info!("Starting parallel processing");
+            let (_, height) = self.size().into();
+            progress.setup(height);
             let _ = &self
                 .inner
                 .enumerate_rows_mut()
+                .progress(progress)
                 .par_bridge()
                 .for_each(|(_, row)| {
-                    progress.increment();
                     row.into_iter().for_each(|(x, y, pixel)| {
-                        f(pixel, x as usize, y as usize);
+                        f(pixel, (x, y).into());
                     });
                 });
         } else {
@@ -300,7 +308,7 @@ impl ApplyFnToImagePixels for FastImage {
                 .par_bridge()
                 .for_each(|(_, row)| {
                     row.into_iter().for_each(|(x, y, pixel)| {
-                        f(pixel, x as usize, y as usize);
+                        f(pixel, (x, y).into());
                     });
                 });
         }
@@ -312,7 +320,7 @@ impl ApplyFnToImagePixels for FastImage {
         progress: Option<Progress>,
         offset: Offset,
     ) where
-        F: Fn(&mut Rgba<u8>, usize, usize),
+        F: Fn(&mut Rgba<u8>, Coord),
     {
         if let Some(mut progress) = progress {
             let max_value = offset.take_rows;
@@ -322,13 +330,13 @@ impl ApplyFnToImagePixels for FastImage {
                 .enumerate_rows_mut()
                 .skip(offset.skip_rows)
                 .take(offset.take_rows)
+                .progress(progress)
                 .for_each(|(_, row)| {
-                    progress.increment();
                     row.into_iter()
                         .skip(offset.skip_columns)
                         .take(offset.take_columns)
                         .for_each(|(x, y, pixel)| {
-                            f(pixel, x as usize, y as usize);
+                            f(pixel, (x, y).into());
                         });
                 });
         } else {
@@ -342,7 +350,7 @@ impl ApplyFnToImagePixels for FastImage {
                         .skip(offset.skip_columns)
                         .take(offset.take_columns)
                         .for_each(|(x, y, pixel)| {
-                            f(pixel, x as usize, y as usize);
+                            f(pixel, (x, y).into());
                         });
                 });
         }
@@ -354,7 +362,7 @@ impl ApplyFnToImagePixels for FastImage {
         progress: Option<Progress>,
         offset: Offset,
     ) where
-        F: Fn(&mut Rgba<u8>, usize, usize) + Send + Sync,
+        F: Fn(&mut Rgba<u8>, Coord) + Send + Sync,
     {
         if let Some(mut progress) = progress {
             let max_value = offset.take_rows;
@@ -364,14 +372,14 @@ impl ApplyFnToImagePixels for FastImage {
                 .enumerate_rows_mut()
                 .skip(offset.skip_rows)
                 .take(offset.take_rows)
+                .progress(progress)
                 .par_bridge()
                 .for_each(|(_, row)| {
-                    progress.increment();
                     row.into_iter()
                         .skip(offset.skip_columns)
                         .take(offset.take_columns)
                         .for_each(|(x, y, pixel)| {
-                            f(pixel, x as usize, y as usize);
+                            f(pixel, (x, y).into());
                         });
                 });
         } else {
@@ -386,7 +394,7 @@ impl ApplyFnToImagePixels for FastImage {
                         .skip(offset.skip_columns)
                         .take(offset.take_columns)
                         .for_each(|(x, y, pixel)| {
-                            f(pixel, x as usize, y as usize);
+                            f(pixel, (x, y).into());
                         });
                 });
         }
@@ -395,14 +403,16 @@ impl ApplyFnToImagePixels for FastImage {
 
 impl ReadPixels for FastImage {
     fn read_srgba_pixel<F>(&self, f: F, progress: Option<Progress>)
-    where
-        F: Fn(Srgba, usize, usize),
+        where
+            F: Fn(Srgba, Coord),
     {
         if let Some(mut progress) = progress {
-            let max_value = self.get_height();
-            progress.setup(max_value);
-            let _ = &self.inner.enumerate_rows().for_each(|(_, row)| {
-                progress.increment();
+            let (_, height) = self.size().into();
+            progress.setup(height);
+            let _ = &self.inner
+                .enumerate_rows()
+                .progress(progress)
+                .for_each(|(_, row)| {
                 read_srgba_pixel_process_row(&f, row);
             });
         } else {
@@ -413,18 +423,18 @@ impl ReadPixels for FastImage {
     }
 
     fn par_read_srgba_pixel<F>(&self, f: F, progress: Option<Progress>)
-    where
-        F: Fn(Srgba, usize, usize) + Send + Sync,
+        where
+            F: Fn(Srgba, Coord) + Send + Sync,
     {
         if let Some(mut progress) = progress {
-            let max_value = self.get_height();
-            progress.setup(max_value);
+            let (_, height) = self.size().into();
+            progress.setup(height);
             let _ = &self
                 .inner
                 .enumerate_rows()
+                .progress(progress)
                 .par_bridge()
                 .for_each(|(_, row)| {
-                    progress.increment();
                     read_srgba_pixel_process_row(&f, row);
                 });
         } else {
@@ -441,12 +451,12 @@ impl ReadPixels for FastImage {
 
 #[inline(always)]
 fn read_srgba_pixel_process_row<F>(f: &F, row: EnumeratePixels<Rgba<u8>>)
-where
-    F: Fn(Srgba, usize, usize),
+    where
+        F: Fn(Srgba, Coord),
 {
     row.into_iter().for_each(|(x, y, pixel)| {
         let srgba = rgba_to_srgba(*pixel);
-        f(srgba, x as usize, y as usize);
+        f(srgba, (x, y).into());
     });
 }
 

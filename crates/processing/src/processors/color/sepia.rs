@@ -40,7 +40,7 @@ impl Processor for SepiaProcessor {
     fn process(&self, mut image: FastImage, progress: Progress) -> FastImage {
         return if self.options.use_fast_approximation {
             image.par_apply_fn_to_image_pixel(
-                |pixel, _x, _y| {
+                |pixel, _coord| {
                     let r = pixel.0[0] as f32;
                     let g = pixel.0[1] as f32;
                     let b = pixel.0[2] as f32;
@@ -58,7 +58,7 @@ impl Processor for SepiaProcessor {
             image
         } else {
             image.par_apply_fn_to_lin_srgba(
-                |mut pixel, _x, _y| {
+                |mut pixel, _coord| {
                     let r = pixel.red;
                     let g = pixel.green;
                     let b = pixel.blue;

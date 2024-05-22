@@ -42,8 +42,7 @@ impl Pipeline for BilateralPipeline {
             sigma_intensity: self.options.sigma_intensity,
             use_fast_approximation: self.options.fast,
         });
-        let width = image.get_width();
-        let height = image.get_height();
+        let (width, height) = image.size().into();
         let pipeline = EnlargementCropPipeline::new(EnlargementCropPipelineOptions {
             fast: self.options.fast,
             processor_name: BILATERAL_PROCESSOR_NAME.to_string(),

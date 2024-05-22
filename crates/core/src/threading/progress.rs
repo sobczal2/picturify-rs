@@ -61,3 +61,32 @@ impl Progress {
         *self.inner.on_increment.write().unwrap() = Some(Box::new(on_increment));
     }
 }
+
+pub struct ProgressIterator<I> {
+    iter: I,
+    progress: Progress,
+}
+
+impl<I> Iterator for ProgressIterator<I>
+    where
+        I: Iterator,
+{
+    type Item = I::Item;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.progress.increment();
+        let next = self.iter.next();
+        next
+    }
+}
+
+pub trait ProgressIteratorExt: Iterator + Sized {
+    fn progress(self, progress: Progress) -> ProgressIterator<Self> {
+        ProgressIterator {
+            iter: self,
+            progress,
+        }
+    }
+}
+
+impl<I> ProgressIteratorExt for I where I: Iterator {}

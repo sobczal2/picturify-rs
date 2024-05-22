@@ -4,7 +4,7 @@ use crate::handlers::common::handler::CommandHandler;
 use crate::handlers::common::image_io::{read_image, write_image};
 use crate::progress::pipeline_progress_bar::run_progress_bar_for_pipeline;
 use clap::ArgMatches;
-use picturify_core::common::angle::Angle;
+use picturify_core::geometry::angle::Angle;
 use picturify_pipeline::common::pipeline_progress::PipelineProgress;
 use picturify_pipeline::geometry::rotate::{RotatePipeline, RotatePipelineOptions};
 use picturify_pipeline::pipeline::Pipeline;

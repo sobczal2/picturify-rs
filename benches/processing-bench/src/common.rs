@@ -1,5 +1,6 @@
 use picturify_core::fast_image::FastImage;
 use std::fmt::Display;
+use picturify_core::geometry::size::Size;
 
 #[derive(Debug, Clone, Copy)]
 pub enum ImageResolution {
@@ -19,17 +20,16 @@ impl Display for ImageResolution {
 }
 
 impl ImageResolution {
-    pub fn get_resolution(&self) -> (usize, usize) {
+    pub fn get_resolution(&self) -> Size {
         match self {
-            ImageResolution::P240 => (320, 240),
-            ImageResolution::P480 => (640, 480),
-            ImageResolution::P720 => (1280, 720),
+            ImageResolution::P240 => (320, 240).into(),
+            ImageResolution::P480 => (640, 480).into(),
+            ImageResolution::P720 => (1280, 720).into(),
         }
     }
 
     pub fn get_image(&self) -> FastImage {
-        let (width, height) = self.get_resolution();
-        FastImage::empty(width, height)
+        FastImage::empty(self.get_resolution())
     }
 
     pub fn get_resolutions() -> Vec<ImageResolution> {

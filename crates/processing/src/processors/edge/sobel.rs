@@ -5,7 +5,7 @@ use picturify_core::fast_image::apply_fn_to_pixels::{
 };
 use picturify_core::fast_image::FastImage;
 use picturify_core::rayon::prelude::*;
-use picturify_core::threading::progress::Progress;
+use picturify_core::threading::progress::{Progress, ProgressIteratorExt};
 use std::sync::{Arc, Mutex};
 
 pub struct SobelProcessorOptions {
@@ -40,9 +40,7 @@ impl WithOptions<SobelProcessorOptions> for SobelProcessor {
 
 impl Processor for SobelProcessor {
     fn process(&self, mut image: FastImage, mut progress: Progress) -> FastImage {
-        let width = image.get_width();
-        let height = image.get_height();
-
+        let (width, height): (usize, usize) = image.size().into();
         let mut magnitude_vec = vec![vec![0.0; width - 2]; height - 2];
         let min_magnitude = Arc::new(Mutex::new(f32::MAX));
         let max_magnitude = Arc::new(Mutex::new(f32::MIN));
@@ -54,9 +52,9 @@ impl Processor for SobelProcessor {
         magnitude_vec
             .iter_mut()
             .enumerate()
+            .progress(progress.clone())
             .par_bridge()
             .for_each(|(y_mag, row)| {
-                progress.increment();
                 let mut row_min_magnitude = f32::MAX;
                 let mut row_max_magnitude = f32::MIN;
                 row.iter_mut().enumerate().for_each(|(x_mag, magnitude)| {
@@ -71,13 +69,14 @@ impl Processor for SobelProcessor {
                             let red: f32;
                             let green: f32;
                             let blue: f32;
+                            let coord = (x + i - 1, y + j - 1).into();
                             if self.options.use_fast_approximation {
-                                let pixel = image.get_image_pixel(x + i - 1, y + j - 1);
+                                let pixel = image.get_image_pixel(coord);
                                 red = pixel[0] as f32 / 255.0;
                                 green = pixel[1] as f32 / 255.0;
                                 blue = pixel[2] as f32 / 255.0;
                             } else {
-                                let pixel = image.get_lin_srgba_pixel(x + i - 1, y + j - 1);
+                                let pixel = image.get_lin_srgba_pixel(coord);
                                 red = pixel.red;
                                 green = pixel.green;
                                 blue = pixel.blue;
@@ -126,7 +125,8 @@ impl Processor for SobelProcessor {
 
         if self.options.use_fast_approximation {
             image.par_apply_fn_to_image_pixel_with_offset(
-                |pixel, x, y| {
+                |pixel, coord| {
+                    let (x, y): (usize, usize) = coord.into();
                     let magnitude = magnitude_vec[y - 1][x - 1];
                     let magnitude =
                         ((magnitude - min_magnitude) / (max_magnitude - min_magnitude)) * 255.0;
@@ -141,7 +141,8 @@ impl Processor for SobelProcessor {
             );
         } else {
             image.par_apply_fn_to_lin_srgba_with_offset(
-                |mut pixel, x, y| {
+                |mut pixel, coord| {
+                    let (x, y): (usize, usize) = coord.into();
                     let magnitude = magnitude_vec[y - 1][x - 1];
                     let magnitude = (magnitude - min_magnitude) / (max_magnitude - min_magnitude);
 

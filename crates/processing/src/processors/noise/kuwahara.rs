@@ -1,10 +1,11 @@
 use crate::common::execution::{Processor, WithOptions};
 use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToPalettePixels, Offset};
-use picturify_core::fast_image::util::{cord_2d_to_1d, image_rgba_to_palette_srgba};
+use picturify_core::fast_image::util::{image_rgba_to_palette_srgba};
 use picturify_core::fast_image::FastImage;
 use picturify_core::palette::{Hsva, IntoColor};
 use picturify_core::threading::progress::Progress;
 use std::ops::Range;
+use picturify_core::geometry::coord::Coord;
 
 pub struct KuwaharaProcessorOptions {
     pub radius: usize,
@@ -36,8 +37,7 @@ impl WithOptions<KuwaharaProcessorOptions> for KuwaharaProcessor {
 
 impl Processor for KuwaharaProcessor {
     fn process(&self, mut image: FastImage, progress: Progress) -> FastImage {
-        let width = image.get_width();
-        let height = image.get_height();
+        let (width, height) = image.size().into();
 
         let radius = self.options.radius;
 
@@ -60,7 +60,8 @@ impl Processor for KuwaharaProcessor {
         };
 
         image.par_apply_fn_to_pixel_with_offset(
-            |pixel: Hsva, x, y| {
+            |pixel: Hsva, coord| {
+                let (x, y) = coord.into();
                 let quadrant1_ranges = (x - radius..x, y - radius..y);
                 let quadrant2_ranges = (x..x + radius, y - radius..y);
                 let quadrant3_ranges = (x - radius..x, y..y + radius);
@@ -134,7 +135,8 @@ fn calculate_variance(
     let mut count = 0;
     for x in range_x.clone() {
         for y in range_y.clone() {
-            let value = value_vec[cord_2d_to_1d(x, y, width)];
+            let coord: Coord = (x, y).into();
+            let value = value_vec[coord.to_index(width as i32)];
             sum += value;
             sum_squared += value * value;
             count += 1;
@@ -156,7 +158,8 @@ fn calculate_mean(
     let mut count = 0;
     for x in range_x.clone() {
         for y in range_y.clone() {
-            let value = value_vec[cord_2d_to_1d(x, y, width)];
+            let coord: Coord = (x, y).into();
+            let value = value_vec[coord.to_index(width as i32)];
             sum += value;
             count += 1;
         }

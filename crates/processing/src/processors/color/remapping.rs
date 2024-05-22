@@ -95,7 +95,7 @@ impl WithOptions<RemappingProcessorOptions> for RemappingProcessor {
 impl Processor for RemappingProcessor {
     fn process(&self, mut image: FastImage, progress: Progress) -> FastImage {
         image.par_apply_fn_to_lin_srgba(
-            |pixel, _x, _y| self.options.function.apply_to_pixel(pixel),
+            |pixel, _coord| self.options.function.apply_to_pixel(pixel),
             Some(progress),
         );
 

@@ -37,8 +37,7 @@ impl Pipeline for KuwaharaPipeline {
         let processor = KuwaharaProcessor::new().with_options(KuwaharaProcessorOptions {
             radius: self.options.radius,
         });
-        let width = image.get_width();
-        let height = image.get_height();
+        let (width, height) = image.size().into();
         let pipeline = EnlargementCropPipeline::new(EnlargementCropPipelineOptions {
             fast: self.options.fast,
             processor_name: KUWAHARA_PROCESSOR_NAME.to_string(),

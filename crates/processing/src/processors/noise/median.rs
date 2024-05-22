@@ -1,7 +1,7 @@
 use crate::common::execution::{Processor, WithOptions};
 use picturify_core::fast_image::FastImage;
 use picturify_core::rayon::prelude::*;
-use picturify_core::threading::progress::Progress;
+use picturify_core::threading::progress::{Progress, ProgressIteratorExt};
 use std::collections::VecDeque;
 
 pub struct MedianProcessorOptions {
@@ -34,8 +34,7 @@ impl WithOptions<MedianProcessorOptions> for MedianProcessor {
 
 impl Processor for MedianProcessor {
     fn process(&self, image: FastImage, mut progress: Progress) -> FastImage {
-        let width = image.get_width();
-        let height = image.get_height();
+        let (width, height): (usize, usize) = image.size().into();
         let radius = self.options.radius;
 
         let mut new_fast_image = image.clone();
@@ -46,9 +45,9 @@ impl Processor for MedianProcessor {
             .enumerate()
             .skip(radius)
             .take(height - 2 * radius)
+            .progress(progress)
             .par_bridge()
             .for_each(|(y, row)| {
-                progress.increment();
                 let mut red_window = VecDeque::with_capacity((2 * radius + 1) * (2 * radius + 1));
                 let mut green_window = VecDeque::with_capacity((2 * radius + 1) * (2 * radius + 1));
                 let mut blue_window = VecDeque::with_capacity((2 * radius + 1) * (2 * radius + 1));
@@ -56,10 +55,8 @@ impl Processor for MedianProcessor {
                 let radius_i32 = radius as i32;
                 for window_x in -radius_i32..=radius_i32 {
                     for window_y in -radius_i32..=radius_i32 {
-                        let pixel = image.get_image_pixel(
-                            (radius_i32 + window_x) as usize,
-                            (y as i32 + window_y) as usize,
-                        );
+                        let coord = (window_x + radius_i32, window_y + y as i32).into();
+                        let pixel = image.get_image_pixel(coord);
                         red_window.push_back(pixel[0]);
                         green_window.push_back(pixel[1]);
                         blue_window.push_back(pixel[2]);
@@ -79,10 +76,8 @@ impl Processor for MedianProcessor {
                         pixel[2] = current_blue_median;
 
                         for window_y in -radius_i32..=radius_i32 {
-                            let pixel = image.get_image_pixel(
-                                (x as i32 - radius_i32) as usize,
-                                (y as i32 + window_y) as usize,
-                            );
+                            let coord = (x as i32 - radius_i32, y as i32 + window_y).into();
+                            let pixel = image.get_image_pixel(coord);
                             red_window.pop_front();
                             green_window.pop_front();
                             blue_window.pop_front();

@@ -1,8 +1,10 @@
 use crate::common::execution::{Processor, WithOptions};
-use picturify_core::common::angle::Angle;
 use picturify_core::error::processing::ProcessingError;
 use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToImagePixels;
 use picturify_core::fast_image::FastImage;
+use picturify_core::geometry::angle::Angle;
+use picturify_core::geometry::coord::Coord;
+use picturify_core::geometry::size::Size;
 use picturify_core::threading::progress::Progress;
 
 #[derive(Copy, Clone)]
@@ -13,19 +15,21 @@ pub enum RotateFixedStrategy {
 }
 
 impl RotateFixedStrategy {
-    fn get_new_dimensions(&self, width: usize, height: usize) -> (usize, usize) {
+    fn get_new_size(&self, size: Size) -> Size {
         match self {
-            RotateFixedStrategy::Deg90 => (height, width),
-            RotateFixedStrategy::Deg180 => (width, height),
-            RotateFixedStrategy::Deg270 => (height, width),
+            RotateFixedStrategy::Deg90 => size.rotate_90(),
+            RotateFixedStrategy::Deg180 => size,
+            RotateFixedStrategy::Deg270 => size.rotate_90(),
         }
     }
 
-    fn rotate_pixel(&self, x: usize, y: usize, width: usize, height: usize) -> (usize, usize) {
+    fn rotate_pixel(&self, coord: Coord, size: Size) -> Coord {
+        let (x, y): (i32, i32) = coord.into();
+        let (width, height): (i32, i32) = size.into();
         match self {
-            RotateFixedStrategy::Deg90 => (y, width - x - 1),
-            RotateFixedStrategy::Deg180 => (width - x - 1, height - y - 1),
-            RotateFixedStrategy::Deg270 => (height - y - 1, x),
+            RotateFixedStrategy::Deg90 => (y, width - x - 1).into(),
+            RotateFixedStrategy::Deg180 => (width - x - 1, height - y - 1).into(),
+            RotateFixedStrategy::Deg270 => (height - y - 1, x).into(),
         }
     }
 }
@@ -78,19 +82,17 @@ impl WithOptions<RoteteFixedProcessorOptions> for RotateFixedProcessor {
 
 impl Processor for RotateFixedProcessor {
     fn process(&self, image: FastImage, progress: Progress) -> FastImage {
-        let width = image.get_width();
-        let height = image.get_height();
-        let (new_width, new_height) = self.options.strategy.get_new_dimensions(width, height);
+        let new_size = self.options.strategy.get_new_size(image.size());
 
-        let mut new_image = FastImage::empty(new_width, new_height);
+        let mut new_image = FastImage::empty(new_size);
 
         new_image.par_apply_fn_to_image_pixel(
-            |pixel, x, y| {
-                let (new_x, new_y) = self
+            |pixel, coord| {
+                let new_coord = self
                     .options
                     .strategy
-                    .rotate_pixel(x, y, new_width, new_height);
-                *pixel = image.get_image_pixel(new_x, new_y)
+                    .rotate_pixel(coord, new_size);
+                *pixel = image.get_image_pixel(new_coord)
             },
             Some(progress),
         );

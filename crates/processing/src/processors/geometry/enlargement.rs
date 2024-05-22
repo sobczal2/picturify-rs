@@ -1,6 +1,8 @@
 use crate::common::execution::{Processor, WithOptions};
 use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToPalettePixels;
 use picturify_core::fast_image::FastImage;
+use picturify_core::geometry::coord::Coord;
+use picturify_core::geometry::size::Size;
 use picturify_core::palette::Srgba;
 use picturify_core::threading::progress::Progress;
 
@@ -55,6 +57,12 @@ impl EnlargementBorder {
             left: x,
         }
     }
+    
+    pub fn is_inside(&self, coord: Coord, size: Size) -> bool {
+        let (x, y): (usize, usize) = coord.into();
+        let (width, height): (usize, usize) = size.into();
+        x >= self.left && x < width - self.right && y >= self.top && y < height - self.bottom
+    }
 }
 
 impl Default for EnlargementProcessorOptions {
@@ -93,26 +101,23 @@ impl WithOptions<EnlargementProcessorOptions> for EnlargementProcessor {
 
 impl Processor for EnlargementProcessor {
     fn process(&self, image: FastImage, progress: Progress) -> FastImage {
-        let new_width = image.get_width() + self.options.border.left + self.options.border.right;
-        let new_height = image.get_height() + self.options.border.top + self.options.border.bottom;
+        let new_size = image.size().increase_by(
+            self.options.border.left + self.options.border.right,
+            self.options.border.top + self.options.border.bottom,
+        );
 
-        let mut new_image = FastImage::empty(new_width, new_height);
+        let mut new_image = FastImage::empty(new_size);
+        let shift = (self.options.border.left, self.options.border.top).into();
 
         match self.options.strategy {
             EnlargementStrategy::Constant(pixel) => {
                 new_image.par_apply_fn_to_pixel(
-                    |_, x, y| {
-                        if x < self.options.border.left
-                            || x >= new_width - self.options.border.right
-                            || y < self.options.border.top
-                            || y >= new_height - self.options.border.bottom
+                    |_, coord| {
+                        if self.options.border.is_inside(coord, new_size)
                         {
-                            pixel
+                            image.get_srgba_pixel(coord - shift)
                         } else {
-                            image.get_srgba_pixel(
-                                x - self.options.border.left,
-                                y - self.options.border.top,
-                            )
+                            pixel
                         }
                     },
                     Some(progress),

@@ -40,7 +40,7 @@ impl WithOptions<ThresholdProcessorOptions> for ThresholdProcessor {
 impl Processor for ThresholdProcessor {
     fn process(&self, mut image: FastImage, progress: Progress) -> FastImage {
         image.par_apply_fn_to_image_pixel(
-            |pixel, _x, _y| {
+            |pixel, _coord| {
                 pixel.0[0] = if pixel.0[0] > self.options.red_threshold {
                     pixel.0[0]
                 } else {

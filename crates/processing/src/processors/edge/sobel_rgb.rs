@@ -5,7 +5,7 @@ use picturify_core::fast_image::apply_fn_to_pixels::{
 };
 use picturify_core::fast_image::FastImage;
 use picturify_core::rayon::prelude::*;
-use picturify_core::threading::progress::Progress;
+use picturify_core::threading::progress::{Progress, ProgressIteratorExt};
 use std::sync::{Arc, Mutex};
 
 pub struct SobelRgbProcessorOptions {
@@ -40,12 +40,11 @@ impl WithOptions<SobelRgbProcessorOptions> for SobelRgbProcessor {
 
 impl Processor for SobelRgbProcessor {
     fn process(&self, mut image: FastImage, mut progress: Progress) -> FastImage {
-        let width = image.get_width();
-        let height = image.get_height();
+        let (width, _): (usize, usize) = image.size().into();
 
-        let mut red_magnitude_vec = vec![vec![0.0; width - 2]; height - 2];
-        let mut green_magnitude_vec = vec![vec![0.0; width - 2]; height - 2];
-        let mut blue_magnitude_vec = vec![vec![0.0; width - 2]; height - 2];
+        let mut red_magnitude_vec = vec![vec![0.0; width - 2]; width - 2];
+        let mut green_magnitude_vec = vec![vec![0.0; width - 2]; width - 2];
+        let mut blue_magnitude_vec = vec![vec![0.0; width - 2]; width - 2];
 
         let red_min_magnitude = Arc::new(Mutex::new(f32::MAX));
         let green_min_magnitude = Arc::new(Mutex::new(f32::MAX));
@@ -58,15 +57,15 @@ impl Processor for SobelRgbProcessor {
         let sobel_kernel_x = create_sobel_kernel_x();
         let sobel_kernel_y = create_sobel_kernel_y();
 
-        progress.setup((height - 2) * 2);
+        progress.setup((width - 2) * 2);
         red_magnitude_vec
             .iter_mut()
             .zip(green_magnitude_vec.iter_mut())
             .zip(blue_magnitude_vec.iter_mut())
             .enumerate()
+            .progress(progress.clone())
             .par_bridge()
             .for_each(|(y_mag, ((red_row, green_row), blue_row))| {
-                progress.increment();
                 let mut red_row_min_magnitude = f32::MAX;
                 let mut red_row_max_magnitude = f32::MIN;
                 let mut green_row_min_magnitude = f32::MAX;
@@ -95,13 +94,14 @@ impl Processor for SobelRgbProcessor {
                                     let red: f32;
                                     let green: f32;
                                     let blue: f32;
+                                    let coord = (x + i - 1, y + j - 1).into();
                                     if self.options.use_fast_approximation {
-                                        let pixel = image.get_image_pixel(x + i - 1, y + j - 1);
+                                        let pixel = image.get_image_pixel(coord);
                                         red = pixel[0] as f32 / 255.0;
                                         green = pixel[1] as f32 / 255.0;
                                         blue = pixel[2] as f32 / 255.0;
                                     } else {
-                                        let pixel = image.get_lin_srgba_pixel(x + i - 1, y + j - 1);
+                                        let pixel = image.get_lin_srgba_pixel(coord);
                                         red = pixel.red;
                                         green = pixel.green;
                                         blue = pixel.blue;
@@ -187,14 +187,15 @@ impl Processor for SobelRgbProcessor {
 
         let offset = Offset {
             skip_rows: 1,
-            take_rows: height - 2,
+            take_rows: width - 2,
             skip_columns: 1,
             take_columns: width - 2,
         };
 
         if self.options.use_fast_approximation {
             image.par_apply_fn_to_image_pixel_with_offset(
-                |pixel, x, y| {
+                |pixel, coord| {
+                    let (x, y): (usize, usize) = coord.into();
                     let red_magnitude = red_magnitude_vec[y - 1][x - 1];
                     let green_magnitude = green_magnitude_vec[y - 1][x - 1];
                     let blue_magnitude = blue_magnitude_vec[y - 1][x - 1];
@@ -220,7 +221,8 @@ impl Processor for SobelRgbProcessor {
             );
         } else {
             image.par_apply_fn_to_lin_srgba_with_offset(
-                |mut pixel, x, y| {
+                |mut pixel, coord| {
+                    let (x, y): (usize, usize) = coord.into();
                     let red_magnitude = red_magnitude_vec[y - 1][x - 1];
                     let green_magnitude = green_magnitude_vec[y - 1][x - 1];
                     let blue_magnitude = blue_magnitude_vec[y - 1][x - 1];

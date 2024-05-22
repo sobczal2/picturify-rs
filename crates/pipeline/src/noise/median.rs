@@ -35,8 +35,7 @@ impl Pipeline for MedianPipeline {
         let processor = MedianProcessor::new().with_options(MedianProcessorOptions {
             radius: self.options.radius,
         });
-        let width = image.get_width();
-        let height = image.get_height();
+        let (width, height) = image.size().into();
         let pipeline = EnlargementCropPipeline::new(EnlargementCropPipelineOptions {
             fast: self.options.fast,
             processor_name: MEDIAN_PROCESSOR_NAME.to_string(),

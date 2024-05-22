@@ -2,16 +2,6 @@ use image::Rgba;
 use palette::Srgba;
 
 #[inline(always)]
-pub fn cord_1d_to_2d(cord: usize, width: usize) -> (usize, usize) {
-    (cord % width, cord / width)
-}
-
-#[inline(always)]
-pub fn cord_2d_to_1d(x: usize, y: usize, width: usize) -> usize {
-    y * width + x
-}
-
-#[inline(always)]
 pub fn image_rgba_to_palette_srgba(image: Rgba<u8>) -> Srgba {
     Srgba::new(
         image[0] as f32 / 255.0,

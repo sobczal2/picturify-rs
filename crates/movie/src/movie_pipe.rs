@@ -124,7 +124,7 @@ impl MoviePipe {
         progress.read().unwrap().set_stage(ProgressStage::Process);
         while ffmpeg_stdout.read_exact(&mut buffer).is_ok() {
             progress.read().unwrap().increment();
-            let image = FastImage::from_rgba_vec(width as usize, height as usize, buffer.clone());
+            let image = FastImage::from_rgba_vec((width, height).into(), buffer.clone());
             let progress = Some(PipelineProgress::new());
             let processed_image = pipeline.run(image, progress);
             ffmpeg_stdin

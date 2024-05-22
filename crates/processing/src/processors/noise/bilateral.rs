@@ -45,8 +45,7 @@ impl WithOptions<BilateralProcessorOptions> for BilateralProcessor {
 // TODO fix this
 impl Processor for BilateralProcessor {
     fn process(&self, image: FastImage, progress: Progress) -> FastImage {
-        let height = image.get_height();
-        let width = image.get_width();
+        let (width, height): (usize, usize) = image.size().into();
 
         let spatial_kernel =
             ConvolutionKernel::new_gaussian(self.options.radius, self.options.sigma_spatial);
@@ -64,7 +63,7 @@ impl Processor for BilateralProcessor {
 
         if self.options.use_fast_approximation {
             new_image.par_apply_fn_to_image_pixel_with_offset(
-                |pixel, x, y| {
+                |pixel, coord| {
                     let mut wp_total = 0.0f32;
                     let red = pixel.0[0] as f32 / 255.0f32;
                     let green = pixel.0[1] as f32 / 255.0f32;
@@ -73,15 +72,14 @@ impl Processor for BilateralProcessor {
 
                     for k in -half_kernel_size..=half_kernel_size {
                         for l in -half_kernel_size..=half_kernel_size {
-                            let ni = y + k as usize;
-                            let nj = x + l as usize;
+                            let (x, y): (i32, i32) = coord.into();
+                            let ni = y + k;
+                            let nj = x + l;
 
-                            let spatial_weight = spatial_kernel.get(
-                                (l + half_kernel_size) as usize,
-                                (k + half_kernel_size) as usize,
-                            );
+                            let spatial_weifht_coord = (l + half_kernel_size, k + half_kernel_size).into();
+                            let spatial_weight = spatial_kernel.get(spatial_weifht_coord);
 
-                            let current_inner_pixel = image.get_image_pixel(nj, ni);
+                            let current_inner_pixel = image.get_image_pixel((nj, ni).into());
                             let current_inner_red = current_inner_pixel.0[0] as f32 / 255.0f32;
                             let current_inner_green = current_inner_pixel.0[1] as f32 / 255.0f32;
                             let current_inner_blue = current_inner_pixel.0[2] as f32 / 255.0f32;

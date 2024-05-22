@@ -36,7 +36,7 @@ impl WithOptions<BrightnessProcessorOptions> for BrightnessProcessor {
 impl Processor for BrightnessProcessor {
     fn process(&self, mut image: FastImage, progress: Progress) -> FastImage {
         image.par_apply_fn_to_pixel(
-            |mut pixel: Hsla, _x, _y| {
+            |mut pixel: Hsla, _coord| {
                 pixel.lightness = (pixel.lightness * self.options.factor).max(0.0).min(1.0);
                 pixel
             },

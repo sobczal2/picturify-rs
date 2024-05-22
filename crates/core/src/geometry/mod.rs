@@ -1,3 +1,3 @@
 pub mod angle;
-pub mod cord;
+pub mod coord;
 pub mod size;

@@ -36,8 +36,7 @@ impl Pipeline for SobelRgbPipeline {
         let processor = SobelRgbProcessor::new().with_options(SobelRgbProcessorOptions {
             use_fast_approximation: self.options.fast,
         });
-        let width = image.get_width();
-        let height = image.get_height();
+        let (width, height) = image.size().into();
         let pipeline = EnlargementCropPipeline::new(EnlargementCropPipelineOptions {
             fast: self.options.fast,
             processor_name: SOBEL_RGB_PROCESSOR_NAME.to_string(),
