@@ -39,11 +39,14 @@ impl TryFrom<Angle> for RotateFixedStrategy {
 
     fn try_from(value: Angle) -> Result<Self, Self::Error> {
         let angle = value.to_degrees();
-        match angle {
-            90.0 => Ok(RotateFixedStrategy::Deg90),
-            180.0 => Ok(RotateFixedStrategy::Deg180),
-            270.0 => Ok(RotateFixedStrategy::Deg270),
-            _ => Err(ProcessingError::InvalidAngle),
+        if (angle - 90f32).abs() < 0.1 {
+            Ok(RotateFixedStrategy::Deg90)
+        } else if (angle - 180f32).abs() < 0.1 {
+            Ok(RotateFixedStrategy::Deg180)
+        } else if (angle - 270f32).abs() < 0.1 {
+            Ok(RotateFixedStrategy::Deg270)
+        } else {
+            Err(ProcessingError::InvalidAngle)
         }
     }
 }

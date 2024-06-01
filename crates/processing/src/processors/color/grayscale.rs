@@ -35,6 +35,7 @@ impl ValueEnum for GrayscaleStrategy {
     }
 }
 
+
 pub struct GrayscaleProcessorOptions {
     pub strategy: GrayscaleStrategy,
     pub use_fast_approximation: bool,
@@ -71,24 +72,16 @@ impl Processor for GrayscaleProcessor {
     fn process(&self, mut image: FastImage, progress: Progress) -> FastImage {
         if self.options.use_fast_approximation {
             let function = match self.options.strategy {
-                GrayscaleStrategy::Average => {
-                    GrayscaleProcessor::average_processing_function_fast()
-                }
-                GrayscaleStrategy::Lightness => {
-                    GrayscaleProcessor::lightness_processing_function_fast()
-                }
-                GrayscaleStrategy::Luminosity => {
-                    GrayscaleProcessor::luminosity_processing_function_fast()
-                }
+                GrayscaleStrategy::Average => GrayscaleProcessor::average_processing_function_fast(),
+                GrayscaleStrategy::Lightness => GrayscaleProcessor::lightness_processing_function_fast(),
+                GrayscaleStrategy::Luminosity => GrayscaleProcessor::luminosity_processing_function_fast(),
             };
             image.par_apply_fn_to_image_pixel(function, Some(progress));
         } else {
             let function = match self.options.strategy {
                 GrayscaleStrategy::Average => GrayscaleProcessor::average_processing_function(),
                 GrayscaleStrategy::Lightness => GrayscaleProcessor::lightness_processing_function(),
-                GrayscaleStrategy::Luminosity => {
-                    GrayscaleProcessor::luminosity_processing_function()
-                }
+                GrayscaleStrategy::Luminosity => GrayscaleProcessor::luminosity_processing_function(),
             };
             image.par_apply_fn_to_lin_srgba(function, Some(progress));
         }
@@ -119,8 +112,7 @@ impl GrayscaleProcessor {
         })
     }
 
-    fn luminosity_processing_function_fast(
-    ) -> Box<dyn Fn(&mut Rgba<u8>, Coord) + Send + Sync> {
+    fn luminosity_processing_function_fast() -> Box<dyn Fn(&mut Rgba<u8>, Coord) + Send + Sync> {
         Box::new(|pixel, _coord| {
             let avg =
                 0.21 * pixel.0[0] as f32 + 0.72 * pixel.0[1] as f32 + 0.07 * pixel.0[2] as f32;
@@ -142,8 +134,7 @@ impl GrayscaleProcessor {
         })
     }
 
-    fn lightness_processing_function(
-    ) -> Box<dyn Fn(LinSrgba, Coord) -> LinSrgba + Send + Sync> {
+    fn lightness_processing_function() -> Box<dyn Fn(LinSrgba, Coord) -> LinSrgba + Send + Sync> {
         Box::new(|mut pixel, _coord| {
             let max = pixel.red.max(pixel.green).max(pixel.blue);
             let min = pixel.red.min(pixel.green).min(pixel.blue);
@@ -156,8 +147,7 @@ impl GrayscaleProcessor {
         })
     }
 
-    fn luminosity_processing_function(
-    ) -> Box<dyn Fn(LinSrgba, Coord) -> LinSrgba + Send + Sync> {
+    fn luminosity_processing_function() -> Box<dyn Fn(LinSrgba, Coord) -> LinSrgba + Send + Sync> {
         Box::new(|mut pixel, _coord| {
             let avg = 0.21 * pixel.red + 0.72 * pixel.green + 0.07 * pixel.blue;
             pixel.red = avg;
