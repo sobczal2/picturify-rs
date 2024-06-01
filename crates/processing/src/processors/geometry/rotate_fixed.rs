@@ -91,10 +91,7 @@ impl Processor for RotateFixedProcessor {
 
         new_image.par_apply_fn_to_image_pixel(
             |pixel, coord| {
-                let new_coord = self
-                    .options
-                    .strategy
-                    .rotate_pixel(coord, new_size);
+                let new_coord = self.options.strategy.rotate_pixel(coord, new_size);
                 *pixel = image.get_image_pixel(new_coord)
             },
             Some(progress),

@@ -1,10 +1,9 @@
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
 use crate::geometry::angle::Angle;
 use crate::geometry::size::Size;
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
 
 #[derive(Debug, Copy, Clone)]
-pub struct Coord
-{
+pub struct Coord {
     x: i32,
     y: i32,
 }
@@ -15,14 +14,17 @@ impl Coord {
         Coord { x, y }
     }
     #[inline]
-    pub fn rotate(&self, angle: Angle, origin: Coord) -> Coord
-    {
+    pub fn rotate(&self, angle: Angle, origin: Coord) -> Coord {
         let x = (self.x - origin.x) as f32;
         let y = (self.y - origin.y) as f32;
         let (sin, cos) = angle.to_sin_cos();
         let new_x = x * cos - y * sin;
         let new_y = x * sin + y * cos;
-        (new_x.round() as i32 + origin.x, new_y.round() as i32 + origin.y).into()
+        (
+            new_x.round() as i32 + origin.x,
+            new_y.round() as i32 + origin.y,
+        )
+            .into()
     }
     #[inline]
     pub fn in_bounds(&self, size: Size) -> bool {
@@ -35,8 +37,7 @@ impl Coord {
     }
 }
 
-impl Add for Coord
-{
+impl Add for Coord {
     type Output = Self;
 
     #[inline]
@@ -45,8 +46,7 @@ impl Add for Coord
     }
 }
 
-impl AddAssign for Coord
-{
+impl AddAssign for Coord {
     #[inline]
     fn add_assign(&mut self, other: Self) {
         self.x += other.x;
@@ -54,8 +54,7 @@ impl AddAssign for Coord
     }
 }
 
-impl Sub for Coord
-{
+impl Sub for Coord {
     type Output = Self;
 
     #[inline]
@@ -64,8 +63,7 @@ impl Sub for Coord
     }
 }
 
-impl SubAssign for Coord
-{
+impl SubAssign for Coord {
     #[inline]
     fn sub_assign(&mut self, other: Self) {
         self.x -= other.x;
@@ -73,8 +71,7 @@ impl SubAssign for Coord
     }
 }
 
-impl Div<i32> for Coord
-{
+impl Div<i32> for Coord {
     type Output = Self;
 
     #[inline]
@@ -83,8 +80,7 @@ impl Div<i32> for Coord
     }
 }
 
-impl DivAssign<i32> for Coord
-{
+impl DivAssign<i32> for Coord {
     #[inline]
     fn div_assign(&mut self, other: i32) {
         self.x /= other;
@@ -92,8 +88,7 @@ impl DivAssign<i32> for Coord
     }
 }
 
-impl Mul<i32> for Coord
-{
+impl Mul<i32> for Coord {
     type Output = Self;
 
     #[inline]
@@ -102,8 +97,7 @@ impl Mul<i32> for Coord
     }
 }
 
-impl MulAssign<i32> for Coord
-{
+impl MulAssign<i32> for Coord {
     #[inline]
     fn mul_assign(&mut self, other: i32) {
         self.x *= other;
@@ -111,8 +105,7 @@ impl MulAssign<i32> for Coord
     }
 }
 
-impl PartialEq for Coord
-{
+impl PartialEq for Coord {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
         self.x == other.x && self.y == other.y

@@ -34,7 +34,7 @@ impl CropBorder {
             y_offset,
         }
     }
-    
+
     pub fn offset(&self) -> Coord {
         (self.x_offset, self.y_offset).into()
     }

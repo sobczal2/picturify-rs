@@ -1,6 +1,6 @@
-use std::sync::{Arc, RwLock};
-use std::sync::atomic::{AtomicBool, Ordering};
 use picturify_core::threading::progress::Progress;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, RwLock};
 
 #[derive(Debug, Clone)]
 pub struct PipelineProgress {
@@ -25,7 +25,10 @@ impl PipelineProgress {
 
     pub fn new_individual(&mut self, name: String) {
         let progress = Progress::new();
-        self.individual_progresses.write().unwrap().push((name, progress));
+        self.individual_progresses
+            .write()
+            .unwrap()
+            .push((name, progress));
     }
 
     pub fn increment_combined(&self) {
@@ -34,7 +37,9 @@ impl PipelineProgress {
 
     pub fn get_current_individual_progress(&self) -> Progress {
         let current_index = self.combined_progress.get() as usize;
-        self.individual_progresses.read().unwrap()[current_index].1.clone()
+        self.individual_progresses.read().unwrap()[current_index]
+            .1
+            .clone()
     }
 
     pub fn get_combined_value(&self) -> usize {
@@ -62,12 +67,16 @@ impl PipelineProgress {
 
     pub fn get_current_individual_name(&self) -> String {
         let current_index = self.combined_progress.get();
-        self.individual_progresses.read().unwrap()[current_index as usize].0.clone()
+        self.individual_progresses.read().unwrap()[current_index as usize]
+            .0
+            .clone()
     }
 
     pub fn get_last_individual_name(&self) -> String {
         let last_index = self.individual_progresses.read().unwrap().len() - 1;
-        self.individual_progresses.read().unwrap()[last_index].0.clone()
+        self.individual_progresses.read().unwrap()[last_index]
+            .0
+            .clone()
     }
 
     pub fn is_ready(&self) -> bool {

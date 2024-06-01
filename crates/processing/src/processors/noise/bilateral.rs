@@ -76,7 +76,8 @@ impl Processor for BilateralProcessor {
                             let ni = y + k;
                             let nj = x + l;
 
-                            let spatial_weifht_coord = (l + half_kernel_size, k + half_kernel_size).into();
+                            let spatial_weifht_coord =
+                                (l + half_kernel_size, k + half_kernel_size).into();
                             let spatial_weight = spatial_kernel.get(spatial_weifht_coord);
 
                             let current_inner_pixel = image.get_image_pixel((nj, ni).into());

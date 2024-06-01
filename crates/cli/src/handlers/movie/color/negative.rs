@@ -14,9 +14,7 @@ pub struct NegativeCommandHandler;
 impl CommandHandler for NegativeCommandHandler {
     fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
         let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
-        let negative_pipeline = NegativePipeline::new(NegativePipelineOptions {
-            fast: *fast,
-        });
+        let negative_pipeline = NegativePipeline::new(NegativePipelineOptions { fast: *fast });
 
         let movie_progress = Arc::new(RwLock::new(MovieProgress::new()));
         let movie_progress_clone = movie_progress.clone();

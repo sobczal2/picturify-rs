@@ -1,7 +1,7 @@
+use crate::geometry::coord::Coord;
 use palette::convert::FromColorUnclamped;
 use palette::rgb::Rgb;
 use palette::{Alpha, Clamp, IntoColor, LinSrgba, Srgba, WithAlpha};
-use crate::geometry::coord::Coord;
 
 use crate::threading::progress::Progress;
 

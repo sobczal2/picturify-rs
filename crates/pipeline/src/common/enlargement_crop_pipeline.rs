@@ -61,7 +61,7 @@ impl EnlargementCropPipeline {
         pipeline_progress.new_individual(self.options.processor_name.clone());
         pipeline_progress.new_individual(CROP_PROCESSOR_NAME.to_string());
         pipeline_progress.setup_combined(3);
-        
+
         let enlargement_processor =
             EnlargementProcessor::new().with_options(self.options.enlargement_processor_options);
         let image = enlargement_processor

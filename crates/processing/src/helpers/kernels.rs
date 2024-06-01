@@ -81,7 +81,7 @@ impl ConvolutionKernel {
         let mut result_red_f32 = 0f32;
         let mut result_green_f32 = 0f32;
         let mut result_blue_f32 = 0f32;
-        
+
         let (width, height) = self.size().into();
 
         for i in 0..width {
@@ -92,7 +92,7 @@ impl ConvolutionKernel {
                 if kernel_value == 0.0 {
                     continue;
                 }
-                
+
                 let (x, y): (usize, usize) = coord.into();
                 let inner_coord = (x + i - width / 2, y + j - height / 2).into();
                 let image_pixel = image.get_image_pixel(inner_coord);

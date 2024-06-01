@@ -5,7 +5,6 @@ use clap::error::ErrorKind;
 use clap::{Arg, Command, Error};
 use picturify_core::geometry::angle::Angle;
 
-
 #[derive(Debug, Copy, Clone)]
 pub struct AngleValueParser;
 

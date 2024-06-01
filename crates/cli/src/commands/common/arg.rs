@@ -1,7 +1,7 @@
 use crate::commands::parsers::angle::AngleValueParser;
+use crate::commands::parsers::crop_border::CropBorderValueParser;
 use clap::{value_parser, Arg, ArgAction, Command};
 use picturify_processing::processors::color::grayscale::GrayscaleStrategy;
-use crate::commands::parsers::crop_border::CropBorderValueParser;
 
 pub enum ArgType {
     Input,

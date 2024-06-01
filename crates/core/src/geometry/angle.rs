@@ -13,11 +13,11 @@ impl Angle {
     pub fn from_degrees(degrees: f32) -> Self {
         Angle::Degrees(degrees)
     }
-    
+
     pub fn from_radians(radians: f32) -> Self {
         Angle::Radians(radians)
     }
-    
+
     pub fn to_radians(&self) -> f32 {
         match *self {
             Angle::Radians(radians) => radians,
@@ -31,7 +31,7 @@ impl Angle {
             Angle::Degrees(degrees) => degrees,
         }
     }
-    
+
     pub fn to_sin_cos(&self) -> (f32, f32) {
         let radians = self.to_radians();
         (radians.sin(), radians.cos())

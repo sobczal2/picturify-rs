@@ -1,9 +1,9 @@
-use std::ffi::OsStr;
 use clap::builder::TypedValueParser;
-use clap::{Arg, Command, Error};
 use clap::error::ErrorKind;
+use clap::{Arg, Command, Error};
 use picturify_processing::processors::geometry::crop::CropBorder;
 use regex::Regex;
+use std::ffi::OsStr;
 
 #[derive(Debug, Copy, Clone)]
 pub struct CropBorderValueParser;
@@ -21,7 +21,7 @@ impl TypedValueParser for CropBorderValueParser {
         &self,
         _cmd: &Command,
         _arg: Option<&Arg>,
-        value: &OsStr
+        value: &OsStr,
     ) -> Result<Self::Value, Error> {
         let regex = Regex::new(r"(\d+)x(\d+)\+(\d+)\+(\d+)").unwrap();
         let value = value.to_str().unwrap();
@@ -31,12 +31,12 @@ impl TypedValueParser for CropBorderValueParser {
                 "Invalid crop border, expected format: <width>x<height>+<x>+<y>\n",
             )
         })?;
-        
+
         let width = captures.get(1).unwrap().as_str().parse::<usize>().unwrap();
         let height = captures.get(2).unwrap().as_str().parse::<usize>().unwrap();
         let x_offset = captures.get(3).unwrap().as_str().parse::<usize>().unwrap();
         let y_offset = captures.get(4).unwrap().as_str().parse::<usize>().unwrap();
-        
+
         Ok(CropBorder::new(width, height, x_offset, y_offset))
     }
 }

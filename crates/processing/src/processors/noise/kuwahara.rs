@@ -1,11 +1,11 @@
 use crate::common::execution::{Processor, WithOptions};
 use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToPalettePixels, Offset};
-use picturify_core::fast_image::util::{image_rgba_to_palette_srgba};
+use picturify_core::fast_image::util::image_rgba_to_palette_srgba;
 use picturify_core::fast_image::FastImage;
+use picturify_core::geometry::coord::Coord;
 use picturify_core::palette::{Hsva, IntoColor};
 use picturify_core::threading::progress::Progress;
 use std::ops::Range;
-use picturify_core::geometry::coord::Coord;
 
 pub struct KuwaharaProcessorOptions {
     pub radius: usize,

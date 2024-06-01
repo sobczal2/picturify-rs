@@ -6,6 +6,7 @@ use crate::commands::image::color::sepia::SepiaCommand;
 use crate::commands::image::common::none::NoneCommand;
 use crate::commands::image::edge::sobel::SobelCommand;
 use crate::commands::image::edge::sobel_rgb::SobelRgbCommand;
+use crate::commands::image::geometry::crop::CropCommand;
 use crate::commands::image::geometry::rotate::RotateCommand;
 use crate::commands::image::noise::bilateral::BilateralCommand;
 use crate::commands::image::noise::gaussian_blur::GaussianBlurCommand;
@@ -22,6 +23,7 @@ use crate::handlers::image::color::sepia::SepiaCommandHandler;
 use crate::handlers::image::common::none::NoneCommandHandler;
 use crate::handlers::image::edge::sobel::SobelCommandHandler;
 use crate::handlers::image::edge::sobel_rgb::SobelRgbCommandHandler;
+use crate::handlers::image::geometry::crop::CropCommandHandler;
 use crate::handlers::image::geometry::rotate::RotateCommandHandler;
 use crate::handlers::image::noise::bilateral::BilateralCommandHandler;
 use crate::handlers::image::noise::gaussian_blur::GaussianBlurCommandHandler;
@@ -32,8 +34,6 @@ use crate::handlers::image::noise::sharpen::SharpenCommandHandler;
 use clap::ArgMatches;
 use std::collections::HashMap;
 use std::rc::Rc;
-use crate::commands::image::geometry::crop::CropCommand;
-use crate::handlers::image::geometry::crop::CropCommandHandler;
 
 pub struct ImageCommandHandler;
 

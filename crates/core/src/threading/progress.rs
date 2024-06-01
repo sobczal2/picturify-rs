@@ -68,8 +68,8 @@ pub struct ProgressIterator<I> {
 }
 
 impl<I> Iterator for ProgressIterator<I>
-    where
-        I: Iterator,
+where
+    I: Iterator,
 {
     type Item = I::Item;
 

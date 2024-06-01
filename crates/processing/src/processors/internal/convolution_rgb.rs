@@ -43,7 +43,7 @@ impl Processor for ConvolutionRgbProcessor {
         let (width, height): (usize, usize) = image.size().into();
 
         let mut new_image = image.clone();
-        
+
         let (kernel_width, kernel_height): (usize, usize) = self.options.kernel.size().into();
         let half_kernel_width = kernel_width / 2;
         let half_kernel_height = kernel_height / 2;

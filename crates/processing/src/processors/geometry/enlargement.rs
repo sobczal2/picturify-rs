@@ -57,7 +57,7 @@ impl EnlargementBorder {
             left: x,
         }
     }
-    
+
     pub fn is_inside(&self, coord: Coord, size: Size) -> bool {
         let (x, y): (usize, usize) = coord.into();
         let (width, height): (usize, usize) = size.into();
@@ -113,8 +113,7 @@ impl Processor for EnlargementProcessor {
             EnlargementStrategy::Constant(pixel) => {
                 new_image.par_apply_fn_to_pixel(
                     |_, coord| {
-                        if self.options.border.is_inside(coord, new_size)
-                        {
+                        if self.options.border.is_inside(coord, new_size) {
                             image.get_srgba_pixel(coord - shift)
                         } else {
                             pixel
