@@ -71,7 +71,7 @@ impl GammaProcessor {
 
     fn process_slow(&self, mut image: FastImage, progress: Progress) -> FastImage {
         image.par_apply_fn_to_lin_srgba(
-            |pixel, _coord| {
+            |mut pixel, _coord| {
                 let red = pixel.red;
                 let green = pixel.green;
                 let blue = pixel.blue;

@@ -1,21 +1,13 @@
 use image::Rgba;
 
 pub trait RgbaF32Pixel {
-    #[inline(always)]
     fn red_f32(&self) -> f32;
-    #[inline(always)]
     fn green_f32(&self) -> f32;
-    #[inline(always)]
     fn blue_f32(&self) -> f32;
-    #[inline(always)]
     fn alpha_f32(&self) -> f32;
-    #[inline(always)]
     fn set_red_f32(&mut self, value: f32);
-    #[inline(always)]
     fn set_green_f32(&mut self, value: f32);
-    #[inline(always)]
     fn set_blue_f32(&mut self, value: f32);
-    #[inline(always)]
     fn set_alpha_f32(&mut self, value: f32);
     #[inline(always)]
     fn set_red_clamped_f32(&mut self, value: f32) {
