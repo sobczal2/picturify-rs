@@ -1,18 +1,18 @@
 use crate::commands::common::arg::{add_input_output_args, ArgType};
 use crate::commands::common::command::Command;
 
-pub struct MedianCommand;
+pub struct MeanBlurCommand;
 
-impl Command for MedianCommand {
+impl Command for MeanBlurCommand {
     fn get() -> clap::Command {
         let cmd = clap::Command::new(Self::name())
             .arg(ArgType::Radius.to_arg())
             .arg(ArgType::Fast.to_arg())
-            .about("Run median processing-bench pipeline on the image");
+            .about("Run mean processing-bench pipeline on an image");
         add_input_output_args(cmd)
     }
 
     fn name() -> &'static str {
-        "median"
+        "mean-blur"
     }
 }

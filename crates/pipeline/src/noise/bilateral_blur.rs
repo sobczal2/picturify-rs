@@ -5,7 +5,9 @@ use picturify_processing::processors::geometry::crop::{CropBorder, CropProcessor
 use picturify_processing::processors::geometry::enlargement::{
     EnlargementBorder, EnlargementProcessorOptions, EnlargementStrategy,
 };
-use picturify_processing::processors::noise::median::{MedianProcessor, MedianProcessorOptions};
+use picturify_processing::processors::noise::bilateral_blur::{
+    BilateralBlurProcessor, BilateralBlurProcessorOptions,
+};
 
 use crate::common::enlargement_crop_pipeline::{
     EnlargementCropPipeline, EnlargementCropPipelineOptions,
@@ -13,32 +15,37 @@ use crate::common::enlargement_crop_pipeline::{
 use crate::common::pipeline_progress::PipelineProgress;
 use crate::pipeline::Pipeline;
 
-pub struct MedianPipelineOptions {
+pub struct BilateralBlurPipelineOptions {
     pub radius: usize,
+    pub sigma_spatial: f32,
+    pub sigma_intensity: f32,
     pub fast: bool,
 }
 
-pub struct MedianPipeline {
-    options: MedianPipelineOptions,
+pub struct BilateralBlurPipeline {
+    options: BilateralBlurPipelineOptions,
 }
 
-impl MedianPipeline {
-    pub fn new(options: MedianPipelineOptions) -> Self {
+impl BilateralBlurPipeline {
+    pub fn new(options: BilateralBlurPipelineOptions) -> Self {
         Self { options }
     }
 }
 
-const MEDIAN_PROCESSOR_NAME: &str = "Median";
+const BILATERAL_BLUR_PROCESSOR_NAME: &str = "BilateralBlur";
 
-impl Pipeline for MedianPipeline {
+impl Pipeline for BilateralBlurPipeline {
     fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
-        let processor = MedianProcessor::new().with_options(MedianProcessorOptions {
+        let processor = BilateralBlurProcessor::new().with_options(BilateralBlurProcessorOptions {
             radius: self.options.radius,
+            sigma_spatial: self.options.sigma_spatial,
+            sigma_intensity: self.options.sigma_intensity,
+            use_fast_approximation: self.options.fast,
         });
         let (width, height) = image.size().into();
         let pipeline = EnlargementCropPipeline::new(EnlargementCropPipelineOptions {
             fast: self.options.fast,
-            processor_name: MEDIAN_PROCESSOR_NAME.to_string(),
+            processor_name: BILATERAL_BLUR_PROCESSOR_NAME.to_string(),
             processor: Box::new(processor),
             enlargement_processor_options: EnlargementProcessorOptions {
                 strategy: EnlargementStrategy::Constant(Srgba::new(0.0, 0.0, 0.0, 1.0)),

@@ -5,12 +5,12 @@ use crate::handlers::common::image_io::{read_image, write_image};
 use crate::progress::pipeline_progress_bar::run_progress_bar_for_pipeline;
 use clap::ArgMatches;
 use picturify_pipeline::common::pipeline_progress::PipelineProgress;
-use picturify_pipeline::noise::bilateral::{BilateralPipeline, BilateralPipelineOptions};
+use picturify_pipeline::noise::bilateral_blur::{BilateralBlurPipeline, BilateralBlurPipelineOptions};
 use picturify_pipeline::pipeline::Pipeline;
 
-pub struct BilateralCommandHandler;
+pub struct BilateralBlurCommandHandler;
 
-impl CommandHandler for BilateralCommandHandler {
+impl CommandHandler for BilateralBlurCommandHandler {
     fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
         let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
@@ -19,7 +19,7 @@ impl CommandHandler for BilateralCommandHandler {
         let sigma_intensity = args
             .get_one::<f32>(ArgType::SigmaIntensity.to_id())
             .unwrap();
-        let pipeline = BilateralPipeline::new(BilateralPipelineOptions {
+        let pipeline = BilateralBlurPipeline::new(BilateralBlurPipelineOptions {
             fast: fast.clone(),
             radius: radius.clone(),
             sigma_spatial: sigma_spatial.clone(),

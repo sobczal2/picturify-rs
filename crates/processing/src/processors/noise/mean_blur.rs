@@ -6,39 +6,39 @@ use crate::processors::internal::convolution_rgb::{
 use picturify_core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
 
-pub struct MeanProcessorOptions {
+pub struct MeanBlurProcessorOptions {
     pub radius: usize,
     pub use_fast_approximation: bool,
 }
 
-impl Default for MeanProcessorOptions {
-    fn default() -> MeanProcessorOptions {
-        MeanProcessorOptions {
+impl Default for MeanBlurProcessorOptions {
+    fn default() -> MeanBlurProcessorOptions {
+        MeanBlurProcessorOptions {
             radius: 3,
             use_fast_approximation: true,
         }
     }
 }
 
-pub struct MeanProcessor {
-    options: MeanProcessorOptions,
+pub struct MeanBlurProcessor {
+    options: MeanBlurProcessorOptions,
 }
 
-impl MeanProcessor {
+impl MeanBlurProcessor {
     pub fn new() -> Self {
-        MeanProcessor {
+        MeanBlurProcessor {
             options: Default::default(),
         }
     }
 }
 
-impl WithOptions<MeanProcessorOptions> for MeanProcessor {
-    fn with_options(self, options: MeanProcessorOptions) -> Self {
-        MeanProcessor { options }
+impl WithOptions<MeanBlurProcessorOptions> for MeanBlurProcessor {
+    fn with_options(self, options: MeanBlurProcessorOptions) -> Self {
+        MeanBlurProcessor { options }
     }
 }
 
-impl Processor for MeanProcessor {
+impl Processor for MeanBlurProcessor {
     fn process(&self, image: FastImage, progress: Progress) -> FastImage {
         let radius = self.options.radius;
 

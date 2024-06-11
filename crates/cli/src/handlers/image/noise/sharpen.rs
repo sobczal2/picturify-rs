@@ -15,7 +15,7 @@ impl CommandHandler for SharpenCommandHandler {
     fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
         let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
-        let negative_pipeline = SharpenPipeline::new(SharpenPipelineOptions { fast: fast.clone() });
+        let pipeline = SharpenPipeline::new(SharpenPipelineOptions { fast: fast.clone() });
 
         let pipeline_progress = PipelineProgress::new();
         let pipeline_progress_clone = pipeline_progress.clone();
@@ -24,7 +24,7 @@ impl CommandHandler for SharpenCommandHandler {
             run_progress_bar_for_pipeline(pipeline_progress_clone);
         });
 
-        let result_image = negative_pipeline.run(image, Some(pipeline_progress.clone()));
+        let result_image = pipeline.run(image, Some(pipeline_progress.clone()));
 
         handle.join().expect("Failed to join thread");
 

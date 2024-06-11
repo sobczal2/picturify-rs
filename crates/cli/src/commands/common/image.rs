@@ -8,11 +8,11 @@ use crate::commands::image::edge::sobel::SobelCommand;
 use crate::commands::image::edge::sobel_rgb::SobelRgbCommand;
 use crate::commands::image::geometry::crop::CropCommand;
 use crate::commands::image::geometry::rotate::RotateCommand;
-use crate::commands::image::noise::bilateral::BilateralCommand;
+use crate::commands::image::noise::bilateral_blur::BilateralBlurCommand;
 use crate::commands::image::noise::gaussian_blur::GaussianBlurCommand;
 use crate::commands::image::noise::kuwahara::KuwaharaCommand;
-use crate::commands::image::noise::mean::MeanCommand;
-use crate::commands::image::noise::median::MedianCommand;
+use crate::commands::image::noise::mean_blur::MeanBlurCommand;
+use crate::commands::image::noise::median_blur::MedianBlurCommand;
 use crate::commands::image::noise::sharpen::SharpenCommand;
 
 pub struct ImageCommand;
@@ -31,11 +31,11 @@ impl Command for ImageCommand {
                 BrightnessCommand::get(),
                 // noise
                 KuwaharaCommand::get(),
-                MedianCommand::get(),
-                MeanCommand::get(),
+                MedianBlurCommand::get(),
+                MeanBlurCommand::get(),
                 SharpenCommand::get(),
                 GaussianBlurCommand::get(),
-                BilateralCommand::get(),
+                BilateralBlurCommand::get(),
                 // edge
                 SobelCommand::get(),
                 SobelRgbCommand::get(),

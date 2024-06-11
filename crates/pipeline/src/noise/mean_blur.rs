@@ -5,9 +5,7 @@ use picturify_processing::processors::geometry::crop::{CropBorder, CropProcessor
 use picturify_processing::processors::geometry::enlargement::{
     EnlargementBorder, EnlargementProcessorOptions, EnlargementStrategy,
 };
-use picturify_processing::processors::noise::bilateral::{
-    BilateralProcessor, BilateralProcessorOptions,
-};
+use picturify_processing::processors::noise::mean_blur::{MeanBlurProcessor, MeanBlurProcessorOptions};
 
 use crate::common::enlargement_crop_pipeline::{
     EnlargementCropPipeline, EnlargementCropPipelineOptions,
@@ -15,37 +13,33 @@ use crate::common::enlargement_crop_pipeline::{
 use crate::common::pipeline_progress::PipelineProgress;
 use crate::pipeline::Pipeline;
 
-pub struct BilateralPipelineOptions {
+pub struct MeanBlurPipelineOptions {
     pub radius: usize,
-    pub sigma_spatial: f32,
-    pub sigma_intensity: f32,
     pub fast: bool,
 }
 
-pub struct BilateralPipeline {
-    options: BilateralPipelineOptions,
+pub struct MeanBlurPipeline {
+    options: MeanBlurPipelineOptions,
 }
 
-impl BilateralPipeline {
-    pub fn new(options: BilateralPipelineOptions) -> Self {
+impl MeanBlurPipeline {
+    pub fn new(options: MeanBlurPipelineOptions) -> Self {
         Self { options }
     }
 }
 
-const BILATERAL_PROCESSOR_NAME: &str = "Bilateral";
+const MEAN_BLUR_PROCESSOR_NAME: &str = "MeanBlur";
 
-impl Pipeline for BilateralPipeline {
+impl Pipeline for MeanBlurPipeline {
     fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
-        let processor = BilateralProcessor::new().with_options(BilateralProcessorOptions {
+        let processor = MeanBlurProcessor::new().with_options(MeanBlurProcessorOptions {
             radius: self.options.radius,
-            sigma_spatial: self.options.sigma_spatial,
-            sigma_intensity: self.options.sigma_intensity,
             use_fast_approximation: self.options.fast,
         });
         let (width, height) = image.size().into();
         let pipeline = EnlargementCropPipeline::new(EnlargementCropPipelineOptions {
             fast: self.options.fast,
-            processor_name: BILATERAL_PROCESSOR_NAME.to_string(),
+            processor_name: MEAN_BLUR_PROCESSOR_NAME.to_string(),
             processor: Box::new(processor),
             enlargement_processor_options: EnlargementProcessorOptions {
                 strategy: EnlargementStrategy::Constant(Srgba::new(0.0, 0.0, 0.0, 1.0)),

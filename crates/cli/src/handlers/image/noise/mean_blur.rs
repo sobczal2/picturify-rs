@@ -5,20 +5,20 @@ use crate::handlers::common::image_io::{read_image, write_image};
 use crate::progress::pipeline_progress_bar::run_progress_bar_for_pipeline;
 use clap::ArgMatches;
 use picturify_pipeline::common::pipeline_progress::PipelineProgress;
-use picturify_pipeline::noise::median::{MedianPipeline, MedianPipelineOptions};
+use picturify_pipeline::noise::mean_blur::{MeanBlurPipeline, MeanBlurPipelineOptions};
 use picturify_pipeline::pipeline::Pipeline;
 use std::thread::spawn;
 
-pub struct MedianCommandHandler;
+pub struct MeanBlurCommandHandler;
 
-impl CommandHandler for MedianCommandHandler {
+impl CommandHandler for MeanBlurCommandHandler {
     fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
-        let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
         let radius = args.get_one::<usize>(ArgType::Radius.to_id()).unwrap();
-        let negative_pipeline = MedianPipeline::new(MedianPipelineOptions {
-            fast: fast.clone(),
+        let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
+        let pipeline = MeanBlurPipeline::new(MeanBlurPipelineOptions {
             radius: radius.clone(),
+            fast: fast.clone(),
         });
 
         let pipeline_progress = PipelineProgress::new();
@@ -28,7 +28,7 @@ impl CommandHandler for MedianCommandHandler {
             run_progress_bar_for_pipeline(pipeline_progress_clone);
         });
 
-        let result_image = negative_pipeline.run(image, Some(pipeline_progress.clone()));
+        let result_image = pipeline.run(image, Some(pipeline_progress.clone()));
 
         handle.join().expect("Failed to join thread");
 

@@ -5,7 +5,7 @@ use picturify_processing::processors::geometry::crop::{CropBorder, CropProcessor
 use picturify_processing::processors::geometry::enlargement::{
     EnlargementBorder, EnlargementProcessorOptions, EnlargementStrategy,
 };
-use picturify_processing::processors::noise::mean::{MeanProcessor, MeanProcessorOptions};
+use picturify_processing::processors::noise::median_blur::{MedianBlurProcessor, MedianBlurProcessorOptions};
 
 use crate::common::enlargement_crop_pipeline::{
     EnlargementCropPipeline, EnlargementCropPipelineOptions,
@@ -13,33 +13,32 @@ use crate::common::enlargement_crop_pipeline::{
 use crate::common::pipeline_progress::PipelineProgress;
 use crate::pipeline::Pipeline;
 
-pub struct MeanPipelineOptions {
+pub struct MedianBlurPipelineOptions {
     pub radius: usize,
     pub fast: bool,
 }
 
-pub struct MeanPipeline {
-    options: MeanPipelineOptions,
+pub struct MedianBlurPipeline {
+    options: MedianBlurPipelineOptions,
 }
 
-impl MeanPipeline {
-    pub fn new(options: MeanPipelineOptions) -> Self {
+impl MedianBlurPipeline {
+    pub fn new(options: MedianBlurPipelineOptions) -> Self {
         Self { options }
     }
 }
 
-const MEAN_PROCESSOR_NAME: &str = "Mean";
+const MEDIAN_BLUR_PROCESSOR_NAME: &str = "MedianBlur";
 
-impl Pipeline for MeanPipeline {
+impl Pipeline for MedianBlurPipeline {
     fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
-        let processor = MeanProcessor::new().with_options(MeanProcessorOptions {
+        let processor = MedianBlurProcessor::new().with_options(MedianBlurProcessorOptions {
             radius: self.options.radius,
-            use_fast_approximation: self.options.fast,
         });
         let (width, height) = image.size().into();
         let pipeline = EnlargementCropPipeline::new(EnlargementCropPipelineOptions {
             fast: self.options.fast,
-            processor_name: MEAN_PROCESSOR_NAME.to_string(),
+            processor_name: MEDIAN_BLUR_PROCESSOR_NAME.to_string(),
             processor: Box::new(processor),
             enlargement_processor_options: EnlargementProcessorOptions {
                 strategy: EnlargementStrategy::Constant(Srgba::new(0.0, 0.0, 0.0, 1.0)),

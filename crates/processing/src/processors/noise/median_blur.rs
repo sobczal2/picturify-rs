@@ -4,35 +4,35 @@ use picturify_core::rayon::prelude::*;
 use picturify_core::threading::progress::{Progress, ProgressIteratorExt};
 use std::collections::VecDeque;
 
-pub struct MedianProcessorOptions {
+pub struct MedianBlurProcessorOptions {
     pub radius: usize,
 }
 
-impl Default for MedianProcessorOptions {
-    fn default() -> MedianProcessorOptions {
-        MedianProcessorOptions { radius: 3 }
+impl Default for MedianBlurProcessorOptions {
+    fn default() -> MedianBlurProcessorOptions {
+        MedianBlurProcessorOptions { radius: 3 }
     }
 }
 
-pub struct MedianProcessor {
-    options: MedianProcessorOptions,
+pub struct MedianBlurProcessor {
+    options: MedianBlurProcessorOptions,
 }
 
-impl MedianProcessor {
+impl MedianBlurProcessor {
     pub fn new() -> Self {
-        MedianProcessor {
+        MedianBlurProcessor {
             options: Default::default(),
         }
     }
 }
 
-impl WithOptions<MedianProcessorOptions> for MedianProcessor {
-    fn with_options(self, options: MedianProcessorOptions) -> Self {
-        MedianProcessor { options }
+impl WithOptions<MedianBlurProcessorOptions> for MedianBlurProcessor {
+    fn with_options(self, options: MedianBlurProcessorOptions) -> Self {
+        MedianBlurProcessor { options }
     }
 }
 
-impl Processor for MedianProcessor {
+impl Processor for MedianBlurProcessor {
     fn process(&self, image: FastImage, mut progress: Progress) -> FastImage {
         let (width, height): (usize, usize) = image.size().into();
         let radius = self.options.radius;

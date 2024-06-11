@@ -6,16 +6,16 @@ use crate::common::execution::{Processor, WithOptions};
 use crate::helpers::functions::gaussian_1d;
 use crate::helpers::kernels::ConvolutionKernel;
 
-pub struct BilateralProcessorOptions {
+pub struct BilateralBlurProcessorOptions {
     pub radius: usize,
     pub sigma_spatial: f32,
     pub sigma_intensity: f32,
     pub use_fast_approximation: bool,
 }
 
-impl Default for BilateralProcessorOptions {
-    fn default() -> BilateralProcessorOptions {
-        BilateralProcessorOptions {
+impl Default for BilateralBlurProcessorOptions {
+    fn default() -> BilateralBlurProcessorOptions {
+        BilateralBlurProcessorOptions {
             radius: 3,
             sigma_spatial: 1.0,
             sigma_intensity: 1.0,
@@ -24,26 +24,26 @@ impl Default for BilateralProcessorOptions {
     }
 }
 
-pub struct BilateralProcessor {
-    options: BilateralProcessorOptions,
+pub struct BilateralBlurProcessor {
+    options: BilateralBlurProcessorOptions,
 }
 
-impl BilateralProcessor {
+impl BilateralBlurProcessor {
     pub fn new() -> Self {
-        BilateralProcessor {
+        BilateralBlurProcessor {
             options: Default::default(),
         }
     }
 }
 
-impl WithOptions<BilateralProcessorOptions> for BilateralProcessor {
-    fn with_options(self, options: BilateralProcessorOptions) -> Self {
-        BilateralProcessor { options }
+impl WithOptions<BilateralBlurProcessorOptions> for BilateralBlurProcessor {
+    fn with_options(self, options: BilateralBlurProcessorOptions) -> Self {
+        BilateralBlurProcessor { options }
     }
 }
 
 // TODO fix this
-impl Processor for BilateralProcessor {
+impl Processor for BilateralBlurProcessor {
     fn process(&self, image: FastImage, progress: Progress) -> FastImage {
         let (width, height): (usize, usize) = image.size().into();
 

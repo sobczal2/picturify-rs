@@ -8,11 +8,11 @@ use crate::commands::image::edge::sobel::SobelCommand;
 use crate::commands::image::edge::sobel_rgb::SobelRgbCommand;
 use crate::commands::image::geometry::crop::CropCommand;
 use crate::commands::image::geometry::rotate::RotateCommand;
-use crate::commands::image::noise::bilateral::BilateralCommand;
+use crate::commands::image::noise::bilateral_blur::BilateralBlurCommand;
 use crate::commands::image::noise::gaussian_blur::GaussianBlurCommand;
 use crate::commands::image::noise::kuwahara::KuwaharaCommand;
-use crate::commands::image::noise::mean::MeanCommand;
-use crate::commands::image::noise::median::MedianCommand;
+use crate::commands::image::noise::mean_blur::MeanBlurCommand;
+use crate::commands::image::noise::median_blur::MedianBlurCommand;
 use crate::commands::image::noise::sharpen::SharpenCommand;
 use crate::error::{CliPicturifyError, CliPicturifyResult};
 use crate::handlers::common::handler::CommandHandler;
@@ -25,11 +25,11 @@ use crate::handlers::image::edge::sobel::SobelCommandHandler;
 use crate::handlers::image::edge::sobel_rgb::SobelRgbCommandHandler;
 use crate::handlers::image::geometry::crop::CropCommandHandler;
 use crate::handlers::image::geometry::rotate::RotateCommandHandler;
-use crate::handlers::image::noise::bilateral::BilateralCommandHandler;
+use crate::handlers::image::noise::bilateral_blur::BilateralBlurCommandHandler;
 use crate::handlers::image::noise::gaussian_blur::GaussianBlurCommandHandler;
 use crate::handlers::image::noise::kuwahara::KuwaharaCommandHandler;
-use crate::handlers::image::noise::mean::MeanCommandHandler;
-use crate::handlers::image::noise::median::MedianCommandHandler;
+use crate::handlers::image::noise::mean_blur::MeanBlurCommandHandler;
+use crate::handlers::image::noise::median_blur::MedianBlurCommandHandler;
 use crate::handlers::image::noise::sharpen::SharpenCommandHandler;
 use clap::ArgMatches;
 use std::collections::HashMap;
@@ -67,8 +67,8 @@ impl CommandHandler for ImageCommandHandler {
                     KuwaharaCommand::name(),
                     Rc::new(KuwaharaCommandHandler::handle),
                 );
-                handlers.insert(MedianCommand::name(), Rc::new(MedianCommandHandler::handle));
-                handlers.insert(MeanCommand::name(), Rc::new(MeanCommandHandler::handle));
+                handlers.insert(MedianBlurCommand::name(), Rc::new(MedianBlurCommandHandler::handle));
+                handlers.insert(MeanBlurCommand::name(), Rc::new(MeanBlurCommandHandler::handle));
                 handlers.insert(
                     SharpenCommand::name(),
                     Rc::new(SharpenCommandHandler::handle),
@@ -78,8 +78,8 @@ impl CommandHandler for ImageCommandHandler {
                     Rc::new(GaussianBlurCommandHandler::handle),
                 );
                 handlers.insert(
-                    BilateralCommand::name(),
-                    Rc::new(BilateralCommandHandler::handle),
+                    BilateralBlurCommand::name(),
+                    Rc::new(BilateralBlurCommandHandler::handle),
                 );
 
                 // edge
