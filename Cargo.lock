@@ -326,14 +326,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "98cc8fbded0c607b7ba9dd60cd98df59af97e84d24e49c8557331cfc26d301ce"
 
 [[package]]
-name = "cli-e2e"
-version = "0.1.0"
-dependencies = [
- "assert_cmd",
- "predicates",
-]
-
-[[package]]
 name = "color_quant"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1001,6 +993,7 @@ dependencies = [
 name = "picturify-cli"
 version = "0.1.0"
 dependencies = [
+ "assert_cmd",
  "clap",
  "indicatif",
  "log",
@@ -1008,9 +1001,11 @@ dependencies = [
  "picturify-movie",
  "picturify-pipeline",
  "picturify-processing",
+ "predicates",
  "regex",
  "simplelog",
  "thiserror",
+ "uuid",
 ]
 
 [[package]]
@@ -1318,9 +1313,9 @@ dependencies = [
 
 [[package]]
 name = "regex"
-version = "1.10.4"
+version = "1.10.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c117dbdfde9c8308975b6a18d71f3f385c89461f7b3fb054288ecf2a2058ba4c"
+checksum = "b91213439dad192326a0d7c6ee3955910425f441d7038e0d6933b0aec5c4517f"
 dependencies = [
  "aho-corasick",
  "memchr",
@@ -1638,6 +1633,15 @@ name = "utf8parse"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "711b9620af191e0cdc7468a8d14e709c3dcdb115b36f838e601583af800a370a"
+
+[[package]]
+name = "uuid"
+version = "1.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a183cf7feeba97b4dd1c0d46788634f6221d87fa961b305bed08c851829efcc0"
+dependencies = [
+ "getrandom",
+]
 
 [[package]]
 name = "v_frame"

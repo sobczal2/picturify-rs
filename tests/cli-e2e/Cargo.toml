@@ -1,8 +1,0 @@
-[package]
-name = "cli-e2e"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-assert_cmd.workspace = true
-predicates.workspace = true

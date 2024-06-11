@@ -7,8 +7,7 @@ members = [
     "crates/playground",
     "crates/processing",
     "crates/movie",
-    "benches/processing-bench",
-    "tests/cli-e2e"
+    "benches/processing-bench"
 ]
 
 [workspace.dependencies]
@@ -26,7 +25,9 @@ image = "0.25.1"
 thiserror = "1.0.58"
 rayon = "1.10.0"
 palette = "0.7.5"
-clap = { features = ["default", "derive", "cargo", "string"], version = "4.5.4" }
+clap = { version = "4.5.4", features = ["default", "derive", "cargo", "string"] }
 criterion = "0.5.1"
 assert_cmd = "2.0"
 predicates = "3.1.0"
+uuid = { version = "1.8.0", features = ["v4"] }
+regex = "1.10.5"

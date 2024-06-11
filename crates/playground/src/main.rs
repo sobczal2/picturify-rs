@@ -1,5 +1,11 @@
+use picturify_core::fast_image::FastImage;
+use picturify_core::fast_image::io::WriteToFile;
+use picturify_core::geometry::size::Size;
+
 fn main() {
-    run_image();
+    let image = FastImage::empty(Size::new(100, 100));
+    image.write_to_file("/home/sobczal/Devel/rust/picturify-rs/tests/cli-e2e/assets/sample_100x100.png").unwrap()
+    // run_image();
     // run_movie();
 }
 
