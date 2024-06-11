@@ -6,7 +6,6 @@ use crate::handlers::common::image::ImageCommandHandler;
 use crate::handlers::common::movie::MovieCommandHandler;
 #[allow(unused_imports)]
 use log::{error, info, warn, LevelFilter};
-use picturify_core::rayon::ThreadPoolBuilder;
 use simplelog::*;
 use std::time::Instant;
 
@@ -35,11 +34,6 @@ fn main() {
     )
     .unwrap();
 
-    ThreadPoolBuilder::new()
-        .num_threads(1)
-        .build_global()
-        .unwrap();
-
     welcome();
     let start = Instant::now();
 
@@ -49,13 +43,14 @@ fn main() {
         Some(("image", args)) => ImageCommandHandler::handle(args.clone()),
         Some(("movie", args)) => MovieCommandHandler::handle(args.clone()),
         _ => {
-            error!("No command specified");
             Err(CliPicturifyError::MissingCommand)
         }
     };
 
     if let Err(e) = result {
         error!("{}", e);
+        
+        std::process::exit(1);
     }
 
     let duration = start.elapsed();

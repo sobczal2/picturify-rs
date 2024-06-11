@@ -6,8 +6,10 @@ members = [
     "crates/pipeline",
     "crates/playground",
     "crates/processing",
-    "crates/movie"
-, "benches/processing-bench"]
+    "crates/movie",
+    "benches/processing-bench",
+    "tests/cli-e2e"
+]
 
 [workspace.dependencies]
 picturify-benchmark = { path = "benches/processing-bench" }
@@ -26,3 +28,5 @@ rayon = "1.10.0"
 palette = "0.7.5"
 clap = { features = ["default", "derive", "cargo", "string"], version = "4.5.4" }
 criterion = "0.5.1"
+assert_cmd = "2.0"
+predicates = "3.1.0"
