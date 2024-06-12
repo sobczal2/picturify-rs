@@ -45,6 +45,7 @@ fn run_movie() {
     // movie_pipe.process();
 }
 
+#[allow(dead_code)]
 fn run_image() {
     // let fast_image = *FastImage::read_from_file("/home/sobczal/Downloads/large.jpg").unwrap();
     //

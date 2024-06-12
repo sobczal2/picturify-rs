@@ -1,6 +1,6 @@
 use std::fs::create_dir;
 use std::path::{Path, PathBuf};
-use std::process::Command;
+use assert_cmd::Command;
 
 pub fn workspace_dir() -> PathBuf {
     let output = Command::new(env!("CARGO"))
@@ -24,4 +24,8 @@ pub fn get_null_path() -> PathBuf {
         create_dir(workspace_dir.join("assets/null")).unwrap();
     }
     workspace_dir.join("assets/null")
+}
+
+pub fn get_picturify_cli_cmd() -> Command {
+    Command::cargo_bin("picturify-cli").unwrap()
 }

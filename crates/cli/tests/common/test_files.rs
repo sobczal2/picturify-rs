@@ -35,11 +35,11 @@ impl Drop for TestFiles {
 }
 
 pub trait WithIo {
-    fn with_io(&mut self, test_files: TestFiles) -> &mut Self;
+    fn with_io(&mut self, test_files: &TestFiles) -> &mut Self;
 }
 
 impl WithIo for Command {
-    fn with_io(&mut self, test_files: TestFiles) -> &mut Self {
+    fn with_io(&mut self, test_files: &TestFiles) -> &mut Self {
         self
             .arg("--input")
             .arg(test_files.input())
