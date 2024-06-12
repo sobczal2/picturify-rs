@@ -19,7 +19,7 @@ pub struct ImageCommand;
 impl Command for ImageCommand {
     fn get() -> clap::Command {
         clap::Command::new(Self::name())
-            .about("Run image processing-bench pipeline on an image")
+            .about("Run processing pipeline on the image")
             .subcommands(&[
                 // common
                 NoneCommand::get(),

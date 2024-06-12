@@ -8,7 +8,7 @@ impl Command for SobelCommand {
         let cmd = clap::Command::new(Self::name())
             .arg(ArgType::Fast.to_arg())
             .arg(ArgType::Rgb.to_arg())
-            .about("Run sobel processing-bench pipeline on the image");
+            .about("Run Sobel edge detection on the image");
         add_input_output_args(cmd)
     }
 

@@ -7,7 +7,7 @@ impl Command for CropCommand {
     fn get() -> clap::Command {
         let cmd = clap::Command::new(Self::name())
             .arg(ArgType::CropBorder.to_arg())
-            .about("Crop the image to the specified dimensions");
+            .about("Crop the image");
         add_input_output_args(cmd)
     }
 
