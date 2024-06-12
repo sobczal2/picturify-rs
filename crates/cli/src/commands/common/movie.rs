@@ -1,7 +1,6 @@
 use crate::commands::common::command::Command;
 use crate::commands::movie::color::negative::NegativeCommand;
 use crate::commands::movie::edge::sobel::SobelCommand;
-use crate::commands::movie::edge::sobel_rgb::SobelRgbCommand;
 
 pub struct MovieCommand;
 
@@ -12,7 +11,6 @@ impl Command for MovieCommand {
             .subcommands(&[
                 NegativeCommand::get(),
                 SobelCommand::get(),
-                SobelRgbCommand::get(),
             ])
     }
 

@@ -5,7 +5,6 @@ use crate::commands::image::color::negative::NegativeCommand;
 use crate::commands::image::color::sepia::SepiaCommand;
 use crate::commands::image::common::none::NoneCommand;
 use crate::commands::image::edge::sobel::SobelCommand;
-use crate::commands::image::edge::sobel_rgb::SobelRgbCommand;
 use crate::commands::image::geometry::crop::CropCommand;
 use crate::commands::image::geometry::rotate::RotateCommand;
 use crate::commands::image::noise::bilateral_blur::BilateralBlurCommand;
@@ -38,7 +37,6 @@ impl Command for ImageCommand {
                 BilateralBlurCommand::get(),
                 // edge
                 SobelCommand::get(),
-                SobelRgbCommand::get(),
                 // geometry
                 RotateCommand::get(),
                 CropCommand::get(),

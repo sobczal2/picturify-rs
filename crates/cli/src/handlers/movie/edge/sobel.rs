@@ -14,7 +14,8 @@ pub struct SobelCommandHandler;
 impl CommandHandler for SobelCommandHandler {
     fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
         let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
-        let sobel_pipeline = SobelPipeline::new(SobelPipelineOptions { fast: fast.clone() });
+        let rgb = args.get_one::<bool>(ArgType::Rgb.to_id()).unwrap();
+        let sobel_pipeline = SobelPipeline::new(SobelPipelineOptions { fast: fast.clone(), rgb: rgb.clone() });
 
         let movie_progress = Arc::new(RwLock::new(MovieProgress::new()));
         let movie_progress_clone = movie_progress.clone();

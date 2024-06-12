@@ -15,6 +15,7 @@ pub enum ArgType {
     Factor,
     Angle,
     CropBorder,
+    Rgb,
 }
 
 impl ArgType {
@@ -85,6 +86,12 @@ impl ArgType {
                 .help("Crop border in format <width>x<height>+<x>+<y>")
                 .required(true)
                 .value_parser(CropBorderValueParser::new()),
+            ArgType::Rgb => Arg::new(self.to_id())
+                .long("rgb")
+                .action(ArgAction::SetTrue)
+                .help("Use RGB version of the algorithm")
+                .default_value("false")
+                .value_parser(value_parser!(bool)),
         }
     }
 
@@ -101,6 +108,7 @@ impl ArgType {
             ArgType::Factor => "factor",
             ArgType::Angle => "angle",
             ArgType::CropBorder => "crop-border",
+            ArgType::Rgb => "rgb",
         }
     }
 }

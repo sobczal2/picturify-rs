@@ -1,12 +1,10 @@
 use crate::commands::common::command::Command;
 use crate::commands::movie::color::negative::NegativeCommand;
 use crate::commands::movie::edge::sobel::SobelCommand;
-use crate::commands::movie::edge::sobel_rgb::SobelRgbCommand;
 use crate::error::{CliPicturifyError, CliPicturifyResult};
 use crate::handlers::common::handler::CommandHandler;
 use crate::handlers::movie::color::negative::NegativeCommandHandler;
 use crate::handlers::movie::edge::sobel::SobelCommandHandler;
-use crate::handlers::movie::edge::sobel_rgb::SobelRgbCommandHandler;
 use clap::ArgMatches;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -25,10 +23,6 @@ impl CommandHandler for MovieCommandHandler {
                     Rc::new(NegativeCommandHandler::handle),
                 );
                 handlers.insert(SobelCommand::name(), Rc::new(SobelCommandHandler::handle));
-                handlers.insert(
-                    SobelRgbCommand::name(),
-                    Rc::new(SobelRgbCommandHandler::handle),
-                );
 
                 if let Some(handler) = handlers.get(name) {
                     handler(args.clone())
