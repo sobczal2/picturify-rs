@@ -5,8 +5,7 @@ pub struct NoneCommand;
 
 impl Command for NoneCommand {
     fn get() -> clap::Command {
-        let cmd = clap::Command::new(Self::name())
-            .about("Do nothing with the image");
+        let cmd = clap::Command::new(Self::name()).about("Do nothing with the image");
         add_input_output_args(cmd)
     }
 

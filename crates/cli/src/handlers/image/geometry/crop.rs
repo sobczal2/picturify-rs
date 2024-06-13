@@ -14,9 +14,7 @@ pub struct CropCommandHandler;
 impl CommandHandler for CropCommandHandler {
     fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
-        let crop_border = args
-            .get_one::<CropBorder>(ArgType::CropBorder.to_id())
-            .unwrap();
+        let crop_border = args.get_one::<CropBorder>(ArgType::Border.to_id()).unwrap();
         let crop_pipeline = CropPipeline::new(CropPipelineOptions {
             crop_border: crop_border.clone(),
         });

@@ -65,8 +65,14 @@ impl CommandHandler for ImageCommandHandler {
                     KuwaharaCommand::name(),
                     Rc::new(KuwaharaCommandHandler::handle),
                 );
-                handlers.insert(MedianBlurCommand::name(), Rc::new(MedianBlurCommandHandler::handle));
-                handlers.insert(MeanBlurCommand::name(), Rc::new(MeanBlurCommandHandler::handle));
+                handlers.insert(
+                    MedianBlurCommand::name(),
+                    Rc::new(MedianBlurCommandHandler::handle),
+                );
+                handlers.insert(
+                    MeanBlurCommand::name(),
+                    Rc::new(MeanBlurCommandHandler::handle),
+                );
                 handlers.insert(
                     SharpenCommand::name(),
                     Rc::new(SharpenCommandHandler::handle),

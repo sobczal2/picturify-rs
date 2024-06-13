@@ -1,8 +1,8 @@
+use crate::common::helpers::{get_null_path, get_sample_100x100_png_path};
+use assert_cmd::Command;
 use std::fs::remove_file;
 use std::path::{Path, PathBuf};
-use assert_cmd::Command;
 use uuid::Uuid;
-use crate::common::helpers::{get_null_path, get_sample_100x100_png_path};
 
 pub struct TestFiles {
     input: PathBuf,
@@ -40,8 +40,7 @@ pub trait WithIo {
 
 impl WithIo for Command {
     fn with_io(&mut self, test_files: &TestFiles) -> &mut Self {
-        self
-            .arg("--input")
+        self.arg("--input")
             .arg(test_files.input())
             .arg("--output")
             .arg(test_files.output());

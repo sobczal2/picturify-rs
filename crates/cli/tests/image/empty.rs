@@ -1,11 +1,9 @@
-mod common;
-mod image;
-
 use crate::common::helpers::get_picturify_cli_cmd;
 
 #[test]
 fn empty_no_args_should_print_missing_command() {
     let mut cmd = get_picturify_cli_cmd();
+    cmd.arg("image");
     let assert = cmd.assert();
 
     assert

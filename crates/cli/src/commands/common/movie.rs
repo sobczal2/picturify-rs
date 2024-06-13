@@ -8,10 +8,7 @@ impl Command for MovieCommand {
     fn get() -> clap::Command {
         clap::Command::new(Self::name())
             .about("Run processing pipeline on the movie")
-            .subcommands(&[
-                NegativeCommand::get(),
-                SobelCommand::get(),
-            ])
+            .subcommands(&[NegativeCommand::get(), SobelCommand::get()])
     }
 
     fn name() -> &'static str {

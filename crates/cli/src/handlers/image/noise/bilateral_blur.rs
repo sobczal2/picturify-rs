@@ -5,7 +5,9 @@ use crate::handlers::common::image_io::{read_image, write_image};
 use crate::progress::pipeline_progress_bar::run_progress_bar_for_pipeline;
 use clap::ArgMatches;
 use picturify_pipeline::common::pipeline_progress::PipelineProgress;
-use picturify_pipeline::noise::bilateral_blur::{BilateralBlurPipeline, BilateralBlurPipelineOptions};
+use picturify_pipeline::noise::bilateral_blur::{
+    BilateralBlurPipeline, BilateralBlurPipelineOptions,
+};
 use picturify_pipeline::pipeline::Pipeline;
 
 pub struct BilateralBlurCommandHandler;

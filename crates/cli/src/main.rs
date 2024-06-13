@@ -42,14 +42,12 @@ fn main() {
     let result = match matches.subcommand() {
         Some(("image", args)) => ImageCommandHandler::handle(args.clone()),
         Some(("movie", args)) => MovieCommandHandler::handle(args.clone()),
-        _ => {
-            Err(CliPicturifyError::MissingCommand)
-        }
+        _ => Err(CliPicturifyError::MissingCommand),
     };
 
     if let Err(e) = result {
         error!("{}", e);
-        
+
         std::process::exit(1);
     }
 

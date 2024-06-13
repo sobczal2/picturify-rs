@@ -5,7 +5,9 @@ use picturify_processing::processors::geometry::crop::{CropBorder, CropProcessor
 use picturify_processing::processors::geometry::enlargement::{
     EnlargementBorder, EnlargementProcessorOptions, EnlargementStrategy,
 };
-use picturify_processing::processors::noise::median_blur::{MedianBlurProcessor, MedianBlurProcessorOptions};
+use picturify_processing::processors::noise::median_blur::{
+    MedianBlurProcessor, MedianBlurProcessorOptions,
+};
 
 use crate::common::enlargement_crop_pipeline::{
     EnlargementCropPipeline, EnlargementCropPipelineOptions,

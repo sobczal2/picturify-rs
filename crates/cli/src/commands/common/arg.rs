@@ -14,7 +14,7 @@ pub enum ArgType {
     SigmaIntensity,
     Factor,
     Angle,
-    CropBorder,
+    Border,
     Rgb,
 }
 
@@ -80,10 +80,10 @@ impl ArgType {
                 .help("Angle value in radians or degrees (e.g. 90deg or 1.57rad)")
                 .default_value("90deg")
                 .value_parser(AngleValueParser::new()),
-            ArgType::CropBorder => Arg::new(self.to_id())
-                .short('c')
-                .long("crop")
-                .help("Crop border in format <width>x<height>+<x>+<y>")
+            ArgType::Border => Arg::new(self.to_id())
+                .short('b')
+                .long("border")
+                .help("Border in format <width>x<height>+<x>+<y>")
                 .required(true)
                 .value_parser(CropBorderValueParser::new()),
             ArgType::Rgb => Arg::new(self.to_id())
@@ -107,7 +107,7 @@ impl ArgType {
             ArgType::SigmaIntensity => "sigma-intensity",
             ArgType::Factor => "factor",
             ArgType::Angle => "angle",
-            ArgType::CropBorder => "crop-border",
+            ArgType::Border => "crop-border",
             ArgType::Rgb => "rgb",
         }
     }

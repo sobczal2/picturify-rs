@@ -1,6 +1,6 @@
+use assert_cmd::Command;
 use std::fs::create_dir;
 use std::path::{Path, PathBuf};
-use assert_cmd::Command;
 
 pub fn workspace_dir() -> PathBuf {
     let output = Command::new(env!("CARGO"))
