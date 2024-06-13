@@ -14,7 +14,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        lfs: true  # Enable Git LFS
 
     - name: Set up Rust
       uses: actions-rs/toolchain@v1
