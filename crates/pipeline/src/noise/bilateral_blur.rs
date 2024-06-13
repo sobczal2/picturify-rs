@@ -1,4 +1,4 @@
-use picturify_core::fast_image::FastImage;
+use picturify_core::core::fast_image::FastImage;
 use picturify_core::palette::Srgba;
 use picturify_processing::processors::geometry::crop::{CropBorder, CropProcessorOptions};
 use picturify_processing::processors::geometry::enlargement::{

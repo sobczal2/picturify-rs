@@ -42,14 +42,18 @@ impl FromStr for Angle {
     type Err = PicturifyError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.len() > 10 {
+            return Err(PicturifyError::ParseError("Invalid angle".to_string()));
+        }
+
         let s = s.trim();
-        if s.ends_with("rad") {
-            let radians = s[..s.len() - 3]
+        if let Some(radians_str) = s.strip_suffix("rad") {
+            let radians = radians_str
                 .parse::<f32>()
                 .map_err(|_| PicturifyError::ParseError("Invalid angle".to_string()))?;
             Ok(Angle::Radians(radians))
-        } else if s.ends_with("deg") {
-            let degrees = s[..s.len() - 3]
+        } else if let Some(degrees_str) = s.strip_suffix("deg") {
+            let degrees = degrees_str
                 .parse::<f32>()
                 .map_err(|_| PicturifyError::ParseError("Invalid angle".to_string()))?;
             Ok(Angle::Degrees(degrees))

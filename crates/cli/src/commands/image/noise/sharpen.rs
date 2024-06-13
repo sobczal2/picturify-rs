@@ -7,7 +7,7 @@ impl Command for SharpenCommand {
     fn get() -> clap::Command {
         let cmd = clap::Command::new(Self::name())
             .arg(ArgType::Fast.to_arg())
-            .about("Run sharpen filter on the image");
+            .about("Run sharpen filter on the core");
         add_input_output_args(cmd)
     }
 

@@ -12,15 +12,15 @@ use std::thread::spawn;
 pub struct SobelCommandHandler;
 
 impl CommandHandler for SobelCommandHandler {
-    fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
+    fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
         let rgb = args.get_one::<bool>(ArgType::Rgb.to_id()).unwrap();
         let sobel_pipeline = SobelPipeline::new(SobelPipelineOptions {
-            fast: fast.clone(),
-            rgb: rgb.clone(),
+            fast: *fast,
+            rgb: *rgb,
         });
 
-        let movie_progress = Arc::new(RwLock::new(MovieProgress::new()));
+        let movie_progress = Arc::new(RwLock::new(MovieProgress::default()));
         let movie_progress_clone = movie_progress.clone();
 
         let handle = spawn(move || {

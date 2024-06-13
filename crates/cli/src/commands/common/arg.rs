@@ -24,13 +24,13 @@ impl ArgType {
             ArgType::Input => Arg::new(self.to_id())
                 .short('i')
                 .long("input")
-                .help("Input image path")
+                .help("Input core path")
                 .required(true)
                 .value_parser(value_parser!(String)),
             ArgType::Output => Arg::new(self.to_id())
                 .short('o')
                 .long("output")
-                .help("Output image path")
+                .help("Output core path")
                 .required(true)
                 .value_parser(value_parser!(String)),
             ArgType::Radius => Arg::new(self.to_id())
@@ -58,15 +58,17 @@ impl ArgType {
                 .help("Sigma value")
                 .value_parser(value_parser!(f32)),
             ArgType::SigmaSpatial => Arg::new(self.to_id())
+                .alias("ss")
                 .long("sigma-spatial")
                 .help("Sigma spatial value")
                 .value_parser(value_parser!(f32)),
             ArgType::SigmaIntensity => Arg::new(self.to_id())
+                .alias("si")
                 .long("sigma-intensity")
                 .help("Sigma intensity value")
                 .value_parser(value_parser!(f32)),
             ArgType::Factor => Arg::new(self.to_id())
-                .short('f')
+                .alias("fa")
                 .long("factor")
                 .help("Brightness factor")
                 .value_parser(value_parser!(f32)),

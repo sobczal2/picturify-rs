@@ -6,7 +6,7 @@ use clap::ArgMatches;
 pub struct NoneCommandHandler;
 
 impl CommandHandler for NoneCommandHandler {
-    fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
+    fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
 
         write_image(image, args.clone())?;

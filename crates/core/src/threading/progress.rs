@@ -23,6 +23,12 @@ impl Debug for Progress {
     }
 }
 
+impl Default for Progress {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Progress {
     pub fn new() -> Self {
         Progress {
@@ -75,8 +81,7 @@ where
 
     fn next(&mut self) -> Option<Self::Item> {
         self.progress.increment();
-        let next = self.iter.next();
-        next
+        self.iter.next()
     }
 }
 

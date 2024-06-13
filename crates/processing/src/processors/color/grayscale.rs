@@ -1,10 +1,8 @@
 use crate::common::execution::Processor;
 use clap::builder::PossibleValue;
 use clap::ValueEnum;
-use picturify_core::fast_image::apply_fn_to_pixels::{
-    ApplyFnToImagePixels, ApplyFnToPalettePixels,
-};
-use picturify_core::fast_image::FastImage;
+use picturify_core::core::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
+use picturify_core::core::fast_image::FastImage;
 use picturify_core::geometry::coord::Coord;
 use picturify_core::image::Rgba;
 use picturify_core::palette::LinSrgba;
@@ -79,8 +77,10 @@ impl Processor for GrayscaleProcessor {
     }
 }
 
+type FastProcessingFunction = Box<dyn Fn(&mut Rgba<u8>, Coord) + Send + Sync>;
+type ProcessingFunction = Box<dyn Fn(LinSrgba, Coord) -> LinSrgba + Send + Sync>;
 impl GrayscaleProcessor {
-    fn average_processing_function_fast() -> Box<dyn Fn(&mut Rgba<u8>, Coord) + Send + Sync> {
+    fn average_processing_function_fast() -> FastProcessingFunction {
         Box::new(|pixel, _coord| {
             let avg = (pixel.0[0] as f32 + pixel.0[1] as f32 + pixel.0[2] as f32) / 3.0;
             for i in 0..3 {
@@ -89,7 +89,7 @@ impl GrayscaleProcessor {
         })
     }
 
-    fn lightness_processing_function_fast() -> Box<dyn Fn(&mut Rgba<u8>, Coord) + Send + Sync> {
+    fn lightness_processing_function_fast() -> FastProcessingFunction {
         Box::new(|pixel, _coord| {
             let max = pixel.0.iter().max().unwrap();
             let min = pixel.0.iter().min().unwrap();
@@ -100,7 +100,7 @@ impl GrayscaleProcessor {
         })
     }
 
-    fn luminosity_processing_function_fast() -> Box<dyn Fn(&mut Rgba<u8>, Coord) + Send + Sync> {
+    fn luminosity_processing_function_fast() -> FastProcessingFunction {
         Box::new(|pixel, _coord| {
             let avg =
                 0.21 * pixel.0[0] as f32 + 0.72 * pixel.0[1] as f32 + 0.07 * pixel.0[2] as f32;
@@ -110,7 +110,7 @@ impl GrayscaleProcessor {
         })
     }
 
-    fn average_processing_function() -> Box<dyn Fn(LinSrgba, Coord) -> LinSrgba + Send + Sync> {
+    fn average_processing_function() -> ProcessingFunction {
         Box::new(|mut pixel, _coord| {
             let avg = (pixel.red + pixel.green + pixel.blue) / 3.0;
             pixel.red = avg;
@@ -121,7 +121,7 @@ impl GrayscaleProcessor {
         })
     }
 
-    fn lightness_processing_function() -> Box<dyn Fn(LinSrgba, Coord) -> LinSrgba + Send + Sync> {
+    fn lightness_processing_function() -> ProcessingFunction {
         Box::new(|mut pixel, _coord| {
             let max = pixel.red.max(pixel.green).max(pixel.blue);
             let min = pixel.red.min(pixel.green).min(pixel.blue);
@@ -134,7 +134,7 @@ impl GrayscaleProcessor {
         })
     }
 
-    fn luminosity_processing_function() -> Box<dyn Fn(LinSrgba, Coord) -> LinSrgba + Send + Sync> {
+    fn luminosity_processing_function() -> ProcessingFunction {
         Box::new(|mut pixel, _coord| {
             let avg = 0.21 * pixel.red + 0.72 * pixel.green + 0.07 * pixel.blue;
             pixel.red = avg;

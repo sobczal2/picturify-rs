@@ -13,7 +13,7 @@ use picturify_pipeline::pipeline::Pipeline;
 pub struct SepiaCommandHandler;
 
 impl CommandHandler for SepiaCommandHandler {
-    fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
+    fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
         let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
 

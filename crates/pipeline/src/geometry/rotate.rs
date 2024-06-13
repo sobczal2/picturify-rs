@@ -1,6 +1,6 @@
 use crate::common::pipeline_progress::PipelineProgress;
 use crate::pipeline::Pipeline;
-use picturify_core::fast_image::FastImage;
+use picturify_core::core::fast_image::FastImage;
 use picturify_core::geometry::angle::Angle;
 use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::geometry::rotate_fixed::{
@@ -43,7 +43,7 @@ impl RotatePipeline {
         pipeline_progress: Option<PipelineProgress>,
         strategy: RotateFixedStrategy,
     ) -> FastImage {
-        let mut pipeline_progress = pipeline_progress.unwrap_or_else(|| PipelineProgress::new());
+        let mut pipeline_progress = pipeline_progress.unwrap_or_default();
 
         pipeline_progress.new_individual(ROTATE_PROCESSOR_NAME.to_string());
         pipeline_progress.setup_combined(1);
@@ -62,7 +62,7 @@ impl RotatePipeline {
         image: FastImage,
         pipeline_progress: Option<PipelineProgress>,
     ) -> FastImage {
-        let mut pipeline_progress = pipeline_progress.unwrap_or_else(|| PipelineProgress::new());
+        let mut pipeline_progress = pipeline_progress.unwrap_or_default();
 
         pipeline_progress.new_individual(ROTATE_PROCESSOR_NAME.to_string());
         pipeline_progress.setup_combined(1);

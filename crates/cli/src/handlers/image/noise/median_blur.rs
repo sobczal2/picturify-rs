@@ -12,13 +12,13 @@ use std::thread::spawn;
 pub struct MedianBlurCommandHandler;
 
 impl CommandHandler for MedianBlurCommandHandler {
-    fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
+    fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
         let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
         let radius = args.get_one::<usize>(ArgType::Radius.to_id()).unwrap();
         let pipeline = MedianBlurPipeline::new(MedianBlurPipelineOptions {
-            fast: fast.clone(),
-            radius: radius.clone(),
+            fast: *fast,
+            radius: *radius,
         });
 
         let pipeline_progress = PipelineProgress::new();

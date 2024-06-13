@@ -9,7 +9,7 @@ impl Command for GaussianBlurCommand {
             .arg(ArgType::Radius.to_arg())
             .arg(ArgType::Fast.to_arg())
             .arg(ArgType::Sigma.to_arg())
-            .about("Run gaussian blur filter on the image");
+            .about("Run gaussian blur filter on the core");
         add_input_output_args(cmd)
     }
 

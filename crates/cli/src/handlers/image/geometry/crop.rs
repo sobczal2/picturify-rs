@@ -12,11 +12,11 @@ use picturify_processing::processors::geometry::crop::CropBorder;
 pub struct CropCommandHandler;
 
 impl CommandHandler for CropCommandHandler {
-    fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
+    fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
         let crop_border = args.get_one::<CropBorder>(ArgType::Border.to_id()).unwrap();
         let crop_pipeline = CropPipeline::new(CropPipelineOptions {
-            crop_border: crop_border.clone(),
+            crop_border: *crop_border,
         });
 
         let pipeline_progress = PipelineProgress::new();

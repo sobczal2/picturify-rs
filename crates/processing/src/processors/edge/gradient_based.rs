@@ -1,9 +1,9 @@
 use crate::common::execution::Processor;
-use picturify_core::error::processing::ProcessingError;
-use picturify_core::fast_image::apply_fn_to_pixels::{
+use picturify_core::core::apply_fn_to_pixels::{
     ApplyFnToImagePixels, ApplyFnToPalettePixels, Offset,
 };
-use picturify_core::fast_image::FastImage;
+use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::processing::ProcessingError;
 use picturify_core::rayon::prelude::*;
 use picturify_core::threading::progress::{Progress, ProgressIteratorExt};
 use std::sync::{Arc, Mutex};

@@ -12,12 +12,10 @@ use picturify_pipeline::pipeline::Pipeline;
 pub struct RotateCommandHandler;
 
 impl CommandHandler for RotateCommandHandler {
-    fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
+    fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
         let angle = args.get_one::<Angle>(ArgType::Angle.to_id()).unwrap();
-        let rotate_pipeline = RotatePipeline::new(RotatePipelineOptions {
-            angle: angle.clone(),
-        });
+        let rotate_pipeline = RotatePipeline::new(RotatePipelineOptions { angle: *angle });
 
         let pipeline_progress = PipelineProgress::new();
         let pipeline_progress_clone = pipeline_progress.clone();

@@ -10,7 +10,7 @@ use picturify_pipeline::pipeline::Pipeline;
 pub struct BrightnessCommandHandler;
 
 impl CommandHandler for BrightnessCommandHandler {
-    fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
+    fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
         let factor = args.get_one::<f32>(ArgType::Factor.to_id()).unwrap();
         let brightness_pipeline =

@@ -12,15 +12,15 @@ use std::thread::spawn;
 pub struct GaussianBlurCommandHandler;
 
 impl CommandHandler for GaussianBlurCommandHandler {
-    fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
+    fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
         let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
         let radius = args.get_one::<usize>(ArgType::Radius.to_id()).unwrap();
         let sigma = args.get_one::<f32>(ArgType::Sigma.to_id()).unwrap();
         let pipeline = GaussianBlurPipeline::new(GaussianBlurPipelineOptions {
-            fast: fast.clone(),
-            radius: radius.clone(),
-            sigma: sigma.clone(),
+            fast: *fast,
+            radius: *radius,
+            sigma: *sigma,
         });
 
         let pipeline_progress = PipelineProgress::new();

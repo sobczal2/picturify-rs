@@ -1,4 +1,4 @@
-use picturify_core::fast_image::FastImage;
+use picturify_core::core::fast_image::FastImage;
 use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::geometry::crop::{CropProcessor, CropProcessorOptions};
 use picturify_processing::processors::geometry::enlargement::{
@@ -40,7 +40,7 @@ impl Pipeline for EnlargementCropPipeline {
 
 impl EnlargementCropPipeline {
     fn run_fast(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
-        let mut pipeline_progress = pipeline_progress.unwrap_or_else(|| PipelineProgress::new());
+        let mut pipeline_progress = pipeline_progress.unwrap_or_default();
 
         pipeline_progress.new_individual(self.options.processor_name.clone());
         pipeline_progress.setup_combined(1);
@@ -55,7 +55,7 @@ impl EnlargementCropPipeline {
     }
 
     fn run_slow(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
-        let mut pipeline_progress = pipeline_progress.unwrap_or_else(|| PipelineProgress::new());
+        let mut pipeline_progress = pipeline_progress.unwrap_or_default();
 
         pipeline_progress.new_individual(ENLARGEMENT_PROCESSOR_NAME.to_string());
         pipeline_progress.new_individual(self.options.processor_name.clone());

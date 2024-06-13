@@ -1,6 +1,6 @@
 use crate::common::execution::Processor;
-use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToImagePixels;
-use picturify_core::fast_image::FastImage;
+use picturify_core::core::apply_fn_to_pixels::ApplyFnToImagePixels;
+use picturify_core::core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
 
 pub struct ThresholdProcessorOptions {

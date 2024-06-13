@@ -8,7 +8,7 @@ impl Command for MedianBlurCommand {
         let cmd = clap::Command::new(Self::name())
             .arg(ArgType::Radius.to_arg())
             .arg(ArgType::Fast.to_arg())
-            .about("Run median blur filter on the image");
+            .about("Run median blur filter on the core");
         add_input_output_args(cmd)
     }
 

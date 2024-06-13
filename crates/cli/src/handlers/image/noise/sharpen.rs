@@ -12,10 +12,10 @@ use std::thread::spawn;
 pub struct SharpenCommandHandler;
 
 impl CommandHandler for SharpenCommandHandler {
-    fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
+    fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
         let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
-        let pipeline = SharpenPipeline::new(SharpenPipelineOptions { fast: fast.clone() });
+        let pipeline = SharpenPipeline::new(SharpenPipelineOptions { fast: *fast });
 
         let pipeline_progress = PipelineProgress::new();
         let pipeline_progress_clone = pipeline_progress.clone();

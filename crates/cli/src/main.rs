@@ -40,8 +40,8 @@ fn main() {
     let matches = PicturifyCommand::get().get_matches();
 
     let result = match matches.subcommand() {
-        Some(("image", args)) => ImageCommandHandler::handle(args.clone()),
-        Some(("movie", args)) => MovieCommandHandler::handle(args.clone()),
+        Some(("core", args)) => ImageCommandHandler::handle(&ImageCommandHandler, args.clone()),
+        Some(("movie", args)) => MovieCommandHandler::handle(&MovieCommandHandler, args.clone()),
         _ => {
             PicturifyCommand::get().print_help().unwrap();
             Err(CliPicturifyError::MissingCommand)

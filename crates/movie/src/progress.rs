@@ -15,6 +15,12 @@ pub struct MovieProgress {
     stage: Arc<RwLock<ProgressStage>>,
 }
 
+impl Default for MovieProgress {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl MovieProgress {
     pub fn new() -> Self {
         Self {

@@ -1,7 +1,5 @@
-use picturify_core::fast_image::apply_fn_to_pixels::{
-    ApplyFnToImagePixels, ApplyFnToPalettePixels,
-};
-use picturify_core::fast_image::FastImage;
+use picturify_core::core::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
+use picturify_core::core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
 
 use crate::common::execution::Processor;
@@ -22,7 +20,7 @@ impl SepiaProcessor {
 
 impl Processor for SepiaProcessor {
     fn process(&self, mut image: FastImage, progress: Progress) -> FastImage {
-        return if self.options.use_fast_approximation {
+        if self.options.use_fast_approximation {
             image.par_apply_fn_to_image_pixel(
                 |pixel, _coord| {
                     let r = pixel.0[0] as f32;
@@ -60,6 +58,6 @@ impl Processor for SepiaProcessor {
                 Some(progress),
             );
             image
-        };
+        }
     }
 }

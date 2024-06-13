@@ -3,19 +3,11 @@ use crate::helpers::kernels::{create_sobel_kernel_x, create_sobel_kernel_y};
 use crate::processors::edge::gradient_based_rgb::{
     GradientBasedRgbProcessor, GradientBasedRgbProcessorOptions,
 };
-use picturify_core::fast_image::FastImage;
+use picturify_core::core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
 
 pub struct SobelRgbProcessorOptions {
     pub use_fast_approximation: bool,
-}
-
-impl Default for SobelRgbProcessorOptions {
-    fn default() -> Self {
-        SobelRgbProcessorOptions {
-            use_fast_approximation: false,
-        }
-    }
 }
 
 pub struct SobelRgbProcessor {

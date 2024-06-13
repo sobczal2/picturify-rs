@@ -19,7 +19,7 @@ pub struct ImageCommand;
 impl Command for ImageCommand {
     fn get() -> clap::Command {
         clap::Command::new(Self::name())
-            .about("Run processing pipeline on the image")
+            .about("Run processing pipeline on the core")
             .subcommands(&[
                 // common
                 NoneCommand::get(),
@@ -44,6 +44,6 @@ impl Command for ImageCommand {
     }
 
     fn name() -> &'static str {
-        "image"
+        "core"
     }
 }

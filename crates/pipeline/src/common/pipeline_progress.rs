@@ -9,6 +9,12 @@ pub struct PipelineProgress {
     ready: Arc<AtomicBool>,
 }
 
+impl Default for PipelineProgress {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl PipelineProgress {
     pub fn new() -> Self {
         Self {
@@ -36,7 +42,7 @@ impl PipelineProgress {
     }
 
     pub fn get_current_individual_progress(&self) -> Progress {
-        let current_index = self.combined_progress.get() as usize;
+        let current_index = self.combined_progress.get();
         self.individual_progresses.read().unwrap()[current_index]
             .1
             .clone()
@@ -67,7 +73,7 @@ impl PipelineProgress {
 
     pub fn get_current_individual_name(&self) -> String {
         let current_index = self.combined_progress.get();
-        self.individual_progresses.read().unwrap()[current_index as usize]
+        self.individual_progresses.read().unwrap()[current_index]
             .0
             .clone()
     }

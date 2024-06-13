@@ -12,13 +12,13 @@ use std::thread::spawn;
 pub struct SobelCommandHandler;
 
 impl CommandHandler for SobelCommandHandler {
-    fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
+    fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
         let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
         let rgb = args.get_one::<bool>(ArgType::Rgb.to_id()).unwrap();
         let sobel_pipeline = SobelPipeline::new(SobelPipelineOptions {
-            fast: fast.clone(),
-            rgb: rgb.clone(),
+            fast: *fast,
+            rgb: *rgb,
         });
 
         let pipeline_progress = PipelineProgress::new();

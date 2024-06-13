@@ -1,22 +1,16 @@
-pub mod apply_fn_to_pixels;
-pub mod io;
-pub mod read_pixels;
-pub mod util;
-
 use crate::conversions::image_palette_bridge::{rgba_to_srgba, srgba_to_rgba};
+use crate::core::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels, Offset};
+use crate::core::io::{ReadFromFile, WriteToFile};
+use crate::core::read_pixels::ReadPixels;
+use crate::error::PicturifyResult;
+use crate::geometry::coord::Coord;
+use crate::geometry::size::Size;
+use crate::threading::progress::{Progress, ProgressIteratorExt};
 use image::buffer::{EnumeratePixels, Pixels, PixelsMut, Rows, RowsMut};
 use image::io::Reader;
 use image::{Rgba, RgbaImage};
 use palette::{LinSrgba, Srgba};
 use rayon::prelude::*;
-
-use crate::error::PicturifyResult;
-use crate::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels, Offset};
-use crate::fast_image::io::{ReadFromFile, WriteToFile};
-use crate::fast_image::read_pixels::ReadPixels;
-use crate::geometry::coord::Coord;
-use crate::geometry::size::Size;
-use crate::threading::progress::{Progress, ProgressIteratorExt};
 
 #[derive(Debug, Clone)]
 pub struct FastImage {
@@ -138,8 +132,7 @@ impl ApplyFnToPalettePixels for FastImage {
             let (_, height) = self.size().into();
             progress.setup(height);
 
-            let _ = self
-                .inner
+            self.inner
                 .enumerate_rows_mut()
                 .progress(progress)
                 .par_bridge()
@@ -149,8 +142,7 @@ impl ApplyFnToPalettePixels for FastImage {
                     });
                 });
         } else {
-            let _ = self
-                .inner
+            self.inner
                 .enumerate_rows_mut()
                 .par_bridge()
                 .for_each(|(_, row)| {
@@ -211,8 +203,7 @@ impl ApplyFnToPalettePixels for FastImage {
             let max_value = offset.take_rows;
             progress.setup(max_value);
 
-            let _ = self
-                .inner
+            self.inner
                 .enumerate_rows_mut()
                 .skip(offset.skip_rows)
                 .take(offset.take_rows)
@@ -227,8 +218,7 @@ impl ApplyFnToPalettePixels for FastImage {
                         });
                 });
         } else {
-            let _ = self
-                .inner
+            self.inner
                 .enumerate_rows_mut()
                 .skip(offset.skip_rows)
                 .take(offset.take_rows)

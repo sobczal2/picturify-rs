@@ -13,7 +13,7 @@ use picturify_pipeline::pipeline::Pipeline;
 pub struct BilateralBlurCommandHandler;
 
 impl CommandHandler for BilateralBlurCommandHandler {
-    fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
+    fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
         let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
         let radius = args.get_one::<usize>(ArgType::Radius.to_id()).unwrap();
@@ -22,10 +22,10 @@ impl CommandHandler for BilateralBlurCommandHandler {
             .get_one::<f32>(ArgType::SigmaIntensity.to_id())
             .unwrap();
         let pipeline = BilateralBlurPipeline::new(BilateralBlurPipelineOptions {
-            fast: fast.clone(),
-            radius: radius.clone(),
-            sigma_spatial: sigma_spatial.clone(),
-            sigma_intensity: sigma_intensity.clone(),
+            fast: *fast,
+            radius: *radius,
+            sigma_spatial: *sigma_spatial,
+            sigma_intensity: *sigma_intensity,
         });
 
         let pipeline_progress = PipelineProgress::new();

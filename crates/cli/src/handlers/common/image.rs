@@ -32,70 +32,53 @@ use crate::handlers::image::noise::median_blur::MedianBlurCommandHandler;
 use crate::handlers::image::noise::sharpen::SharpenCommandHandler;
 use clap::ArgMatches;
 use std::collections::HashMap;
-use std::rc::Rc;
 
 pub struct ImageCommandHandler;
 
 impl CommandHandler for ImageCommandHandler {
-    fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
+    fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         match args.subcommand() {
             Some((name, args)) => {
-                let mut handlers: HashMap<&str, Rc<dyn Fn(ArgMatches) -> CliPicturifyResult<()>>> =
-                    HashMap::new();
+                let mut handlers: HashMap<&str, Box<dyn CommandHandler>> = HashMap::new();
 
                 // common
-                handlers.insert(NoneCommand::name(), Rc::new(NoneCommandHandler::handle));
+                handlers.insert(NoneCommand::name(), Box::new(NoneCommandHandler));
 
                 // color
-                handlers.insert(SepiaCommand::name(), Rc::new(SepiaCommandHandler::handle));
-                handlers.insert(
-                    NegativeCommand::name(),
-                    Rc::new(NegativeCommandHandler::handle),
-                );
-                handlers.insert(
-                    GrayscaleCommand::name(),
-                    Rc::new(GrayscaleCommandHandler::handle),
-                );
+                handlers.insert(SepiaCommand::name(), Box::new(SepiaCommandHandler));
+                handlers.insert(NegativeCommand::name(), Box::new(NegativeCommandHandler));
+                handlers.insert(GrayscaleCommand::name(), Box::new(GrayscaleCommandHandler));
                 handlers.insert(
                     BrightnessCommand::name(),
-                    Rc::new(BrightnessCommandHandler::handle),
+                    Box::new(BrightnessCommandHandler),
                 );
 
                 // noise
-                handlers.insert(
-                    KuwaharaCommand::name(),
-                    Rc::new(KuwaharaCommandHandler::handle),
-                );
+                handlers.insert(KuwaharaCommand::name(), Box::new(KuwaharaCommandHandler));
                 handlers.insert(
                     MedianBlurCommand::name(),
-                    Rc::new(MedianBlurCommandHandler::handle),
+                    Box::new(MedianBlurCommandHandler),
                 );
-                handlers.insert(
-                    MeanBlurCommand::name(),
-                    Rc::new(MeanBlurCommandHandler::handle),
-                );
-                handlers.insert(
-                    SharpenCommand::name(),
-                    Rc::new(SharpenCommandHandler::handle),
-                );
+                handlers.insert(MeanBlurCommand::name(), Box::new(MeanBlurCommandHandler));
+                handlers.insert(SharpenCommand::name(), Box::new(SharpenCommandHandler));
                 handlers.insert(
                     GaussianBlurCommand::name(),
-                    Rc::new(GaussianBlurCommandHandler::handle),
+                    Box::new(GaussianBlurCommandHandler),
                 );
                 handlers.insert(
                     BilateralBlurCommand::name(),
-                    Rc::new(BilateralBlurCommandHandler::handle),
+                    Box::new(BilateralBlurCommandHandler),
                 );
 
                 // edge
-                handlers.insert(SobelCommand::name(), Rc::new(SobelCommandHandler::handle));
+                handlers.insert(SobelCommand::name(), Box::new(SobelCommandHandler));
 
                 // geometry
-                handlers.insert(RotateCommand::name(), Rc::new(RotateCommandHandler::handle));
-                handlers.insert(CropCommand::name(), Rc::new(CropCommandHandler::handle));
+                handlers.insert(RotateCommand::name(), Box::new(RotateCommandHandler));
+                handlers.insert(CropCommand::name(), Box::new(CropCommandHandler));
 
                 if let Some(handler) = handlers.get(name) {
-                    handler(args.clone())
+                    handler.handle(args.clone())
                 } else {
                     Err(CliPicturifyError::InvalidCommand(name.to_string()))
                 }

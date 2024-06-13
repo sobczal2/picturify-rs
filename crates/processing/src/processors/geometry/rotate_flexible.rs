@@ -1,6 +1,6 @@
 use crate::common::execution::Processor;
-use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToImagePixels;
-use picturify_core::fast_image::FastImage;
+use picturify_core::core::apply_fn_to_pixels::ApplyFnToImagePixels;
+use picturify_core::core::fast_image::FastImage;
 use picturify_core::geometry::angle::Angle;
 use picturify_core::geometry::size::Size;
 use picturify_core::threading::progress::Progress;
@@ -29,7 +29,7 @@ impl Processor for RotateFlexibleProcessor {
         let mut new_image = FastImage::empty(new_size);
         let rotation_origin = (width / 2, height / 2).into();
         let mut shift = (new_width - width, new_height - height).into();
-        shift = shift / 2;
+        shift /= 2;
 
         let angle = -self.options.angle;
 

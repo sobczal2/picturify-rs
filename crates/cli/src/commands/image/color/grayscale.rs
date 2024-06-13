@@ -8,7 +8,7 @@ impl Command for GrayscaleCommand {
         let cmd = clap::Command::new(Self::name())
             .arg(ArgType::GrayscaleStrategy.to_arg())
             .arg(ArgType::Fast.to_arg())
-            .about("Run grayscale filter on the image");
+            .about("Run grayscale filter on the core");
         add_input_output_args(cmd)
     }
 

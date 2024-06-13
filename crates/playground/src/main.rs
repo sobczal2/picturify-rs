@@ -1,5 +1,5 @@
-use picturify_core::fast_image::io::WriteToFile;
-use picturify_core::fast_image::FastImage;
+use picturify_core::core::fast_image::FastImage;
+use picturify_core::core::io::WriteToFile;
 use picturify_core::geometry::size::Size;
 
 fn main() {
@@ -15,18 +15,18 @@ fn main() {
 
 #[allow(dead_code)]
 fn run_movie() {
-    // let custom_pipeline = CustomPipeline::new(|fast_image: FastImage| {
-    //     let image = fast_image;
+    // let custom_pipeline = CustomPipeline::new(|core: FastImage| {
+    //     let core = core;
     //     let processor = MedianProcessor::with_options(MedianProcessorOptions { radius: 3 });
-    //     let image = processor.process(image);
+    //     let core = processor.process(core);
     //
     //     let processor = SobelRgbProcessor::new();
-    //     let image = processor.process(image);
+    //     let core = processor.process(core);
     //
     //     let processor = RemappingProcessor::with_options(RemappingProcessorOptions {
     //         function: RemappingFunction::Logarithmic { factor: 1.025 },
     //     });
-    //     let image = processor.process(image);
+    //     let core = processor.process(core);
     //
     //     let processor = ThresholdProcessor::with_options(ThresholdProcessorOptions {
     //         red_threshold: 128,
@@ -34,7 +34,7 @@ fn run_movie() {
     //         blue_threshold: 128,
     //     });
     //
-    //     processor.process(image)
+    //     processor.process(core)
     // });
     //
     // let movie_pipe = MoviePipe::new(
@@ -51,7 +51,7 @@ fn run_movie() {
 
 #[allow(dead_code)]
 fn run_image() {
-    // let fast_image = *FastImage::read_from_file("/home/sobczal/Downloads/large.jpg").unwrap();
+    // let core = *FastImage::read_from_file("/home/sobczal/Downloads/large.jpg").unwrap();
     //
     // let processor = CropProcessor::new().with_options(CropProcessorOptions {
     //     x: 100,
@@ -61,10 +61,10 @@ fn run_image() {
     // });
     //
     // let start = Instant::now();
-    // let fast_image = processor.process(fast_image, Arc::new(RwLock::new(Progress::new())));
+    // let core = processor.process(core, Arc::new(RwLock::new(Progress::new())));
     // let duration = start.elapsed();
     // println!("Time elapsed in grayscale is: {:?}", duration);
-    // fast_image
+    // core
     //     .write_to_file("/home/sobczal/Downloads/output.png")
     //     .unwrap();
 }

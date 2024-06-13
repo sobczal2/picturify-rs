@@ -13,7 +13,7 @@ use std::thread::spawn;
 pub struct GrayscaleCommandHandler;
 
 impl CommandHandler for GrayscaleCommandHandler {
-    fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
+    fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
         let strategy = args
             .get_one::<GrayscaleStrategy>(ArgType::GrayscaleStrategy.to_id())

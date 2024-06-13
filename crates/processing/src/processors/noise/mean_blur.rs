@@ -3,7 +3,7 @@ use crate::helpers::kernels::ConvolutionKernel;
 use crate::processors::internal::convolution_rgb::{
     ConvolutionRgbProcessor, ConvolutionRgbProcessorOptions,
 };
-use picturify_core::fast_image::FastImage;
+use picturify_core::core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
 
 pub struct MeanBlurProcessorOptions {

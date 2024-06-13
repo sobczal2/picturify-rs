@@ -5,7 +5,7 @@ use crate::common::test_files::{TestFiles, WithIo};
 fn crop_standard_args_should_succeed() {
     let test_files = TestFiles::new_100x100_png();
     let mut cmd = get_picturify_cli_cmd();
-    cmd.arg("image")
+    cmd.arg("core")
         .arg("crop")
         .arg("--border")
         .arg("50x50+25+25")

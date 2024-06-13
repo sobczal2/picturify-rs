@@ -1,5 +1,5 @@
 use crate::helpers::functions::gaussian_2d;
-use picturify_core::fast_image::FastImage;
+use picturify_core::core::fast_image::FastImage;
 use picturify_core::geometry::coord::Coord;
 use picturify_core::geometry::size::Size;
 use picturify_core::image::Rgba;
@@ -54,22 +54,19 @@ impl ConvolutionKernel {
 
         let mut sum = 0.0;
 
-        for i in 0..2 * radius + 1 {
-            for j in 0..2 * radius + 1 {
+        values.iter_mut().enumerate().for_each(|(i, row)| {
+            row.iter_mut().enumerate().for_each(|(j, value)| {
                 let x = i as f32 - radius as f32;
                 let y = j as f32 - radius as f32;
 
-                let value = gaussian_2d(x, y, two_sigma_squared);
-                values[i][j] = value;
-                sum += value;
-            }
-        }
+                *value = gaussian_2d(x, y, two_sigma_squared);
+                sum += *value;
+            });
+        });
 
-        for i in 0..2 * radius + 1 {
-            for j in 0..2 * radius + 1 {
-                values[i][j] /= sum;
-            }
-        }
+        values
+            .iter_mut()
+            .for_each(|row| row.iter_mut().for_each(|value| *value /= sum));
 
         ConvolutionKernel { values }
     }

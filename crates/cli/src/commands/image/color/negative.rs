@@ -7,7 +7,7 @@ impl Command for NegativeCommand {
     fn get() -> clap::Command {
         let cmd = clap::Command::new(Self::name())
             .arg(ArgType::Fast.to_arg())
-            .about("Run negative filter on the image");
+            .about("Run negative filter on the core");
         add_input_output_args(cmd)
     }
 

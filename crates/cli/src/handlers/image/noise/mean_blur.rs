@@ -12,13 +12,13 @@ use std::thread::spawn;
 pub struct MeanBlurCommandHandler;
 
 impl CommandHandler for MeanBlurCommandHandler {
-    fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
+    fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
         let radius = args.get_one::<usize>(ArgType::Radius.to_id()).unwrap();
         let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
         let pipeline = MeanBlurPipeline::new(MeanBlurPipelineOptions {
-            radius: radius.clone(),
-            fast: fast.clone(),
+            radius: *radius,
+            fast: *fast,
         });
 
         let pipeline_progress = PipelineProgress::new();

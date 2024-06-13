@@ -1,6 +1,6 @@
 pub mod conversions;
+pub mod core;
 pub mod error;
-pub mod fast_image;
 pub mod geometry;
 pub mod pixel;
 pub mod threading;
