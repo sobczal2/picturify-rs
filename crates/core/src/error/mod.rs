@@ -10,7 +10,7 @@ pub enum PicturifyError {
     IoError(#[from] std::io::Error),
     #[error("Image error: {0}")]
     ImageError(#[from] image::ImageError),
-    #[error("Invalid core format")]
+    #[error("Invalid image format")]
     InvalidImageFormat,
     #[error("Processing error: {0}")]
     ProcessingError(#[from] processing::ProcessingError),

@@ -8,7 +8,7 @@ use crate::geometry::size::Size;
 use crate::threading::progress::{Progress, ProgressIteratorExt};
 use image::buffer::{EnumeratePixels, Pixels, PixelsMut, Rows, RowsMut};
 use image::io::Reader;
-use image::{Rgba, RgbaImage};
+use image::{DynamicImage, ImageFormat, Rgba, RgbaImage};
 use palette::{LinSrgba, Srgba};
 use rayon::prelude::*;
 
@@ -460,7 +460,32 @@ impl ReadFromFile for FastImage {
 
 impl WriteToFile for FastImage {
     fn write_to_file(&self, path: &str) -> PicturifyResult<()> {
-        self.inner.save(path)?;
-        Ok(())
+        let format = ImageFormat::from_path(path)?;
+        let supports_alpha = match format {
+            ImageFormat::Png => true,
+            ImageFormat::Jpeg => false,
+            ImageFormat::Gif => true,
+            ImageFormat::WebP => true,
+            ImageFormat::Pnm => false,
+            ImageFormat::Tiff => true,
+            ImageFormat::Tga => true,
+            ImageFormat::Dds => true,
+            ImageFormat::Bmp => true,
+            ImageFormat::Ico => true,
+            ImageFormat::Hdr => true,
+            ImageFormat::OpenExr => true,
+            ImageFormat::Farbfeld => true,
+            ImageFormat::Avif => true,
+            ImageFormat::Qoi => true,
+            _ => unreachable!("Unsupported image format")
+        };
+        
+        let image = if supports_alpha {
+            self.inner.save(path)?
+        } else {
+            DynamicImage::ImageRgba8(self.inner.clone()).to_rgb8().save(path)?
+        };
+        
+        Ok(image)
     }
 }

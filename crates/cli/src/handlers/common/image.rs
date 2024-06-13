@@ -85,7 +85,7 @@ impl CommandHandler for ImageCommandHandler {
             }
             None => {
                 ImageCommand::get().print_help().unwrap();
-                Err(CliPicturifyError::MissingCommand)
+                Err(CliPicturifyError::MissingSubcommand)
             }
         }
     }

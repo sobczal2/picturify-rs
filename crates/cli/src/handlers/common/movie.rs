@@ -28,7 +28,7 @@ impl CommandHandler for MovieCommandHandler {
             }
             None => {
                 MovieCommand::get().print_help().unwrap();
-                Err(CliPicturifyError::MissingCommand)
+                Err(CliPicturifyError::MissingSubcommand)
             }
         }
     }

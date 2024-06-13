@@ -14,6 +14,8 @@ pub enum CliPicturifyError {
     InvalidCommand(String),
     #[error("Missing command")]
     MissingCommand,
+    #[error("Missing subcommand")]
+    MissingSubcommand,
     #[error("Movie Picturify error - {0}")]
     MoviePicturifyError(#[from] MoviePicturifyError),
 }
