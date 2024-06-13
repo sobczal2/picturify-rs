@@ -3,16 +3,10 @@ use picturify_core::fast_image::FastImage;
 use picturify_core::palette::Hsla;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::{Processor, WithOptions};
+use crate::common::execution::Processor;
 
 pub struct BrightnessProcessorOptions {
     pub factor: f32,
-}
-
-impl Default for BrightnessProcessorOptions {
-    fn default() -> Self {
-        BrightnessProcessorOptions { factor: 1.0 }
-    }
 }
 
 pub struct BrightnessProcessor {
@@ -20,15 +14,7 @@ pub struct BrightnessProcessor {
 }
 
 impl BrightnessProcessor {
-    pub fn new() -> Self {
-        BrightnessProcessor {
-            options: Default::default(),
-        }
-    }
-}
-
-impl WithOptions<BrightnessProcessorOptions> for BrightnessProcessor {
-    fn with_options(self, options: BrightnessProcessorOptions) -> Self {
+    pub fn new(options: BrightnessProcessorOptions) -> Self {
         BrightnessProcessor { options }
     }
 }

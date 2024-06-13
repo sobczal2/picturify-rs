@@ -2,7 +2,7 @@ use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, Offse
 use picturify_core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::{Processor, WithOptions};
+use crate::common::execution::Processor;
 use crate::helpers::functions::gaussian_1d;
 use crate::helpers::kernels::ConvolutionKernel;
 
@@ -13,31 +13,12 @@ pub struct BilateralBlurProcessorOptions {
     pub use_fast_approximation: bool,
 }
 
-impl Default for BilateralBlurProcessorOptions {
-    fn default() -> BilateralBlurProcessorOptions {
-        BilateralBlurProcessorOptions {
-            radius: 3,
-            sigma_spatial: 1.0,
-            sigma_intensity: 1.0,
-            use_fast_approximation: false,
-        }
-    }
-}
-
 pub struct BilateralBlurProcessor {
     options: BilateralBlurProcessorOptions,
 }
 
 impl BilateralBlurProcessor {
-    pub fn new() -> Self {
-        BilateralBlurProcessor {
-            options: Default::default(),
-        }
-    }
-}
-
-impl WithOptions<BilateralBlurProcessorOptions> for BilateralBlurProcessor {
-    fn with_options(self, options: BilateralBlurProcessorOptions) -> Self {
+    pub fn new(options: BilateralBlurProcessorOptions) -> Self {
         BilateralBlurProcessor { options }
     }
 }

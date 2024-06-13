@@ -1,4 +1,4 @@
-use crate::common::execution::{Processor, WithOptions};
+use crate::common::execution::Processor;
 use picturify_core::fast_image::apply_fn_to_pixels::{
     ApplyFnToImagePixels, ApplyFnToPalettePixels,
 };
@@ -11,29 +11,12 @@ pub struct GammaProcessorOptions {
     pub use_fast_approximation: bool,
 }
 
-impl Default for GammaProcessorOptions {
-    fn default() -> Self {
-        GammaProcessorOptions {
-            gamma: 1.0,
-            use_fast_approximation: false,
-        }
-    }
-}
-
 pub struct GammaProcessor {
     options: GammaProcessorOptions,
 }
 
 impl GammaProcessor {
-    pub fn new() -> Self {
-        GammaProcessor {
-            options: Default::default(),
-        }
-    }
-}
-
-impl WithOptions<GammaProcessorOptions> for GammaProcessor {
-    fn with_options(self, options: GammaProcessorOptions) -> Self {
+    pub fn new(options: GammaProcessorOptions) -> Self {
         GammaProcessor { options }
     }
 }

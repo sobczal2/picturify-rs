@@ -1,7 +1,7 @@
 use crate::common::pipeline_progress::PipelineProgress;
 use crate::pipeline::Pipeline;
 use picturify_core::fast_image::FastImage;
-use picturify_processing::common::execution::{Processor, WithOptions};
+use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::color::negative::{
     NegativeProcessor, NegativeProcessorOptions,
 };
@@ -30,7 +30,7 @@ impl Pipeline for NegativePipeline {
         pipeline_progress.new_individual(NEGATIVE_PROCESSOR_NAME.to_string());
         pipeline_progress.setup_combined(1);
 
-        let processor = NegativeProcessor::new().with_options(NegativeProcessorOptions {
+        let processor = NegativeProcessor::new(NegativeProcessorOptions {
             use_fast_approximation: self.options.fast,
         });
 

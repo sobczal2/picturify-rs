@@ -5,12 +5,20 @@ use picturify_core::geometry::size::Size;
 use picturify_core::image::Rgba;
 use picturify_core::palette::LinSrgba;
 
-pub fn create_sobel_kernel_x() -> [[f32; 3]; 3] {
-    [[-1.0, 0.0, 1.0], [-2.0, 0.0, 2.0], [-1.0, 0.0, 1.0]]
+pub fn create_sobel_kernel_x() -> Vec<Vec<f32>> {
+    vec![
+        vec![-1.0, 0.0, 1.0],
+        vec![-2.0, 0.0, 2.0],
+        vec![-1.0, 0.0, 1.0],
+    ]
 }
 
-pub fn create_sobel_kernel_y() -> [[f32; 3]; 3] {
-    [[-1.0, -2.0, -1.0], [0.0, 0.0, 0.0], [1.0, 2.0, 1.0]]
+pub fn create_sobel_kernel_y() -> Vec<Vec<f32>> {
+    vec![
+        vec![-1.0, -2.0, -1.0],
+        vec![0.0, 0.0, 0.0],
+        vec![1.0, 2.0, 1.0],
+    ]
 }
 
 pub struct ConvolutionKernel {

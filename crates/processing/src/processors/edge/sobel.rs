@@ -1,23 +1,14 @@
-use crate::common::execution::{Processor, WithOptions};
-use crate::helpers::kernels::{create_sobel_kernel_x, create_sobel_kernel_y};
-use picturify_core::fast_image::apply_fn_to_pixels::{
-    ApplyFnToImagePixels, ApplyFnToPalettePixels, Offset,
-};
 use picturify_core::fast_image::FastImage;
-use picturify_core::rayon::prelude::*;
-use picturify_core::threading::progress::{Progress, ProgressIteratorExt};
-use std::sync::{Arc, Mutex};
+use picturify_core::threading::progress::Progress;
+
+use crate::common::execution::Processor;
+use crate::helpers::kernels::{create_sobel_kernel_x, create_sobel_kernel_y};
+use crate::processors::edge::gradient_based::{
+    GradientBasedProcessor, GradientBasedProcessorOptions,
+};
 
 pub struct SobelProcessorOptions {
     pub use_fast_approximation: bool,
-}
-
-impl Default for SobelProcessorOptions {
-    fn default() -> Self {
-        SobelProcessorOptions {
-            use_fast_approximation: false,
-        }
-    }
 }
 
 pub struct SobelProcessor {
@@ -25,138 +16,19 @@ pub struct SobelProcessor {
 }
 
 impl SobelProcessor {
-    pub fn new() -> Self {
-        SobelProcessor {
-            options: Default::default(),
-        }
-    }
-}
-
-impl WithOptions<SobelProcessorOptions> for SobelProcessor {
-    fn with_options(self, options: SobelProcessorOptions) -> Self {
-        SobelProcessor { options }
+    pub fn new(options: SobelProcessorOptions) -> Self {
+        Self { options }
     }
 }
 
 impl Processor for SobelProcessor {
-    fn process(&self, mut image: FastImage, mut progress: Progress) -> FastImage {
-        let (width, height): (usize, usize) = image.size().into();
-        let mut magnitude_vec = vec![vec![0.0; width - 2]; height - 2];
-        let min_magnitude = Arc::new(Mutex::new(f32::MAX));
-        let max_magnitude = Arc::new(Mutex::new(f32::MIN));
-
-        let sobel_kernel_x = create_sobel_kernel_x();
-        let sobel_kernel_y = create_sobel_kernel_y();
-
-        progress.setup((height - 2) * 2);
-        magnitude_vec
-            .iter_mut()
-            .enumerate()
-            .progress(progress.clone())
-            .par_bridge()
-            .for_each(|(y_mag, row)| {
-                let mut row_min_magnitude = f32::MAX;
-                let mut row_max_magnitude = f32::MIN;
-                row.iter_mut().enumerate().for_each(|(x_mag, magnitude)| {
-                    let x = x_mag + 1;
-                    let y = y_mag + 1;
-
-                    let mut magnitude_x = 0.0;
-                    let mut magnitude_y = 0.0;
-
-                    for i in 0..3 {
-                        for j in 0..3 {
-                            let red: f32;
-                            let green: f32;
-                            let blue: f32;
-                            let coord = (x + i - 1, y + j - 1).into();
-                            if self.options.use_fast_approximation {
-                                let pixel = image.get_image_pixel(coord);
-                                red = pixel[0] as f32 / 255.0;
-                                green = pixel[1] as f32 / 255.0;
-                                blue = pixel[2] as f32 / 255.0;
-                            } else {
-                                let pixel = image.get_lin_srgba_pixel(coord);
-                                red = pixel.red;
-                                green = pixel.green;
-                                blue = pixel.blue;
-                            }
-
-                            magnitude_x += sobel_kernel_x[j][i] * (red + green + blue) / 3.0;
-                            magnitude_y += sobel_kernel_y[j][i] * (red + green + blue) / 3.0;
-                        }
-                    }
-
-                    let actual_magnitude = (magnitude_x.powi(2) + magnitude_y.powi(2)).sqrt();
-                    *magnitude = actual_magnitude;
-
-                    if actual_magnitude < row_min_magnitude {
-                        row_min_magnitude = actual_magnitude;
-                    }
-
-                    if actual_magnitude > row_max_magnitude {
-                        row_max_magnitude = actual_magnitude;
-                    }
-                });
-
-                if row_min_magnitude < *min_magnitude.lock().unwrap() {
-                    *min_magnitude.lock().unwrap() = row_min_magnitude;
-                }
-
-                if row_max_magnitude > *max_magnitude.lock().unwrap() {
-                    *max_magnitude.lock().unwrap() = row_max_magnitude;
-                }
-            });
-
-        let min_magnitude = *min_magnitude.lock().unwrap();
-        let max_magnitude = *max_magnitude.lock().unwrap();
-
-        let mut inner_progress = Progress::new();
-        inner_progress.set_on_increment(move || {
-            progress.increment();
-        });
-
-        let offset = Offset {
-            skip_rows: 1,
-            take_rows: height - 2,
-            skip_columns: 1,
-            take_columns: width - 2,
+    fn process(&self, image: FastImage, progress: Progress) -> FastImage {
+        let inner_processor_options = GradientBasedProcessorOptions {
+            use_fast_approximation: self.options.use_fast_approximation,
+            x_kernel: create_sobel_kernel_x(),
+            y_kernel: create_sobel_kernel_y(),
         };
-
-        if self.options.use_fast_approximation {
-            image.par_apply_fn_to_image_pixel_with_offset(
-                |pixel, coord| {
-                    let (x, y): (usize, usize) = coord.into();
-                    let magnitude = magnitude_vec[y - 1][x - 1];
-                    let magnitude =
-                        ((magnitude - min_magnitude) / (max_magnitude - min_magnitude)) * 255.0;
-                    let magnitude = magnitude as u8;
-
-                    pixel[0] = magnitude;
-                    pixel[1] = magnitude;
-                    pixel[2] = magnitude;
-                },
-                Some(inner_progress),
-                offset,
-            );
-        } else {
-            image.par_apply_fn_to_lin_srgba_with_offset(
-                |mut pixel, coord| {
-                    let (x, y): (usize, usize) = coord.into();
-                    let magnitude = magnitude_vec[y - 1][x - 1];
-                    let magnitude = (magnitude - min_magnitude) / (max_magnitude - min_magnitude);
-
-                    pixel.red = magnitude;
-                    pixel.green = magnitude;
-                    pixel.blue = magnitude;
-
-                    pixel
-                },
-                Some(inner_progress),
-                offset,
-            );
-        }
-
-        image
+        let inner_processor = GradientBasedProcessor::new(inner_processor_options).unwrap();
+        inner_processor.process(image, progress)
     }
 }

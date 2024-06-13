@@ -1,6 +1,5 @@
 use picturify_core::fast_image::FastImage;
 use picturify_core::palette::Srgba;
-use picturify_processing::common::execution::WithOptions;
 use picturify_processing::processors::geometry::crop::{CropBorder, CropProcessorOptions};
 use picturify_processing::processors::geometry::enlargement::{
     EnlargementBorder, EnlargementProcessorOptions, EnlargementStrategy,
@@ -35,7 +34,7 @@ const GAUSSIAN_BLUR_PROCESSOR_NAME: &str = "GaussianBlur";
 
 impl Pipeline for GaussianBlurPipeline {
     fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
-        let processor = GaussianBlurProcessor::new().with_options(GaussianBlurProcessorOptions {
+        let processor = GaussianBlurProcessor::new(GaussianBlurProcessorOptions {
             radius: self.options.radius,
             sigma: self.options.sigma,
             use_fast_approximation: self.options.fast,

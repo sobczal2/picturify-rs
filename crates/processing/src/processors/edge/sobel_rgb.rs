@@ -1,12 +1,10 @@
-use crate::common::execution::{Processor, WithOptions};
+use crate::common::execution::Processor;
 use crate::helpers::kernels::{create_sobel_kernel_x, create_sobel_kernel_y};
-use picturify_core::fast_image::apply_fn_to_pixels::{
-    ApplyFnToImagePixels, ApplyFnToPalettePixels, Offset,
+use crate::processors::edge::gradient_based_rgb::{
+    GradientBasedRgbProcessor, GradientBasedRgbProcessorOptions,
 };
 use picturify_core::fast_image::FastImage;
-use picturify_core::rayon::prelude::*;
-use picturify_core::threading::progress::{Progress, ProgressIteratorExt};
-use std::sync::{Arc, Mutex};
+use picturify_core::threading::progress::Progress;
 
 pub struct SobelRgbProcessorOptions {
     pub use_fast_approximation: bool,
@@ -25,225 +23,19 @@ pub struct SobelRgbProcessor {
 }
 
 impl SobelRgbProcessor {
-    pub fn new() -> Self {
-        SobelRgbProcessor {
-            options: Default::default(),
-        }
-    }
-}
-
-impl WithOptions<SobelRgbProcessorOptions> for SobelRgbProcessor {
-    fn with_options(self, options: SobelRgbProcessorOptions) -> Self {
-        SobelRgbProcessor { options }
+    pub fn new(options: SobelRgbProcessorOptions) -> Self {
+        Self { options }
     }
 }
 
 impl Processor for SobelRgbProcessor {
-    fn process(&self, mut image: FastImage, mut progress: Progress) -> FastImage {
-        let (width, _): (usize, usize) = image.size().into();
-
-        let mut red_magnitude_vec = vec![vec![0.0; width - 2]; width - 2];
-        let mut green_magnitude_vec = vec![vec![0.0; width - 2]; width - 2];
-        let mut blue_magnitude_vec = vec![vec![0.0; width - 2]; width - 2];
-
-        let red_min_magnitude = Arc::new(Mutex::new(f32::MAX));
-        let green_min_magnitude = Arc::new(Mutex::new(f32::MAX));
-        let blue_min_magnitude = Arc::new(Mutex::new(f32::MAX));
-
-        let red_max_magnitude = Arc::new(Mutex::new(f32::MIN));
-        let green_max_magnitude = Arc::new(Mutex::new(f32::MIN));
-        let blue_max_magnitude = Arc::new(Mutex::new(f32::MIN));
-
-        let sobel_kernel_x = create_sobel_kernel_x();
-        let sobel_kernel_y = create_sobel_kernel_y();
-
-        progress.setup((width - 2) * 2);
-        red_magnitude_vec
-            .iter_mut()
-            .zip(green_magnitude_vec.iter_mut())
-            .zip(blue_magnitude_vec.iter_mut())
-            .enumerate()
-            .progress(progress.clone())
-            .par_bridge()
-            .for_each(|(y_mag, ((red_row, green_row), blue_row))| {
-                let mut red_row_min_magnitude = f32::MAX;
-                let mut red_row_max_magnitude = f32::MIN;
-                let mut green_row_min_magnitude = f32::MAX;
-                let mut green_row_max_magnitude = f32::MIN;
-                let mut blue_row_min_magnitude = f32::MAX;
-                let mut blue_row_max_magnitude = f32::MIN;
-                red_row
-                    .iter_mut()
-                    .zip(green_row.iter_mut())
-                    .zip(blue_row.iter_mut())
-                    .enumerate()
-                    .for_each(
-                        |(x_mag, ((red_magnitude, green_magnitude), blue_magnitude))| {
-                            let x = x_mag + 1;
-                            let y = y_mag + 1;
-
-                            let mut red_magnitude_x = 0.0;
-                            let mut red_magnitude_y = 0.0;
-                            let mut green_magnitude_x = 0.0;
-                            let mut green_magnitude_y = 0.0;
-                            let mut blue_magnitude_x = 0.0;
-                            let mut blue_magnitude_y = 0.0;
-
-                            for i in 0..3 {
-                                for j in 0..3 {
-                                    let red: f32;
-                                    let green: f32;
-                                    let blue: f32;
-                                    let coord = (x + i - 1, y + j - 1).into();
-                                    if self.options.use_fast_approximation {
-                                        let pixel = image.get_image_pixel(coord);
-                                        red = pixel[0] as f32 / 255.0;
-                                        green = pixel[1] as f32 / 255.0;
-                                        blue = pixel[2] as f32 / 255.0;
-                                    } else {
-                                        let pixel = image.get_lin_srgba_pixel(coord);
-                                        red = pixel.red;
-                                        green = pixel.green;
-                                        blue = pixel.blue;
-                                    }
-
-                                    red_magnitude_x += sobel_kernel_x[j][i] * red;
-                                    red_magnitude_y += sobel_kernel_y[j][i] * red;
-                                    green_magnitude_x += sobel_kernel_x[j][i] * green;
-                                    green_magnitude_y += sobel_kernel_y[j][i] * green;
-                                    blue_magnitude_x += sobel_kernel_x[j][i] * blue;
-                                    blue_magnitude_y += sobel_kernel_y[j][i] * blue;
-                                }
-                            }
-
-                            let red_actual_magnitude =
-                                (red_magnitude_x.powi(2) + red_magnitude_y.powi(2)).sqrt();
-                            let green_actual_magnitude =
-                                (green_magnitude_x.powi(2) + green_magnitude_y.powi(2)).sqrt();
-                            let blue_actual_magnitude =
-                                (blue_magnitude_x.powi(2) + blue_magnitude_y.powi(2)).sqrt();
-
-                            *red_magnitude = red_actual_magnitude;
-                            *green_magnitude = green_actual_magnitude;
-                            *blue_magnitude = blue_actual_magnitude;
-
-                            if red_actual_magnitude < red_row_min_magnitude {
-                                red_row_min_magnitude = red_actual_magnitude;
-                            }
-
-                            if red_actual_magnitude > red_row_max_magnitude {
-                                red_row_max_magnitude = red_actual_magnitude;
-                            }
-
-                            if green_actual_magnitude < green_row_min_magnitude {
-                                green_row_min_magnitude = green_actual_magnitude;
-                            }
-
-                            if green_actual_magnitude > green_row_max_magnitude {
-                                green_row_max_magnitude = green_actual_magnitude;
-                            }
-
-                            if blue_actual_magnitude < blue_row_min_magnitude {
-                                blue_row_min_magnitude = blue_actual_magnitude;
-                            }
-
-                            if blue_actual_magnitude > blue_row_max_magnitude {
-                                blue_row_max_magnitude = blue_actual_magnitude;
-                            }
-                        },
-                    );
-
-                if red_row_min_magnitude < *red_min_magnitude.lock().unwrap() {
-                    *red_min_magnitude.lock().unwrap() = red_row_min_magnitude;
-                }
-
-                if red_row_max_magnitude > *red_max_magnitude.lock().unwrap() {
-                    *red_max_magnitude.lock().unwrap() = red_row_max_magnitude;
-                }
-
-                if green_row_min_magnitude < *green_min_magnitude.lock().unwrap() {
-                    *green_min_magnitude.lock().unwrap() = green_row_min_magnitude;
-                }
-
-                if green_row_max_magnitude > *green_max_magnitude.lock().unwrap() {
-                    *green_max_magnitude.lock().unwrap() = green_row_max_magnitude;
-                }
-
-                if blue_row_min_magnitude < *blue_min_magnitude.lock().unwrap() {
-                    *blue_min_magnitude.lock().unwrap() = blue_row_min_magnitude;
-                }
-
-                if blue_row_max_magnitude > *blue_max_magnitude.lock().unwrap() {
-                    *blue_max_magnitude.lock().unwrap() = blue_row_max_magnitude;
-                }
-            });
-
-        let red_min_magnitude = *red_min_magnitude.lock().unwrap();
-        let red_max_magnitude = *red_max_magnitude.lock().unwrap();
-        let green_min_magnitude = *green_min_magnitude.lock().unwrap();
-        let green_max_magnitude = *green_max_magnitude.lock().unwrap();
-        let blue_min_magnitude = *blue_min_magnitude.lock().unwrap();
-        let blue_max_magnitude = *blue_max_magnitude.lock().unwrap();
-
-        let offset = Offset {
-            skip_rows: 1,
-            take_rows: width - 2,
-            skip_columns: 1,
-            take_columns: width - 2,
+    fn process(&self, image: FastImage, progress: Progress) -> FastImage {
+        let inner_processor_options = GradientBasedRgbProcessorOptions {
+            use_fast_approximation: self.options.use_fast_approximation,
+            x_kernel: create_sobel_kernel_x(),
+            y_kernel: create_sobel_kernel_y(),
         };
-
-        if self.options.use_fast_approximation {
-            image.par_apply_fn_to_image_pixel_with_offset(
-                |pixel, coord| {
-                    let (x, y): (usize, usize) = coord.into();
-                    let red_magnitude = red_magnitude_vec[y - 1][x - 1];
-                    let green_magnitude = green_magnitude_vec[y - 1][x - 1];
-                    let blue_magnitude = blue_magnitude_vec[y - 1][x - 1];
-                    let red_magnitude = ((red_magnitude - red_min_magnitude)
-                        / (red_max_magnitude - red_min_magnitude))
-                        * 255.0;
-                    let green_magnitude = ((green_magnitude - green_min_magnitude)
-                        / (green_max_magnitude - green_min_magnitude))
-                        * 255.0;
-                    let blue_magnitude = ((blue_magnitude - blue_min_magnitude)
-                        / (blue_max_magnitude - blue_min_magnitude))
-                        * 255.0;
-                    let red_magnitude = red_magnitude as u8;
-                    let green_magnitude = green_magnitude as u8;
-                    let blue_magnitude = blue_magnitude as u8;
-
-                    pixel[0] = red_magnitude;
-                    pixel[1] = green_magnitude;
-                    pixel[2] = blue_magnitude;
-                },
-                Some(progress),
-                offset,
-            );
-        } else {
-            image.par_apply_fn_to_lin_srgba_with_offset(
-                |mut pixel, coord| {
-                    let (x, y): (usize, usize) = coord.into();
-                    let red_magnitude = red_magnitude_vec[y - 1][x - 1];
-                    let green_magnitude = green_magnitude_vec[y - 1][x - 1];
-                    let blue_magnitude = blue_magnitude_vec[y - 1][x - 1];
-                    let red_magnitude = (red_magnitude - red_min_magnitude)
-                        / (red_max_magnitude - red_min_magnitude);
-                    let green_magnitude = (green_magnitude - green_min_magnitude)
-                        / (green_max_magnitude - green_min_magnitude);
-                    let blue_magnitude = (blue_magnitude - blue_min_magnitude)
-                        / (blue_max_magnitude - blue_min_magnitude);
-
-                    pixel.red = red_magnitude;
-                    pixel.green = green_magnitude;
-                    pixel.blue = blue_magnitude;
-
-                    pixel
-                },
-                Some(progress),
-                offset,
-            );
-        }
-
-        image
+        let inner_processor = GradientBasedRgbProcessor::new(inner_processor_options).unwrap();
+        inner_processor.process(image, progress)
     }
 }

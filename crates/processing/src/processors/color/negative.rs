@@ -1,4 +1,4 @@
-use crate::common::execution::{Processor, WithOptions};
+use crate::common::execution::Processor;
 use picturify_core::fast_image::apply_fn_to_pixels::{
     ApplyFnToImagePixels, ApplyFnToPalettePixels,
 };
@@ -9,29 +9,13 @@ pub struct NegativeProcessorOptions {
     pub use_fast_approximation: bool,
 }
 
-impl Default for NegativeProcessorOptions {
-    fn default() -> Self {
-        NegativeProcessorOptions {
-            use_fast_approximation: true,
-        }
-    }
-}
-
 pub struct NegativeProcessor {
     options: NegativeProcessorOptions,
 }
 
 impl NegativeProcessor {
-    pub fn new() -> Self {
-        NegativeProcessor {
-            options: Default::default(),
-        }
-    }
-}
-
-impl WithOptions<NegativeProcessorOptions> for NegativeProcessor {
-    fn with_options(self, options: NegativeProcessorOptions) -> Self {
-        NegativeProcessor { options }
+    pub fn new(options: NegativeProcessorOptions) -> Self {
+        Self { options }
     }
 }
 

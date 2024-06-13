@@ -3,7 +3,7 @@ use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToImagePixels, Offse
 use picturify_core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::{Processor, WithOptions};
+use crate::common::execution::Processor;
 use crate::helpers::kernels::ConvolutionKernel;
 
 pub struct ConvolutionRgbProcessorOptions {
@@ -11,29 +11,12 @@ pub struct ConvolutionRgbProcessorOptions {
     pub use_fast_approximation: bool,
 }
 
-impl Default for ConvolutionRgbProcessorOptions {
-    fn default() -> Self {
-        ConvolutionRgbProcessorOptions {
-            kernel: ConvolutionKernel::new(vec![vec![1.0]]),
-            use_fast_approximation: true,
-        }
-    }
-}
-
 pub struct ConvolutionRgbProcessor {
     options: ConvolutionRgbProcessorOptions,
 }
 
 impl ConvolutionRgbProcessor {
-    pub fn new() -> Self {
-        ConvolutionRgbProcessor {
-            options: Default::default(),
-        }
-    }
-}
-
-impl WithOptions<ConvolutionRgbProcessorOptions> for ConvolutionRgbProcessor {
-    fn with_options(self, options: ConvolutionRgbProcessorOptions) -> Self {
+    pub fn new(options: ConvolutionRgbProcessorOptions) -> Self {
         ConvolutionRgbProcessor { options }
     }
 }

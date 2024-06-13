@@ -23,7 +23,7 @@ fn main() {
         TerminalMode::Mixed,
         ColorChoice::Auto,
     )
-    .unwrap();
+        .unwrap();
 
     #[cfg(not(debug_assertions))]
     TermLogger::init(
@@ -32,7 +32,7 @@ fn main() {
         TerminalMode::Mixed,
         ColorChoice::Auto,
     )
-    .unwrap();
+        .unwrap();
 
     welcome();
     let start = Instant::now();
@@ -42,7 +42,10 @@ fn main() {
     let result = match matches.subcommand() {
         Some(("image", args)) => ImageCommandHandler::handle(args.clone()),
         Some(("movie", args)) => MovieCommandHandler::handle(args.clone()),
-        _ => Err(CliPicturifyError::MissingCommand),
+        _ => {
+            PicturifyCommand::get().print_help().unwrap();
+            Err(CliPicturifyError::MissingCommand)
+        }
     };
 
     if let Err(e) = result {

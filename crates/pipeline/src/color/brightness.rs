@@ -1,19 +1,13 @@
 use crate::common::pipeline_progress::PipelineProgress;
 use crate::pipeline::Pipeline;
 use picturify_core::fast_image::FastImage;
-use picturify_processing::common::execution::{Processor, WithOptions};
+use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::color::brightness::{
     BrightnessProcessor, BrightnessProcessorOptions,
 };
 
 pub struct BrightnessPipelineOptions {
     pub factor: f32,
-}
-
-impl Default for BrightnessPipelineOptions {
-    fn default() -> Self {
-        BrightnessPipelineOptions { factor: 1.0 }
-    }
 }
 
 pub struct BrightnessPipeline {
@@ -35,7 +29,7 @@ impl Pipeline for BrightnessPipeline {
         pipeline_progress.new_individual(BRIGHTNESS_PROCESSOR_NAME.to_string());
         pipeline_progress.setup_combined(1);
 
-        let processor = BrightnessProcessor::new().with_options(BrightnessProcessorOptions {
+        let processor = BrightnessProcessor::new(BrightnessProcessorOptions {
             factor: self.options.factor,
         });
         let final_image =

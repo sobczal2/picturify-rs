@@ -1,4 +1,4 @@
-use crate::common::execution::{Processor, WithOptions};
+use crate::common::execution::Processor;
 use clap::builder::PossibleValue;
 use clap::ValueEnum;
 use picturify_core::fast_image::apply_fn_to_pixels::{
@@ -40,29 +40,12 @@ pub struct GrayscaleProcessorOptions {
     pub use_fast_approximation: bool,
 }
 
-impl Default for GrayscaleProcessorOptions {
-    fn default() -> Self {
-        GrayscaleProcessorOptions {
-            strategy: GrayscaleStrategy::Luminosity,
-            use_fast_approximation: true,
-        }
-    }
-}
-
 pub struct GrayscaleProcessor {
     options: GrayscaleProcessorOptions,
 }
 
 impl GrayscaleProcessor {
-    pub fn new() -> Self {
-        GrayscaleProcessor {
-            options: Default::default(),
-        }
-    }
-}
-
-impl WithOptions<GrayscaleProcessorOptions> for GrayscaleProcessor {
-    fn with_options(self, options: GrayscaleProcessorOptions) -> Self {
+    pub fn new(options: GrayscaleProcessorOptions) -> Self {
         GrayscaleProcessor { options }
     }
 }

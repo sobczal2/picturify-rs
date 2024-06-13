@@ -8,6 +8,7 @@ use crate::handlers::movie::edge::sobel::SobelCommandHandler;
 use clap::ArgMatches;
 use std::collections::HashMap;
 use std::rc::Rc;
+use crate::commands::common::movie::MovieCommand;
 
 pub struct MovieCommandHandler;
 
@@ -30,7 +31,10 @@ impl CommandHandler for MovieCommandHandler {
                     Err(CliPicturifyError::InvalidCommand(name.to_string()))
                 }
             }
-            None => Err(CliPicturifyError::MissingCommand),
+            None => {
+                MovieCommand::get().print_help().unwrap();
+                Err(CliPicturifyError::MissingCommand)
+            }
         }
     }
 }

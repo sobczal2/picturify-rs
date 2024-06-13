@@ -1,4 +1,4 @@
-use crate::common::execution::{Processor, WithOptions};
+use crate::common::execution::Processor;
 use picturify_core::fast_image::apply_fn_to_pixels::{ApplyFnToPalettePixels, Offset};
 use picturify_core::fast_image::util::image_rgba_to_palette_srgba;
 use picturify_core::fast_image::FastImage;
@@ -11,26 +11,12 @@ pub struct KuwaharaProcessorOptions {
     pub radius: usize,
 }
 
-impl Default for KuwaharaProcessorOptions {
-    fn default() -> KuwaharaProcessorOptions {
-        KuwaharaProcessorOptions { radius: 3 }
-    }
-}
-
 pub struct KuwaharaProcessor {
     options: KuwaharaProcessorOptions,
 }
 
 impl KuwaharaProcessor {
-    pub fn new() -> Self {
-        KuwaharaProcessor {
-            options: Default::default(),
-        }
-    }
-}
-
-impl WithOptions<KuwaharaProcessorOptions> for KuwaharaProcessor {
-    fn with_options(self, options: KuwaharaProcessorOptions) -> Self {
+    pub fn new(options: KuwaharaProcessorOptions) -> Self {
         KuwaharaProcessor { options }
     }
 }

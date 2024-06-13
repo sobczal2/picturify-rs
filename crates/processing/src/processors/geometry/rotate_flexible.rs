@@ -1,4 +1,4 @@
-use crate::common::execution::{Processor, WithOptions};
+use crate::common::execution::Processor;
 use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToImagePixels;
 use picturify_core::fast_image::FastImage;
 use picturify_core::geometry::angle::Angle;
@@ -9,30 +9,13 @@ pub struct RotateFlexibleProcessorOptions {
     pub angle: Angle,
 }
 
-impl Default for RotateFlexibleProcessorOptions {
-    fn default() -> Self {
-        RotateFlexibleProcessorOptions {
-            angle: Angle::from_degrees(0.0),
-        }
-    }
-}
-
 pub struct RotateFlexibleProcessor {
     options: RotateFlexibleProcessorOptions,
 }
 
 impl RotateFlexibleProcessor {
-    pub fn new() -> Self {
-        RotateFlexibleProcessor {
-            options: RotateFlexibleProcessorOptions::default(),
-        }
-    }
-}
-
-impl WithOptions<RotateFlexibleProcessorOptions> for RotateFlexibleProcessor {
-    fn with_options(mut self, options: RotateFlexibleProcessorOptions) -> Self {
-        self.options = options;
-        self
+    pub fn new(options: RotateFlexibleProcessorOptions) -> Self {
+        RotateFlexibleProcessor { options }
     }
 }
 

@@ -1,4 +1,4 @@
-use crate::common::execution::{Processor, WithOptions};
+use crate::common::execution::Processor;
 use picturify_core::fast_image::FastImage;
 use picturify_core::rayon::prelude::*;
 use picturify_core::threading::progress::{Progress, ProgressIteratorExt};
@@ -8,26 +8,12 @@ pub struct MedianBlurProcessorOptions {
     pub radius: usize,
 }
 
-impl Default for MedianBlurProcessorOptions {
-    fn default() -> MedianBlurProcessorOptions {
-        MedianBlurProcessorOptions { radius: 3 }
-    }
-}
-
 pub struct MedianBlurProcessor {
     options: MedianBlurProcessorOptions,
 }
 
 impl MedianBlurProcessor {
-    pub fn new() -> Self {
-        MedianBlurProcessor {
-            options: Default::default(),
-        }
-    }
-}
-
-impl WithOptions<MedianBlurProcessorOptions> for MedianBlurProcessor {
-    fn with_options(self, options: MedianBlurProcessorOptions) -> Self {
+    pub fn new(options: MedianBlurProcessorOptions) -> Self {
         MedianBlurProcessor { options }
     }
 }

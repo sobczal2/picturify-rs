@@ -4,18 +4,10 @@ use picturify_core::fast_image::apply_fn_to_pixels::{
 use picturify_core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::{Processor, WithOptions};
+use crate::common::execution::Processor;
 
 pub struct SepiaProcessorOptions {
     pub use_fast_approximation: bool,
-}
-
-impl Default for SepiaProcessorOptions {
-    fn default() -> Self {
-        SepiaProcessorOptions {
-            use_fast_approximation: true,
-        }
-    }
 }
 
 pub struct SepiaProcessor {
@@ -23,16 +15,8 @@ pub struct SepiaProcessor {
 }
 
 impl SepiaProcessor {
-    pub fn new() -> Self {
-        SepiaProcessor {
-            options: Default::default(),
-        }
-    }
-}
-
-impl WithOptions<SepiaProcessorOptions> for SepiaProcessor {
-    fn with_options(self, options: SepiaProcessorOptions) -> Self {
-        SepiaProcessor { options }
+    pub fn new(options: SepiaProcessorOptions) -> Self {
+        Self { options }
     }
 }
 

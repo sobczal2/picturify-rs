@@ -1,4 +1,4 @@
-use crate::common::execution::{Processor, WithOptions};
+use crate::common::execution::Processor;
 use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToPalettePixels;
 use picturify_core::fast_image::FastImage;
 
@@ -66,29 +66,13 @@ pub struct RemappingProcessorOptions {
     pub function: RemappingFunction,
 }
 
-impl Default for RemappingProcessorOptions {
-    fn default() -> RemappingProcessorOptions {
-        RemappingProcessorOptions {
-            function: RemappingFunction::Linear { min: 0.0, max: 1.0 },
-        }
-    }
-}
-
 pub struct RemappingProcessor {
     options: RemappingProcessorOptions,
 }
 
 impl RemappingProcessor {
-    pub fn new() -> Self {
-        RemappingProcessor {
-            options: Default::default(),
-        }
-    }
-}
-
-impl WithOptions<RemappingProcessorOptions> for RemappingProcessor {
-    fn with_options(self, options: RemappingProcessorOptions) -> Self {
-        RemappingProcessor { options }
+    pub fn new(options: RemappingProcessorOptions) -> Self {
+        Self { options }
     }
 }
 

@@ -1,5 +1,5 @@
 use picturify_core::fast_image::FastImage;
-use picturify_processing::common::execution::{Processor, WithOptions};
+use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::geometry::crop::{CropProcessor, CropProcessorOptions};
 use picturify_processing::processors::geometry::enlargement::{
     EnlargementProcessor, EnlargementProcessorOptions,
@@ -63,7 +63,7 @@ impl EnlargementCropPipeline {
         pipeline_progress.setup_combined(3);
 
         let enlargement_processor =
-            EnlargementProcessor::new().with_options(self.options.enlargement_processor_options);
+            EnlargementProcessor::new(self.options.enlargement_processor_options);
         let image = enlargement_processor
             .process(image, pipeline_progress.get_current_individual_progress());
         pipeline_progress.increment_combined();
@@ -74,7 +74,7 @@ impl EnlargementCropPipeline {
             .process(image, pipeline_progress.get_current_individual_progress());
         pipeline_progress.increment_combined();
 
-        let crop_processor = CropProcessor::new().with_options(self.options.crop_processor_options);
+        let crop_processor = CropProcessor::new(self.options.crop_processor_options);
 
         let image =
             crop_processor.process(image, pipeline_progress.get_current_individual_progress());

@@ -8,4 +8,6 @@ pub enum ProcessingError {
     InvalidChannelSelector,
     #[error("Invalid angle")]
     InvalidAngle,
+    #[error("Invalid kernel")]
+    InvalidKernel,
 }

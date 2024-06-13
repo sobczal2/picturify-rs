@@ -4,7 +4,7 @@ use picturify_core::geometry::coord::Coord;
 use picturify_core::geometry::size::Size;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::{Processor, WithOptions};
+use crate::common::execution::Processor;
 
 #[derive(Copy, Clone)]
 pub struct CropBorder {
@@ -12,17 +12,6 @@ pub struct CropBorder {
     pub height: usize,
     pub x_offset: usize,
     pub y_offset: usize,
-}
-
-impl Default for CropBorder {
-    fn default() -> Self {
-        CropBorder {
-            width: 0,
-            height: 0,
-            x_offset: 0,
-            y_offset: 0,
-        }
-    }
 }
 
 impl CropBorder {
@@ -42,7 +31,7 @@ impl CropBorder {
 
 impl From<CropBorder> for Size {
     fn from(crop_border: CropBorder) -> Self {
-        Size::new(crop_border.width, crop_border.height)
+        Self::new(crop_border.width, crop_border.height)
     }
 }
 
@@ -51,28 +40,12 @@ pub struct CropProcessorOptions {
     pub crop_border: CropBorder,
 }
 
-impl Default for CropProcessorOptions {
-    fn default() -> Self {
-        CropProcessorOptions {
-            crop_border: Default::default(),
-        }
-    }
-}
-
 pub struct CropProcessor {
     options: CropProcessorOptions,
 }
 
 impl CropProcessor {
-    pub fn new() -> Self {
-        CropProcessor {
-            options: Default::default(),
-        }
-    }
-}
-
-impl WithOptions<CropProcessorOptions> for CropProcessor {
-    fn with_options(self, options: CropProcessorOptions) -> Self {
+    pub fn new(options: CropProcessorOptions) -> Self {
         CropProcessor { options }
     }
 }

@@ -2,7 +2,7 @@ use crate::common::pipeline_progress::PipelineProgress;
 use crate::pipeline::Pipeline;
 use picturify_core::fast_image::FastImage;
 use picturify_core::geometry::angle::Angle;
-use picturify_processing::common::execution::{Processor, WithOptions};
+use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::geometry::rotate_fixed::{
     RotateFixedProcessor, RotateFixedStrategy, RoteteFixedProcessorOptions,
 };
@@ -48,8 +48,7 @@ impl RotatePipeline {
         pipeline_progress.new_individual(ROTATE_PROCESSOR_NAME.to_string());
         pipeline_progress.setup_combined(1);
 
-        let processor =
-            RotateFixedProcessor::new().with_options(RoteteFixedProcessorOptions { strategy });
+        let processor = RotateFixedProcessor::new(RoteteFixedProcessorOptions { strategy });
 
         let final_image =
             processor.process(image, pipeline_progress.get_current_individual_progress());
@@ -68,10 +67,9 @@ impl RotatePipeline {
         pipeline_progress.new_individual(ROTATE_PROCESSOR_NAME.to_string());
         pipeline_progress.setup_combined(1);
 
-        let processor =
-            RotateFlexibleProcessor::new().with_options(RotateFlexibleProcessorOptions {
-                angle: self.options.angle,
-            });
+        let processor = RotateFlexibleProcessor::new(RotateFlexibleProcessorOptions {
+            angle: self.options.angle,
+        });
 
         let final_image =
             processor.process(image, pipeline_progress.get_current_individual_progress());

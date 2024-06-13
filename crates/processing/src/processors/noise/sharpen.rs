@@ -1,4 +1,4 @@
-use crate::common::execution::{Processor, WithOptions};
+use crate::common::execution::Processor;
 use crate::helpers::kernels::ConvolutionKernel;
 use crate::processors::internal::convolution_rgb::{
     ConvolutionRgbProcessor, ConvolutionRgbProcessorOptions,
@@ -10,39 +10,22 @@ pub struct SharpenProcessorOptions {
     pub use_fast_approximation: bool,
 }
 
-impl Default for SharpenProcessorOptions {
-    fn default() -> SharpenProcessorOptions {
-        SharpenProcessorOptions {
-            use_fast_approximation: true,
-        }
-    }
-}
-
 pub struct SharpenProcessor {
     options: SharpenProcessorOptions,
 }
 
 impl SharpenProcessor {
-    pub fn new() -> Self {
-        SharpenProcessor {
-            options: Default::default(),
-        }
-    }
-}
-
-impl WithOptions<SharpenProcessorOptions> for SharpenProcessor {
-    fn with_options(self, options: SharpenProcessorOptions) -> Self {
+    pub fn new(options: SharpenProcessorOptions) -> Self {
         SharpenProcessor { options }
     }
 }
 
 impl Processor for SharpenProcessor {
     fn process(&self, image: FastImage, progress: Progress) -> FastImage {
-        let processor =
-            ConvolutionRgbProcessor::new().with_options(ConvolutionRgbProcessorOptions {
-                kernel: ConvolutionKernel::new_sharpen(),
-                use_fast_approximation: self.options.use_fast_approximation,
-            });
+        let processor = ConvolutionRgbProcessor::new(ConvolutionRgbProcessorOptions {
+            kernel: ConvolutionKernel::new_sharpen(),
+            use_fast_approximation: self.options.use_fast_approximation,
+        });
         processor.process(image, progress)
     }
 }

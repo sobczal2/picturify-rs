@@ -1,4 +1,4 @@
-use crate::common::execution::{Processor, WithOptions};
+use crate::common::execution::Processor;
 use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToPalettePixels;
 use picturify_core::fast_image::FastImage;
 use picturify_core::geometry::coord::Coord;
@@ -17,17 +17,6 @@ pub struct EnlargementBorder {
     pub right: usize,
     pub bottom: usize,
     pub left: usize,
-}
-
-impl Default for EnlargementBorder {
-    fn default() -> Self {
-        EnlargementBorder {
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0,
-        }
-    }
 }
 
 impl EnlargementBorder {
@@ -65,15 +54,6 @@ impl EnlargementBorder {
     }
 }
 
-impl Default for EnlargementProcessorOptions {
-    fn default() -> Self {
-        EnlargementProcessorOptions {
-            border: Default::default(),
-            strategy: EnlargementStrategy::Constant(Srgba::new(0f32, 0f32, 0f32, 0f32)),
-        }
-    }
-}
-
 #[derive(Copy, Clone)]
 pub struct EnlargementProcessorOptions {
     pub border: EnlargementBorder,
@@ -85,17 +65,8 @@ pub struct EnlargementProcessor {
 }
 
 impl EnlargementProcessor {
-    pub fn new() -> Self {
-        EnlargementProcessor {
-            options: Default::default(),
-        }
-    }
-}
-
-impl WithOptions<EnlargementProcessorOptions> for EnlargementProcessor {
-    fn with_options(mut self, options: EnlargementProcessorOptions) -> Self {
-        self.options = options;
-        self
+    pub fn new(options: EnlargementProcessorOptions) -> Self {
+        EnlargementProcessor { options }
     }
 }
 

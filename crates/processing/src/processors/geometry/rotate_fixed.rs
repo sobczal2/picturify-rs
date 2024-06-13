@@ -1,4 +1,4 @@
-use crate::common::execution::{Processor, WithOptions};
+use crate::common::execution::Processor;
 use picturify_core::error::processing::ProcessingError;
 use picturify_core::fast_image::apply_fn_to_pixels::ApplyFnToImagePixels;
 use picturify_core::fast_image::FastImage;
@@ -56,30 +56,13 @@ pub struct RoteteFixedProcessorOptions {
     pub strategy: RotateFixedStrategy,
 }
 
-impl Default for RoteteFixedProcessorOptions {
-    fn default() -> Self {
-        RoteteFixedProcessorOptions {
-            strategy: RotateFixedStrategy::Deg90,
-        }
-    }
-}
-
 pub struct RotateFixedProcessor {
     options: RoteteFixedProcessorOptions,
 }
 
 impl RotateFixedProcessor {
-    pub fn new() -> Self {
-        RotateFixedProcessor {
-            options: Default::default(),
-        }
-    }
-}
-
-impl WithOptions<RoteteFixedProcessorOptions> for RotateFixedProcessor {
-    fn with_options(mut self, options: RoteteFixedProcessorOptions) -> Self {
-        self.options = options;
-        self
+    pub fn new(options: RoteteFixedProcessorOptions) -> Self {
+        RotateFixedProcessor { options }
     }
 }
 

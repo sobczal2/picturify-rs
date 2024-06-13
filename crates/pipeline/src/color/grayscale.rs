@@ -1,7 +1,7 @@
 use crate::common::pipeline_progress::PipelineProgress;
 use crate::pipeline::Pipeline;
 use picturify_core::fast_image::FastImage;
-use picturify_processing::common::execution::{Processor, WithOptions};
+use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::color::grayscale::{
     GrayscaleProcessor, GrayscaleProcessorOptions, GrayscaleStrategy,
 };
@@ -9,15 +9,6 @@ use picturify_processing::processors::color::grayscale::{
 pub struct GrayscalePipelineOptions {
     pub strategy: GrayscaleStrategy,
     pub fast: bool,
-}
-
-impl Default for GrayscalePipelineOptions {
-    fn default() -> Self {
-        GrayscalePipelineOptions {
-            strategy: GrayscaleStrategy::Average,
-            fast: false,
-        }
-    }
 }
 
 pub struct GrayscalePipeline {
@@ -39,7 +30,7 @@ impl Pipeline for GrayscalePipeline {
         pipeline_progress.new_individual(GRAYSCALE_PROCESSOR_NAME.to_string());
         pipeline_progress.setup_combined(1);
 
-        let processor = GrayscaleProcessor::new().with_options(GrayscaleProcessorOptions {
+        let processor = GrayscaleProcessor::new(GrayscaleProcessorOptions {
             strategy: self.options.strategy,
             use_fast_approximation: self.options.fast,
         });

@@ -1,6 +1,5 @@
 use picturify_core::fast_image::FastImage;
 use picturify_core::palette::Srgba;
-use picturify_processing::common::execution::WithOptions;
 use picturify_processing::processors::geometry::crop::{CropBorder, CropProcessorOptions};
 use picturify_processing::processors::geometry::enlargement::{
     EnlargementBorder, EnlargementProcessorOptions, EnlargementStrategy,
@@ -36,7 +35,7 @@ const BILATERAL_BLUR_PROCESSOR_NAME: &str = "BilateralBlur";
 
 impl Pipeline for BilateralBlurPipeline {
     fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
-        let processor = BilateralBlurProcessor::new().with_options(BilateralBlurProcessorOptions {
+        let processor = BilateralBlurProcessor::new(BilateralBlurProcessorOptions {
             radius: self.options.radius,
             sigma_spatial: self.options.sigma_spatial,
             sigma_intensity: self.options.sigma_intensity,

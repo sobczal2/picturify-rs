@@ -1,7 +1,7 @@
 use crate::common::pipeline_progress::PipelineProgress;
 use crate::pipeline::Pipeline;
 use picturify_core::fast_image::FastImage;
-use picturify_processing::common::execution::{Processor, WithOptions};
+use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::geometry::crop::{
     CropBorder, CropProcessor, CropProcessorOptions,
 };
@@ -30,7 +30,7 @@ impl Pipeline for CropPipeline {
         pipeline_progress.new_individual(CROP_PROCESSOR_NAME.to_string());
         pipeline_progress.setup_combined(1);
 
-        let processor = CropProcessor::new().with_options(CropProcessorOptions {
+        let processor = CropProcessor::new(CropProcessorOptions {
             crop_border: self.options.crop_border,
         });
 

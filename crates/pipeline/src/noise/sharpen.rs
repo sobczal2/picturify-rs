@@ -1,6 +1,5 @@
 use picturify_core::fast_image::FastImage;
 use picturify_core::palette::Srgba;
-use picturify_processing::common::execution::WithOptions;
 use picturify_processing::processors::geometry::crop::{CropBorder, CropProcessorOptions};
 use picturify_processing::processors::geometry::enlargement::{
     EnlargementBorder, EnlargementProcessorOptions, EnlargementStrategy,
@@ -31,7 +30,7 @@ const SHARPEN_PROCESSOR_NAME: &str = "Sharpen";
 
 impl Pipeline for SharpenPipeline {
     fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
-        let processor = SharpenProcessor::new().with_options(SharpenProcessorOptions {
+        let processor = SharpenProcessor::new(SharpenProcessorOptions {
             use_fast_approximation: self.options.fast,
         });
         let (width, height) = image.size().into();

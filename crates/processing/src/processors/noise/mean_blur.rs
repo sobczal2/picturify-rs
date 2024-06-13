@@ -1,4 +1,4 @@
-use crate::common::execution::{Processor, WithOptions};
+use crate::common::execution::Processor;
 use crate::helpers::kernels::ConvolutionKernel;
 use crate::processors::internal::convolution_rgb::{
     ConvolutionRgbProcessor, ConvolutionRgbProcessorOptions,
@@ -11,29 +11,12 @@ pub struct MeanBlurProcessorOptions {
     pub use_fast_approximation: bool,
 }
 
-impl Default for MeanBlurProcessorOptions {
-    fn default() -> MeanBlurProcessorOptions {
-        MeanBlurProcessorOptions {
-            radius: 3,
-            use_fast_approximation: true,
-        }
-    }
-}
-
 pub struct MeanBlurProcessor {
     options: MeanBlurProcessorOptions,
 }
 
 impl MeanBlurProcessor {
-    pub fn new() -> Self {
-        MeanBlurProcessor {
-            options: Default::default(),
-        }
-    }
-}
-
-impl WithOptions<MeanBlurProcessorOptions> for MeanBlurProcessor {
-    fn with_options(self, options: MeanBlurProcessorOptions) -> Self {
+    pub fn new(options: MeanBlurProcessorOptions) -> Self {
         MeanBlurProcessor { options }
     }
 }
@@ -42,11 +25,10 @@ impl Processor for MeanBlurProcessor {
     fn process(&self, image: FastImage, progress: Progress) -> FastImage {
         let radius = self.options.radius;
 
-        let processor =
-            ConvolutionRgbProcessor::new().with_options(ConvolutionRgbProcessorOptions {
-                kernel: ConvolutionKernel::new_mean(radius),
-                use_fast_approximation: self.options.use_fast_approximation,
-            });
+        let processor = ConvolutionRgbProcessor::new(ConvolutionRgbProcessorOptions {
+            kernel: ConvolutionKernel::new_mean(radius),
+            use_fast_approximation: self.options.use_fast_approximation,
+        });
         processor.process(image, progress)
     }
 }

@@ -32,6 +32,7 @@ use crate::handlers::image::noise::sharpen::SharpenCommandHandler;
 use clap::ArgMatches;
 use std::collections::HashMap;
 use std::rc::Rc;
+use crate::commands::common::image::ImageCommand;
 
 pub struct ImageCommandHandler;
 
@@ -99,7 +100,10 @@ impl CommandHandler for ImageCommandHandler {
                     Err(CliPicturifyError::InvalidCommand(name.to_string()))
                 }
             }
-            None => Err(CliPicturifyError::MissingCommand),
+            None => {
+                ImageCommand::get().print_help().unwrap();
+                Err(CliPicturifyError::MissingCommand)
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 use clap::ArgMatches;
 use std::thread::spawn;
 
+use crate::commands::common::arg::ArgType;
 use crate::error::CliPicturifyResult;
 use crate::handlers::common::handler::CommandHandler;
 use crate::handlers::common::image_io::{read_image, write_image};
@@ -14,7 +15,9 @@ pub struct SepiaCommandHandler;
 impl CommandHandler for SepiaCommandHandler {
     fn handle(args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
-        let negative_pipeline = SepiaPipeline::new(SepiaPipelineOptions {});
+        let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
+
+        let negative_pipeline = SepiaPipeline::new(SepiaPipelineOptions { fast: *fast });
 
         let pipeline_progress = PipelineProgress::new();
         let pipeline_progress_clone = pipeline_progress.clone();
