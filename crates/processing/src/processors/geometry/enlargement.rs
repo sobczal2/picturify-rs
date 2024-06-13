@@ -66,7 +66,7 @@ pub struct EnlargementProcessor {
 
 impl EnlargementProcessor {
     pub fn new(options: EnlargementProcessorOptions) -> Self {
-        EnlargementProcessor { options }
+        Self { options }
     }
 }
 

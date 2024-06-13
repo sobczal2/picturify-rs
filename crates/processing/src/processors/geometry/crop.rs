@@ -46,7 +46,7 @@ pub struct CropProcessor {
 
 impl CropProcessor {
     pub fn new(options: CropProcessorOptions) -> Self {
-        CropProcessor { options }
+        Self { options }
     }
 }
 

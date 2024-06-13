@@ -19,7 +19,7 @@ pub struct BilateralBlurProcessor {
 
 impl BilateralBlurProcessor {
     pub fn new(options: BilateralBlurProcessorOptions) -> Self {
-        BilateralBlurProcessor { options }
+        Self { options }
     }
 }
 

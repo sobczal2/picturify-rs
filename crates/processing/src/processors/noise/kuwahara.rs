@@ -17,7 +17,7 @@ pub struct KuwaharaProcessor {
 
 impl KuwaharaProcessor {
     pub fn new(options: KuwaharaProcessorOptions) -> Self {
-        KuwaharaProcessor { options }
+        Self { options }
     }
 }
 

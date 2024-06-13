@@ -1,4 +1,5 @@
 use crate::commands::common::command::Command;
+use crate::commands::common::movie::MovieCommand;
 use crate::commands::movie::color::negative::NegativeCommand;
 use crate::commands::movie::edge::sobel::SobelCommand;
 use crate::error::{CliPicturifyError, CliPicturifyResult};
@@ -8,7 +9,6 @@ use crate::handlers::movie::edge::sobel::SobelCommandHandler;
 use clap::ArgMatches;
 use std::collections::HashMap;
 use std::rc::Rc;
-use crate::commands::common::movie::MovieCommand;
 
 pub struct MovieCommandHandler;
 

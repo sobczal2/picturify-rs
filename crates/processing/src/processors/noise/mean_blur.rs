@@ -17,7 +17,7 @@ pub struct MeanBlurProcessor {
 
 impl MeanBlurProcessor {
     pub fn new(options: MeanBlurProcessorOptions) -> Self {
-        MeanBlurProcessor { options }
+        Self { options }
     }
 }
 

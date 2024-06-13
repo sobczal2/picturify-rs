@@ -14,7 +14,7 @@ pub struct MedianBlurProcessor {
 
 impl MedianBlurProcessor {
     pub fn new(options: MedianBlurProcessorOptions) -> Self {
-        MedianBlurProcessor { options }
+        Self { options }
     }
 }
 

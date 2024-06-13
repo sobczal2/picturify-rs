@@ -17,7 +17,7 @@ pub struct GammaProcessor {
 
 impl GammaProcessor {
     pub fn new(options: GammaProcessorOptions) -> Self {
-        GammaProcessor { options }
+        Self { options }
     }
 }
 

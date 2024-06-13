@@ -15,7 +15,7 @@ pub struct RotateFlexibleProcessor {
 
 impl RotateFlexibleProcessor {
     pub fn new(options: RotateFlexibleProcessorOptions) -> Self {
-        RotateFlexibleProcessor { options }
+        Self { options }
     }
 }
 

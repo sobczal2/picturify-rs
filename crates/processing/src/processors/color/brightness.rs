@@ -15,7 +15,7 @@ pub struct BrightnessProcessor {
 
 impl BrightnessProcessor {
     pub fn new(options: BrightnessProcessorOptions) -> Self {
-        BrightnessProcessor { options }
+        Self { options }
     }
 }
 

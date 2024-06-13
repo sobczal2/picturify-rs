@@ -17,7 +17,7 @@ pub struct ConvolutionRgbProcessor {
 
 impl ConvolutionRgbProcessor {
     pub fn new(options: ConvolutionRgbProcessorOptions) -> Self {
-        ConvolutionRgbProcessor { options }
+        Self { options }
     }
 }
 

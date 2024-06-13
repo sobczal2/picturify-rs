@@ -46,7 +46,7 @@ pub struct GrayscaleProcessor {
 
 impl GrayscaleProcessor {
     pub fn new(options: GrayscaleProcessorOptions) -> Self {
-        GrayscaleProcessor { options }
+        Self { options }
     }
 }
 

@@ -23,7 +23,7 @@ fn main() {
         TerminalMode::Mixed,
         ColorChoice::Auto,
     )
-        .unwrap();
+    .unwrap();
 
     #[cfg(not(debug_assertions))]
     TermLogger::init(
@@ -32,7 +32,7 @@ fn main() {
         TerminalMode::Mixed,
         ColorChoice::Auto,
     )
-        .unwrap();
+    .unwrap();
 
     welcome();
     let start = Instant::now();

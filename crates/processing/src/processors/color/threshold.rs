@@ -15,7 +15,7 @@ pub struct ThresholdProcessor {
 
 impl ThresholdProcessor {
     pub fn new(options: ThresholdProcessorOptions) -> Self {
-        ThresholdProcessor { options }
+        Self { options }
     }
 }
 

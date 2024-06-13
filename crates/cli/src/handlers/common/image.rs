@@ -1,4 +1,5 @@
 use crate::commands::common::command::Command;
+use crate::commands::common::image::ImageCommand;
 use crate::commands::image::color::brightness::BrightnessCommand;
 use crate::commands::image::color::grayscale::GrayscaleCommand;
 use crate::commands::image::color::negative::NegativeCommand;
@@ -32,7 +33,6 @@ use crate::handlers::image::noise::sharpen::SharpenCommandHandler;
 use clap::ArgMatches;
 use std::collections::HashMap;
 use std::rc::Rc;
-use crate::commands::common::image::ImageCommand;
 
 pub struct ImageCommandHandler;
 

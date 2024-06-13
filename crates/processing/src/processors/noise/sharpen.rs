@@ -16,7 +16,7 @@ pub struct SharpenProcessor {
 
 impl SharpenProcessor {
     pub fn new(options: SharpenProcessorOptions) -> Self {
-        SharpenProcessor { options }
+        Self { options }
     }
 }
 
