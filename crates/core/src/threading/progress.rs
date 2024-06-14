@@ -1,6 +1,6 @@
 use std::fmt::Debug;
-use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, RwLock};
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 #[derive(Clone)]
 pub struct Progress {

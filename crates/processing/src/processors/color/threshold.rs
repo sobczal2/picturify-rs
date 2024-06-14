@@ -1,7 +1,8 @@
-use crate::common::execution::Processor;
 use picturify_core::core::apply_fn_to_pixels::ApplyFnToImagePixels;
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
+
+use crate::common::execution::Processor;
 
 pub struct ThresholdProcessorOptions {
     pub red_threshold: u8,

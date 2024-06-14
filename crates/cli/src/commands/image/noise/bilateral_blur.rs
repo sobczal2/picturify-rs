@@ -1,20 +1,23 @@
-use crate::commands::common::arg::{add_input_output_args, ArgType};
-use crate::commands::common::command::Command;
+use crate::commands::common::arg::ArgType;
+use crate::commands::common::command::CommandForImage;
+use crate::common::filter_group::Group;
 
 pub struct BilateralBlurCommand;
 
-impl Command for BilateralBlurCommand {
+impl CommandForImage for BilateralBlurCommand {
     fn get() -> clap::Command {
-        let cmd = clap::Command::new(Self::name())
+        Self::get_base()
             .arg(ArgType::Radius.to_arg())
             .arg(ArgType::Fast.to_arg())
             .arg(ArgType::SigmaSpatial.to_arg())
             .arg(ArgType::SigmaIntensity.to_arg())
-            .about("Run bilateral blur filter on the image");
-        add_input_output_args(cmd)
     }
 
     fn name() -> &'static str {
         "bilateral-blur"
+    }
+
+    fn group() -> Group {
+        Group::Noise
     }
 }

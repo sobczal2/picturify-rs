@@ -1,10 +1,10 @@
-use crate::commands::common::command::Command;
+use crate::commands::common::command::{Command, CommandForImage};
 use crate::commands::image::color::brightness::BrightnessCommand;
 use crate::commands::image::color::grayscale::GrayscaleCommand;
 use crate::commands::image::color::negative::NegativeCommand;
 use crate::commands::image::color::quantization::QuantizationCommand;
 use crate::commands::image::color::sepia::SepiaCommand;
-use crate::commands::image::common::none::NoneCommand;
+use crate::commands::image::common::passthrough::PassthroughCommand;
 use crate::commands::image::edge::sobel::SobelCommand;
 use crate::commands::image::geometry::crop::CropCommand;
 use crate::commands::image::geometry::rotate::RotateCommand;
@@ -19,11 +19,11 @@ pub struct ImageCommand;
 
 impl Command for ImageCommand {
     fn get() -> clap::Command {
-        clap::Command::new(Self::name())
+        clap::Command::new("image")
             .about("Run processing pipeline on the image")
             .subcommands(&[
                 // common
-                NoneCommand::get(),
+                PassthroughCommand::get(),
                 // color
                 SepiaCommand::get(),
                 NegativeCommand::get(),
@@ -43,9 +43,5 @@ impl Command for ImageCommand {
                 RotateCommand::get(),
                 CropCommand::get(),
             ])
-    }
-
-    fn name() -> &'static str {
-        "image"
     }
 }

@@ -1,12 +1,14 @@
-use crate::common::execution::Processor;
 use clap::builder::PossibleValue;
 use clap::ValueEnum;
+
 use picturify_core::core::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::geometry::coord::Coord;
 use picturify_core::image::Rgba;
 use picturify_core::palette::LinSrgba;
 use picturify_core::threading::progress::Progress;
+
+use crate::common::execution::Processor;
 
 #[derive(Clone, Copy)]
 pub enum GrayscaleStrategy {

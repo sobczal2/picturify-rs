@@ -1,4 +1,4 @@
-use clap::{value_parser, Arg, ArgAction, Command};
+use clap::{Arg, ArgAction, value_parser};
 
 use picturify_processing::processors::color::grayscale::GrayscaleStrategy;
 
@@ -119,10 +119,4 @@ impl ArgType {
             ArgType::Levels => "levels",
         }
     }
-}
-
-pub fn add_input_output_args(command: Command) -> Command {
-    command
-        .arg(ArgType::Input.to_arg())
-        .arg(ArgType::Output.to_arg())
 }

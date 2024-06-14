@@ -21,3 +21,4 @@ assert_cmd.workspace = true
 predicates.workspace = true
 uuid.workspace = true
 rand.workspace = true
+colored.workspace = true

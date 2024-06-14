@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use clap::ArgMatches;
 use log::warn;
 
-use crate::commands::common::command::Command;
+use crate::commands::common::command::{Command, CommandForMovie};
 use crate::commands::common::movie::MovieCommand;
 use crate::commands::movie::color::negative::NegativeCommand;
 use crate::commands::movie::edge::sobel::SobelCommand;

@@ -1,17 +1,20 @@
-use crate::commands::common::arg::{add_input_output_args, ArgType};
-use crate::commands::common::command::Command;
+use crate::commands::common::arg::ArgType;
+use crate::commands::common::command::CommandForImage;
+use crate::common::filter_group::Group;
 
 pub struct RotateCommand;
 
-impl Command for RotateCommand {
+impl CommandForImage for RotateCommand {
     fn get() -> clap::Command {
-        let cmd = clap::Command::new(Self::name())
+        Self::get_base()
             .arg(ArgType::Angle.to_arg())
-            .about("Rotate the image clockwise");
-        add_input_output_args(cmd)
     }
 
     fn name() -> &'static str {
         "rotate"
+    }
+
+    fn group() -> Group {
+        Group::Geometry
     }
 }

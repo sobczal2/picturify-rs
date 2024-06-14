@@ -1,4 +1,3 @@
-use crate::common::execution::Processor;
 use picturify_core::core::apply_fn_to_pixels::ApplyFnToImagePixels;
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingError;
@@ -6,6 +5,8 @@ use picturify_core::geometry::angle::Angle;
 use picturify_core::geometry::coord::Coord;
 use picturify_core::geometry::size::Size;
 use picturify_core::threading::progress::Progress;
+
+use crate::common::execution::Processor;
 
 #[derive(Copy, Clone)]
 pub enum RotateFixedStrategy {

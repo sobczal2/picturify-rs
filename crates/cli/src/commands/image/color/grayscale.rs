@@ -1,18 +1,21 @@
-use crate::commands::common::arg::{add_input_output_args, ArgType};
-use crate::commands::common::command::Command;
+use crate::commands::common::arg::ArgType;
+use crate::commands::common::command::CommandForImage;
+use crate::common::filter_group::Group;
 
 pub struct GrayscaleCommand;
 
-impl Command for GrayscaleCommand {
+impl CommandForImage for GrayscaleCommand {
     fn get() -> clap::Command {
-        let cmd = clap::Command::new(Self::name())
+        Self::get_base()
             .arg(ArgType::GrayscaleStrategy.to_arg())
             .arg(ArgType::Fast.to_arg())
-            .about("Run grayscale filter on the image");
-        add_input_output_args(cmd)
     }
 
     fn name() -> &'static str {
         "grayscale"
+    }
+
+    fn group() -> Group {
+        Group::Color
     }
 }

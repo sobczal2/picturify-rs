@@ -1,20 +1,18 @@
-use crate::commands::common::arg::ArgType;
 use crate::commands::common::command::CommandForImage;
 use crate::common::filter_group::Group;
 
-pub struct BrightnessCommand;
+pub struct PassthroughCommand;
 
-impl CommandForImage for BrightnessCommand {
+impl CommandForImage for PassthroughCommand {
     fn get() -> clap::Command {
         Self::get_base()
-            .arg(ArgType::Factor.to_arg())
     }
 
     fn name() -> &'static str {
-        "brightness"
+        "passthrough"
     }
 
     fn group() -> Group {
-        Group::Color
+        Group::Common
     }
 }

@@ -2,14 +2,14 @@ use std::collections::HashMap;
 
 use clap::ArgMatches;
 
-use crate::commands::common::command::Command;
+use crate::commands::common::command::{Command, CommandForImage};
 use crate::commands::common::image::ImageCommand;
 use crate::commands::image::color::brightness::BrightnessCommand;
 use crate::commands::image::color::grayscale::GrayscaleCommand;
 use crate::commands::image::color::negative::NegativeCommand;
 use crate::commands::image::color::quantization::QuantizationCommand;
 use crate::commands::image::color::sepia::SepiaCommand;
-use crate::commands::image::common::none::NoneCommand;
+use crate::commands::image::common::passthrough::PassthroughCommand;
 use crate::commands::image::edge::sobel::SobelCommand;
 use crate::commands::image::geometry::crop::CropCommand;
 use crate::commands::image::geometry::rotate::RotateCommand;
@@ -26,7 +26,7 @@ use crate::handlers::image::color::grayscale::GrayscaleCommandHandler;
 use crate::handlers::image::color::negative::NegativeCommandHandler;
 use crate::handlers::image::color::quantization::QuantizationCommandHandler;
 use crate::handlers::image::color::sepia::SepiaCommandHandler;
-use crate::handlers::image::common::none::NoneCommandHandler;
+use crate::handlers::image::common::passthrough::PassthroughCommandHandler;
 use crate::handlers::image::edge::sobel::SobelCommandHandler;
 use crate::handlers::image::geometry::crop::CropCommandHandler;
 use crate::handlers::image::geometry::rotate::RotateCommandHandler;
@@ -46,7 +46,7 @@ impl CommandHandler for ImageCommandHandler {
                 let mut handlers: HashMap<&str, Box<dyn CommandHandler>> = HashMap::new();
 
                 // common
-                handlers.insert(NoneCommand::name(), Box::new(NoneCommandHandler));
+                handlers.insert(PassthroughCommand::name(), Box::new(PassthroughCommandHandler));
 
                 // color
                 handlers.insert(SepiaCommand::name(), Box::new(SepiaCommandHandler));

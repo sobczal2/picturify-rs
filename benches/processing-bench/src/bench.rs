@@ -1,6 +1,7 @@
+use criterion::criterion_main;
+
 use crate::color::negative::negative_processor_benchmark_group;
 use crate::get_image::get_image_benchmark_group;
-use criterion::criterion_main;
 
 pub mod color;
 pub mod common;

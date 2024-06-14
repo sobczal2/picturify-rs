@@ -1,4 +1,5 @@
 use image::Rgba;
+
 use crate::pixel::traits::{RgbaF32Pixel, RgbaU8Pixel};
 
 impl RgbaU8Pixel for Rgba<u8> {

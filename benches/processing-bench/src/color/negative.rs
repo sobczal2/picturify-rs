@@ -1,11 +1,14 @@
-use crate::common::ImageResolution;
-use criterion::{criterion_group, BenchmarkId, Criterion};
+use std::fmt::Display;
+
+use criterion::{BenchmarkId, Criterion, criterion_group};
+
 use picturify_core::threading::progress::Progress;
 use picturify_processing::common::execution::{Processor, WithOptions};
 use picturify_processing::processors::color::negative::{
     NegativeProcessor, NegativeProcessorOptions,
 };
-use std::fmt::Display;
+
+use crate::common::ImageResolution;
 
 #[derive(Clone, Copy, Debug)]
 struct NegativeProcessorBenchmarkOptions {

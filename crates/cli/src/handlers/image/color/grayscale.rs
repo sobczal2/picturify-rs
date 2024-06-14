@@ -5,7 +5,7 @@ use picturify_processing::processors::color::grayscale::GrayscaleStrategy;
 
 use crate::commands::common::arg::ArgType;
 use crate::error::CliPicturifyResult;
-use crate::handlers::common::handler::{run_pipeline, CommandHandler};
+use crate::handlers::common::handler::{CommandHandler, run_pipeline};
 use crate::handlers::common::image_io::{read_image, write_image};
 
 pub struct GrayscaleCommandHandler;

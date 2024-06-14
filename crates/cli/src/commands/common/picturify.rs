@@ -1,4 +1,4 @@
-use crate::commands::common::command::Command;
+use crate::commands::common::command::{Command};
 use crate::commands::common::image::ImageCommand;
 use crate::commands::common::movie::MovieCommand;
 use crate::metadata;
@@ -7,7 +7,7 @@ pub struct PicturifyCommand;
 
 impl Command for PicturifyCommand {
     fn get() -> clap::Command {
-        clap::Command::new(Self::name())
+        clap::Command::new(metadata::NAME)
             .version(metadata::VERSION)
             .author(metadata::AUTHORS)
             .about(format!(
@@ -27,9 +27,5 @@ impl Command for PicturifyCommand {
                 picturify_movie::metadata::VERSION,
             ))
             .subcommands(vec![ImageCommand::get(), MovieCommand::get()])
-    }
-
-    fn name() -> &'static str {
-        metadata::NAME
     }
 }

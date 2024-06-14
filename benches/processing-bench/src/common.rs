@@ -1,6 +1,7 @@
+use std::fmt::Display;
+
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::geometry::size::Size;
-use std::fmt::Display;
 
 #[derive(Debug, Clone, Copy)]
 pub enum ImageResolution {

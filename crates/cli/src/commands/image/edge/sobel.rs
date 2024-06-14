@@ -1,18 +1,21 @@
-use crate::commands::common::arg::{add_input_output_args, ArgType};
-use crate::commands::common::command::Command;
+use crate::commands::common::arg::ArgType;
+use crate::commands::common::command::CommandForImage;
+use crate::common::filter_group::Group;
 
 pub struct SobelCommand;
 
-impl Command for SobelCommand {
+impl CommandForImage for SobelCommand {
     fn get() -> clap::Command {
-        let cmd = clap::Command::new(Self::name())
+        Self::get_base()
             .arg(ArgType::Fast.to_arg())
             .arg(ArgType::Rgb.to_arg())
-            .about("Run Sobel edge detection on the image");
-        add_input_output_args(cmd)
     }
 
     fn name() -> &'static str {
         "sobel"
+    }
+
+    fn group() -> Group {
+        Group::Edge
     }
 }

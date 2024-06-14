@@ -1,5 +1,6 @@
+use criterion::{Criterion, criterion_group};
+
 use crate::common::ImageResolution;
-use criterion::{criterion_group, Criterion};
 
 fn get_image_benchmark(c: &mut Criterion) {
     let mut group = c.benchmark_group("get_image_benchmark");

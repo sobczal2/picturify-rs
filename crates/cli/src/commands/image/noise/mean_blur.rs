@@ -1,18 +1,21 @@
-use crate::commands::common::arg::{add_input_output_args, ArgType};
-use crate::commands::common::command::Command;
+use crate::commands::common::arg::ArgType;
+use crate::commands::common::command::CommandForImage;
+use crate::common::filter_group::Group;
 
 pub struct MeanBlurCommand;
 
-impl Command for MeanBlurCommand {
+impl CommandForImage for MeanBlurCommand {
     fn get() -> clap::Command {
-        let cmd = clap::Command::new(Self::name())
+        Self::get_base()
             .arg(ArgType::Radius.to_arg())
             .arg(ArgType::Fast.to_arg())
-            .about("Run mean blur filter on the image");
-        add_input_output_args(cmd)
     }
 
     fn name() -> &'static str {
         "mean-blur"
+    }
+
+    fn group() -> Group {
+        Group::Noise
     }
 }

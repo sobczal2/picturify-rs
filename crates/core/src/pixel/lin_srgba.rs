@@ -1,4 +1,5 @@
 use palette::LinSrgba;
+
 use crate::pixel::traits::{RgbaF32Pixel, RgbaU8Pixel};
 
 impl RgbaU8Pixel for LinSrgba {

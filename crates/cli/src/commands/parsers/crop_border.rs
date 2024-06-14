@@ -1,8 +1,8 @@
 use std::ffi::OsStr;
 
+use clap::{Arg, Command, Error};
 use clap::builder::TypedValueParser;
 use clap::error::ErrorKind;
-use clap::{Arg, Command, Error};
 use regex::Regex;
 
 use picturify_processing::processors::geometry::crop::CropBorder;
