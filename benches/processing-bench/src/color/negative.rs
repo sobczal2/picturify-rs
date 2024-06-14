@@ -46,10 +46,9 @@ fn negative_processor_benchmark(c: &mut Criterion) {
             |b, &options| {
                 b.iter(|| {
                     let image = options.resolution.get_image();
-                    let processor =
-                        NegativeProcessor::new(NegativeProcessorOptions {
-                            use_fast_approximation: options.use_fast_approximation,
-                        });
+                    let processor = NegativeProcessor::new(NegativeProcessorOptions {
+                        use_fast_approximation: options.use_fast_approximation,
+                    });
                     processor.process(image, Progress::new());
                 });
             },

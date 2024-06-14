@@ -4,6 +4,8 @@ use picturify_processing::processors::color::grayscale::GrayscaleStrategy;
 
 use crate::commands::parsers::angle::AngleValueParser;
 use crate::commands::parsers::crop_border::CropBorderValueParser;
+use crate::commands::parsers::scale_strategy::ScaleStrategyValueParser;
+use crate::commands::parsers::size::SizeValueParser;
 
 pub enum ArgType {
     Input,
@@ -19,6 +21,8 @@ pub enum ArgType {
     Border,
     Rgb,
     Levels,
+    Size,
+    ScaleStrategy,
 }
 
 impl ArgType {
@@ -99,6 +103,16 @@ impl ArgType {
                 .help("Number of levels")
                 .required(true)
                 .value_parser(value_parser!(u8)),
+            ArgType::Size => Arg::new(self.to_id())
+                .long("size")
+                .help("Size in format <width>x<height>")
+                .required(true)
+                .value_parser(SizeValueParser::new()),
+            ArgType::ScaleStrategy => Arg::new(self.to_id())
+                .long("strategy")
+                .help("Scale strategy")
+                .default_value("nearest-neighbor")
+                .value_parser(ScaleStrategyValueParser::new()),
         }
     }
 
@@ -117,6 +131,8 @@ impl ArgType {
             ArgType::Border => "crop-border",
             ArgType::Rgb => "rgb",
             ArgType::Levels => "levels",
+            ArgType::Size => "size",
+            ArgType::ScaleStrategy => "scale-strategy",
         }
     }
 }

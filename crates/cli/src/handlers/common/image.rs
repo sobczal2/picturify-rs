@@ -13,6 +13,7 @@ use crate::commands::image::common::passthrough::PassthroughCommand;
 use crate::commands::image::edge::sobel::SobelCommand;
 use crate::commands::image::geometry::crop::CropCommand;
 use crate::commands::image::geometry::rotate::RotateCommand;
+use crate::commands::image::geometry::scale::ScaleCommand;
 use crate::commands::image::noise::bilateral_blur::BilateralBlurCommand;
 use crate::commands::image::noise::gaussian_blur::GaussianBlurCommand;
 use crate::commands::image::noise::kuwahara::KuwaharaCommand;
@@ -30,6 +31,7 @@ use crate::handlers::image::common::passthrough::PassthroughCommandHandler;
 use crate::handlers::image::edge::sobel::SobelCommandHandler;
 use crate::handlers::image::geometry::crop::CropCommandHandler;
 use crate::handlers::image::geometry::rotate::RotateCommandHandler;
+use crate::handlers::image::geometry::scale::ScaleCommandHandler;
 use crate::handlers::image::noise::bilateral_blur::BilateralBlurCommandHandler;
 use crate::handlers::image::noise::gaussian_blur::GaussianBlurCommandHandler;
 use crate::handlers::image::noise::kuwahara::KuwaharaCommandHandler;
@@ -87,6 +89,7 @@ impl CommandHandler for ImageCommandHandler {
                 // geometry
                 handlers.insert(RotateCommand::name(), Box::new(RotateCommandHandler));
                 handlers.insert(CropCommand::name(), Box::new(CropCommandHandler));
+                handlers.insert(ScaleCommand::name(), Box::new(ScaleCommandHandler));
 
                 if let Some(handler) = handlers.get(name) {
                     handler.handle(args.clone())

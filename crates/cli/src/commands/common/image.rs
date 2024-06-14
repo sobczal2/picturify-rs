@@ -8,6 +8,7 @@ use crate::commands::image::common::passthrough::PassthroughCommand;
 use crate::commands::image::edge::sobel::SobelCommand;
 use crate::commands::image::geometry::crop::CropCommand;
 use crate::commands::image::geometry::rotate::RotateCommand;
+use crate::commands::image::geometry::scale::ScaleCommand;
 use crate::commands::image::noise::bilateral_blur::BilateralBlurCommand;
 use crate::commands::image::noise::gaussian_blur::GaussianBlurCommand;
 use crate::commands::image::noise::kuwahara::KuwaharaCommand;
@@ -42,6 +43,7 @@ impl Command for ImageCommand {
                 // geometry
                 RotateCommand::get(),
                 CropCommand::get(),
+                ScaleCommand::get(),
             ])
     }
 }
