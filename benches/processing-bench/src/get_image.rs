@@ -1,4 +1,4 @@
-use criterion::{Criterion, criterion_group};
+use criterion::{criterion_group, Criterion};
 
 use crate::common::ImageResolution;
 

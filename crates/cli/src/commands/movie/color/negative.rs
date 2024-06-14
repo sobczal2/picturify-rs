@@ -6,8 +6,7 @@ pub struct NegativeCommand;
 
 impl CommandForMovie for NegativeCommand {
     fn get() -> clap::Command {
-        Self::get_base()
-            .arg(ArgType::Fast.to_arg())
+        Self::get_base().arg(ArgType::Fast.to_arg())
     }
 
     fn name() -> &'static str {

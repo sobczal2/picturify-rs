@@ -1,6 +1,6 @@
-use image::{DynamicImage, ImageFormat, Rgba, RgbaImage};
 use image::buffer::{EnumeratePixels, Pixels, PixelsMut, Rows, RowsMut};
 use image::io::Reader;
+use image::{DynamicImage, ImageFormat, Rgba, RgbaImage};
 use palette::{LinSrgba, Srgba};
 use rayon::prelude::*;
 

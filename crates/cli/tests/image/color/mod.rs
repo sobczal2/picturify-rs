@@ -1,5 +1,5 @@
 mod brightness;
 mod grayscale;
 mod negative;
-mod sepia;
 mod quantization;
+mod sepia;

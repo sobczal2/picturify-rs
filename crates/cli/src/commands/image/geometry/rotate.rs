@@ -6,8 +6,7 @@ pub struct RotateCommand;
 
 impl CommandForImage for RotateCommand {
     fn get() -> clap::Command {
-        Self::get_base()
-            .arg(ArgType::Angle.to_arg())
+        Self::get_base().arg(ArgType::Angle.to_arg())
     }
 
     fn name() -> &'static str {

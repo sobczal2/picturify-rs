@@ -1,4 +1,4 @@
-use std::thread::{JoinHandle, spawn};
+use std::thread::{spawn, JoinHandle};
 
 use clap::ArgMatches;
 

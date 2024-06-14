@@ -1,9 +1,9 @@
 use std::fmt::Display;
 
-use criterion::{BenchmarkId, Criterion, criterion_group};
+use criterion::{criterion_group, BenchmarkId, Criterion};
 
 use picturify_core::threading::progress::Progress;
-use picturify_processing::common::execution::{Processor, WithOptions};
+use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::color::negative::{
     NegativeProcessor, NegativeProcessorOptions,
 };
@@ -47,7 +47,7 @@ fn negative_processor_benchmark(c: &mut Criterion) {
                 b.iter(|| {
                     let image = options.resolution.get_image();
                     let processor =
-                        NegativeProcessor::new().with_options(NegativeProcessorOptions {
+                        NegativeProcessor::new(NegativeProcessorOptions {
                             use_fast_approximation: options.use_fast_approximation,
                         });
                     processor.process(image, Progress::new());

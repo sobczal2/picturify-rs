@@ -46,7 +46,10 @@ impl CommandHandler for ImageCommandHandler {
                 let mut handlers: HashMap<&str, Box<dyn CommandHandler>> = HashMap::new();
 
                 // common
-                handlers.insert(PassthroughCommand::name(), Box::new(PassthroughCommandHandler));
+                handlers.insert(
+                    PassthroughCommand::name(),
+                    Box::new(PassthroughCommandHandler),
+                );
 
                 // color
                 handlers.insert(SepiaCommand::name(), Box::new(SepiaCommandHandler));
@@ -56,7 +59,10 @@ impl CommandHandler for ImageCommandHandler {
                     BrightnessCommand::name(),
                     Box::new(BrightnessCommandHandler),
                 );
-                handlers.insert(QuantizationCommand::name(), Box::new(QuantizationCommandHandler));
+                handlers.insert(
+                    QuantizationCommand::name(),
+                    Box::new(QuantizationCommandHandler),
+                );
 
                 // noise
                 handlers.insert(KuwaharaCommand::name(), Box::new(KuwaharaCommandHandler));

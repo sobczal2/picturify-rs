@@ -1,4 +1,4 @@
-use clap::{Arg, ArgAction, value_parser};
+use clap::{value_parser, Arg, ArgAction};
 
 use picturify_processing::processors::color::grayscale::GrayscaleStrategy;
 

@@ -1,4 +1,4 @@
-use crate::commands::common::command::{Command};
+use crate::commands::common::command::Command;
 use crate::commands::common::image::ImageCommand;
 use crate::commands::common::movie::MovieCommand;
 use crate::metadata;

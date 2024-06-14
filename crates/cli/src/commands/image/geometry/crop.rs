@@ -6,8 +6,7 @@ pub struct CropCommand;
 
 impl CommandForImage for CropCommand {
     fn get() -> clap::Command {
-        Self::get_base()
-            .arg(ArgType::Border.to_arg())
+        Self::get_base().arg(ArgType::Border.to_arg())
     }
 
     fn name() -> &'static str {

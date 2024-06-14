@@ -1,10 +1,10 @@
 use std::time::Instant;
 
 #[allow(unused_imports)]
-use log::{error, info, LevelFilter, warn};
+use log::{error, info, warn, LevelFilter};
 use simplelog::*;
 
-use crate::commands::common::command::{Command};
+use crate::commands::common::command::Command;
 use crate::commands::common::picturify::PicturifyCommand;
 use crate::error::CliPicturifyError;
 use crate::handlers::common::handler::CommandHandler;
@@ -12,11 +12,11 @@ use crate::handlers::common::image::ImageCommandHandler;
 use crate::handlers::common::movie::MovieCommandHandler;
 
 mod commands;
+mod common;
 mod error;
 mod handlers;
 mod metadata;
 mod progress;
-mod common;
 
 fn main() {
     TermLogger::init(

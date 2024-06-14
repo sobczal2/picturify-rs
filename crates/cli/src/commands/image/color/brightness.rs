@@ -6,8 +6,7 @@ pub struct BrightnessCommand;
 
 impl CommandForImage for BrightnessCommand {
     fn get() -> clap::Command {
-        Self::get_base()
-            .arg(ArgType::Factor.to_arg())
+        Self::get_base().arg(ArgType::Factor.to_arg())
     }
 
     fn name() -> &'static str {
