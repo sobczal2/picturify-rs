@@ -10,3 +10,4 @@ pub mod geometry;
 pub mod metadata;
 pub mod pixel;
 pub mod threading;
+pub mod utils;

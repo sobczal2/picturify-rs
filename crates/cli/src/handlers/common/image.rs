@@ -10,6 +10,7 @@ use crate::commands::image::color::negative::NegativeCommand;
 use crate::commands::image::color::quantization::QuantizationCommand;
 use crate::commands::image::color::sepia::SepiaCommand;
 use crate::commands::image::common::passthrough::PassthroughCommand;
+use crate::commands::image::edge::prewitt::PrewittCommand;
 use crate::commands::image::edge::sobel::SobelCommand;
 use crate::commands::image::geometry::crop::CropCommand;
 use crate::commands::image::geometry::rotate::RotateCommand;
@@ -28,6 +29,7 @@ use crate::handlers::image::color::negative::NegativeCommandHandler;
 use crate::handlers::image::color::quantization::QuantizationCommandHandler;
 use crate::handlers::image::color::sepia::SepiaCommandHandler;
 use crate::handlers::image::common::passthrough::PassthroughCommandHandler;
+use crate::handlers::image::edge::prewitt::PrewittCommandHandler;
 use crate::handlers::image::edge::sobel::SobelCommandHandler;
 use crate::handlers::image::geometry::crop::CropCommandHandler;
 use crate::handlers::image::geometry::rotate::RotateCommandHandler;
@@ -85,6 +87,7 @@ impl CommandHandler for ImageCommandHandler {
 
                 // edge
                 handlers.insert(SobelCommand::name(), Box::new(SobelCommandHandler));
+                handlers.insert(PrewittCommand::name(), Box::new(PrewittCommandHandler));
 
                 // geometry
                 handlers.insert(RotateCommand::name(), Box::new(RotateCommandHandler));

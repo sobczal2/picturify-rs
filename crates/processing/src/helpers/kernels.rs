@@ -1,24 +1,34 @@
-use crate::helpers::functions::gaussian_2d;
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::geometry::coord::Coord;
 use picturify_core::geometry::size::Size;
 use picturify_core::image::Rgba;
 use picturify_core::palette::LinSrgba;
+use picturify_core::utils::vec::rotate_left_2d;
+
+use crate::helpers::functions::gaussian_2d;
 
 pub fn create_sobel_kernel_x() -> Vec<Vec<f32>> {
     vec![
-        vec![-1.0, 0.0, 1.0],
-        vec![-2.0, 0.0, 2.0],
-        vec![-1.0, 0.0, 1.0],
+        vec![1.0, 0.0, -1.0],
+        vec![2.0, 0.0, -2.0],
+        vec![1.0, 0.0, -1.0],
     ]
 }
 
 pub fn create_sobel_kernel_y() -> Vec<Vec<f32>> {
+    rotate_left_2d(create_sobel_kernel_x())
+}
+
+pub fn create_prewitt_kernel_x() -> Vec<Vec<f32>> {
     vec![
-        vec![-1.0, -2.0, -1.0],
+        vec![1.0, 1.0, 1.0],
         vec![0.0, 0.0, 0.0],
-        vec![1.0, 2.0, 1.0],
+        vec![-1.0, -1.0, -1.0],
     ]
+}
+
+pub fn create_prewitt_kernel_y() -> Vec<Vec<f32>> {
+    rotate_left_2d(create_prewitt_kernel_x())
 }
 
 pub struct ConvolutionKernel {

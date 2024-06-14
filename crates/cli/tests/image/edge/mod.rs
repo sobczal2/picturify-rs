@@ -1,1 +1,2 @@
+mod prewitt;
 mod sobel;

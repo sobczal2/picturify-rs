@@ -104,10 +104,13 @@ impl Processor for GradientBasedProcessor {
                                 blue = pixel.blue;
                             }
 
-                            magnitude_x += x_kernel[j][i] * (red + green + blue) / 3.0;
-                            magnitude_y += y_kernel[j][i] * (red + green + blue) / 3.0;
+                            magnitude_x += x_kernel[j][i] * (red + green + blue);
+                            magnitude_y += y_kernel[j][i] * (red + green + blue);
                         }
                     }
+
+                    magnitude_x /= 3.0;
+                    magnitude_y /= 3.0;
 
                     let actual_magnitude = (magnitude_x.powi(2) + magnitude_y.powi(2)).sqrt();
                     *magnitude = actual_magnitude;
