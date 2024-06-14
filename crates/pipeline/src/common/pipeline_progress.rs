@@ -1,6 +1,7 @@
-use picturify_core::threading::progress::Progress;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, RwLock};
+
+use picturify_core::threading::progress::Progress;
 
 #[derive(Debug, Clone)]
 pub struct PipelineProgress {

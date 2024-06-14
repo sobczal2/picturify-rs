@@ -1,10 +1,11 @@
-use crate::common::pipeline_progress::PipelineProgress;
-use crate::pipeline::Pipeline;
 use picturify_core::core::fast_image::FastImage;
 use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::color::grayscale::{
     GrayscaleProcessor, GrayscaleProcessorOptions, GrayscaleStrategy,
 };
+
+use crate::common::pipeline_progress::PipelineProgress;
+use crate::pipeline::Pipeline;
 
 pub struct GrayscalePipelineOptions {
     pub strategy: GrayscaleStrategy,

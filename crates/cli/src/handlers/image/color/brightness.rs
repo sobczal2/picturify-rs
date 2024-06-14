@@ -1,11 +1,11 @@
+use clap::ArgMatches;
+
+use picturify_pipeline::color::brightness::{BrightnessPipeline, BrightnessPipelineOptions};
+
 use crate::commands::common::arg::ArgType;
 use crate::error::CliPicturifyResult;
-use crate::handlers::common::handler::CommandHandler;
+use crate::handlers::common::handler::{run_pipeline, CommandHandler};
 use crate::handlers::common::image_io::{read_image, write_image};
-use clap::ArgMatches;
-use picturify_pipeline::color::brightness::{BrightnessPipeline, BrightnessPipelineOptions};
-use picturify_pipeline::common::pipeline_progress::PipelineProgress;
-use picturify_pipeline::pipeline::Pipeline;
 
 pub struct BrightnessCommandHandler;
 
@@ -13,21 +13,9 @@ impl CommandHandler for BrightnessCommandHandler {
     fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
         let factor = args.get_one::<f32>(ArgType::Factor.to_id()).unwrap();
-        let brightness_pipeline =
-            BrightnessPipeline::new(BrightnessPipelineOptions { factor: *factor });
+        let pipeline = BrightnessPipeline::new(BrightnessPipelineOptions { factor: *factor });
 
-        let pipeline_progress = PipelineProgress::new();
-        let pipeline_progress_clone = pipeline_progress.clone();
-
-        let handle = std::thread::spawn(move || {
-            crate::progress::pipeline_progress_bar::run_progress_bar_for_pipeline(
-                pipeline_progress_clone,
-            );
-        });
-
-        let result_image = brightness_pipeline.run(image, Some(pipeline_progress.clone()));
-
-        handle.join().expect("Failed to join thread");
+        let result_image = run_pipeline(image, Box::new(pipeline))?;
 
         write_image(result_image, args.clone())?;
 

@@ -1,14 +1,12 @@
+use clap::ArgMatches;
+
+use picturify_pipeline::color::grayscale::{GrayscalePipeline, GrayscalePipelineOptions};
+use picturify_processing::processors::color::grayscale::GrayscaleStrategy;
+
 use crate::commands::common::arg::ArgType;
 use crate::error::CliPicturifyResult;
-use crate::handlers::common::handler::CommandHandler;
+use crate::handlers::common::handler::{run_pipeline, CommandHandler};
 use crate::handlers::common::image_io::{read_image, write_image};
-use crate::progress::pipeline_progress_bar::run_progress_bar_for_pipeline;
-use clap::ArgMatches;
-use picturify_pipeline::color::grayscale::{GrayscalePipeline, GrayscalePipelineOptions};
-use picturify_pipeline::common::pipeline_progress::PipelineProgress;
-use picturify_pipeline::pipeline::Pipeline;
-use picturify_processing::processors::color::grayscale::GrayscaleStrategy;
-use std::thread::spawn;
 
 pub struct GrayscaleCommandHandler;
 
@@ -19,21 +17,12 @@ impl CommandHandler for GrayscaleCommandHandler {
             .get_one::<GrayscaleStrategy>(ArgType::GrayscaleStrategy.to_id())
             .unwrap();
         let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
-        let grayscale_pipeline = GrayscalePipeline::new(GrayscalePipelineOptions {
+        let pipeline = GrayscalePipeline::new(GrayscalePipelineOptions {
             strategy: *strategy,
             fast: *fast,
         });
 
-        let pipeline_progress = PipelineProgress::new();
-        let pipeline_progress_clone = pipeline_progress.clone();
-
-        let handle = spawn(move || {
-            run_progress_bar_for_pipeline(pipeline_progress_clone);
-        });
-
-        let result_image = grayscale_pipeline.run(image, Some(pipeline_progress.clone()));
-
-        handle.join().expect("Failed to join thread");
+        let result_image = run_pipeline(image, Box::new(pipeline))?;
 
         write_image(result_image, args.clone())?;
 

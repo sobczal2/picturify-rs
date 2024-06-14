@@ -1,6 +1,7 @@
+use thiserror::Error;
+
 use picturify_core::error::PicturifyError;
 use picturify_movie::error::MoviePicturifyError;
-use thiserror::Error;
 
 pub type CliPicturifyResult<T> = Result<T, CliPicturifyError>;
 
@@ -18,4 +19,6 @@ pub enum CliPicturifyError {
     MissingSubcommand,
     #[error("Movie Picturify error - {0}")]
     MoviePicturifyError(#[from] MoviePicturifyError),
+    #[error("Threading error")]
+    ThreadingError,
 }

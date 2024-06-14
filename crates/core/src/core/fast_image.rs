@@ -1,3 +1,9 @@
+use image::buffer::{EnumeratePixels, Pixels, PixelsMut, Rows, RowsMut};
+use image::io::Reader;
+use image::{DynamicImage, ImageFormat, Rgba, RgbaImage};
+use palette::{LinSrgba, Srgba};
+use rayon::prelude::*;
+
 use crate::conversions::image_palette_bridge::{rgba_to_srgba, srgba_to_rgba};
 use crate::core::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels, Offset};
 use crate::core::io::{ReadFromFile, WriteToFile};
@@ -6,11 +12,6 @@ use crate::error::PicturifyResult;
 use crate::geometry::coord::Coord;
 use crate::geometry::size::Size;
 use crate::threading::progress::{Progress, ProgressIteratorExt};
-use image::buffer::{EnumeratePixels, Pixels, PixelsMut, Rows, RowsMut};
-use image::io::Reader;
-use image::{DynamicImage, ImageFormat, Rgba, RgbaImage};
-use palette::{LinSrgba, Srgba};
-use rayon::prelude::*;
 
 #[derive(Debug, Clone)]
 pub struct FastImage {
@@ -477,15 +478,17 @@ impl WriteToFile for FastImage {
             ImageFormat::Farbfeld => true,
             ImageFormat::Avif => true,
             ImageFormat::Qoi => true,
-            _ => unreachable!("Unsupported image format")
+            _ => unreachable!("Unsupported image format"),
         };
-        
-        let image = if supports_alpha {
+
+        if supports_alpha {
             self.inner.save(path)?
         } else {
-            DynamicImage::ImageRgba8(self.inner.clone()).to_rgb8().save(path)?
+            DynamicImage::ImageRgba8(self.inner.clone())
+                .to_rgb8()
+                .save(path)?
         };
-        
-        Ok(image)
+
+        Ok(())
     }
 }

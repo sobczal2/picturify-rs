@@ -1,13 +1,14 @@
-use picturify_core::core::fast_image::FastImage;
 use std::fs::remove_file;
 use std::io::{Read, Write};
 use std::process::{Command, Stdio};
 use std::sync::{Arc, RwLock};
 
-use crate::error::{MoviePicturifyError, MoviePicturifyResult};
-use crate::progress::{MovieProgress, ProgressStage};
+use picturify_core::core::fast_image::FastImage;
 use picturify_pipeline::common::pipeline_progress::PipelineProgress;
 use picturify_pipeline::pipeline::Pipeline;
+
+use crate::error::{MoviePicturifyError, MoviePicturifyResult};
+use crate::progress::{MovieProgress, ProgressStage};
 
 pub struct MoviePipe;
 

@@ -1,8 +1,13 @@
+use std::collections::HashMap;
+
+use clap::ArgMatches;
+
 use crate::commands::common::command::Command;
 use crate::commands::common::image::ImageCommand;
 use crate::commands::image::color::brightness::BrightnessCommand;
 use crate::commands::image::color::grayscale::GrayscaleCommand;
 use crate::commands::image::color::negative::NegativeCommand;
+use crate::commands::image::color::quantization::QuantizationCommand;
 use crate::commands::image::color::sepia::SepiaCommand;
 use crate::commands::image::common::none::NoneCommand;
 use crate::commands::image::edge::sobel::SobelCommand;
@@ -19,6 +24,7 @@ use crate::handlers::common::handler::CommandHandler;
 use crate::handlers::image::color::brightness::BrightnessCommandHandler;
 use crate::handlers::image::color::grayscale::GrayscaleCommandHandler;
 use crate::handlers::image::color::negative::NegativeCommandHandler;
+use crate::handlers::image::color::quantization::QuantizationCommandHandler;
 use crate::handlers::image::color::sepia::SepiaCommandHandler;
 use crate::handlers::image::common::none::NoneCommandHandler;
 use crate::handlers::image::edge::sobel::SobelCommandHandler;
@@ -30,8 +36,6 @@ use crate::handlers::image::noise::kuwahara::KuwaharaCommandHandler;
 use crate::handlers::image::noise::mean_blur::MeanBlurCommandHandler;
 use crate::handlers::image::noise::median_blur::MedianBlurCommandHandler;
 use crate::handlers::image::noise::sharpen::SharpenCommandHandler;
-use clap::ArgMatches;
-use std::collections::HashMap;
 
 pub struct ImageCommandHandler;
 
@@ -52,6 +56,7 @@ impl CommandHandler for ImageCommandHandler {
                     BrightnessCommand::name(),
                     Box::new(BrightnessCommandHandler),
                 );
+                handlers.insert(QuantizationCommand::name(), Box::new(QuantizationCommandHandler));
 
                 // noise
                 handlers.insert(KuwaharaCommand::name(), Box::new(KuwaharaCommandHandler));

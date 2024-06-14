@@ -7,7 +7,7 @@ impl Command for RotateCommand {
     fn get() -> clap::Command {
         let cmd = clap::Command::new(Self::name())
             .arg(ArgType::Angle.to_arg())
-            .about("Rotate the core clockwise");
+            .about("Rotate the image clockwise");
         add_input_output_args(cmd)
     }
 

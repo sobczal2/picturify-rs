@@ -1,10 +1,13 @@
-use crate::commands::common::arg::ArgType;
-use crate::error::{CliPicturifyError, CliPicturifyResult};
+use std::time::Instant;
+
 use clap::ArgMatches;
 use log::debug;
+
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::core::io::{ReadFromFile, WriteToFile};
-use std::time::Instant;
+
+use crate::commands::common::arg::ArgType;
+use crate::error::{CliPicturifyError, CliPicturifyResult};
 
 pub fn read_image(args: ArgMatches) -> CliPicturifyResult<FastImage> {
     let input = args

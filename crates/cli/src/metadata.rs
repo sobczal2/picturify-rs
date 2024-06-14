@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use clap::{crate_authors, crate_description, crate_name, crate_version};
 
 pub const NAME: &str = crate_name!();

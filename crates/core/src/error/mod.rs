@@ -1,6 +1,6 @@
-pub mod processing;
-
 use thiserror::Error;
+
+pub mod processing;
 
 pub type PicturifyResult<T> = Result<T, PicturifyError>;
 

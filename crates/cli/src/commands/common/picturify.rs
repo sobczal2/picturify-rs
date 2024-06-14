@@ -17,10 +17,14 @@ impl Command for PicturifyCommand {
                 \t{} v{}\n\
                 \t{} v{}\n",
                 metadata::NAME,
-                metadata::NAME, metadata::VERSION,
-                picturify_core::metadata::NAME, picturify_core::metadata::VERSION,
-                picturify_processing::metadata::NAME, picturify_processing::metadata::VERSION,
-                picturify_movie::metadata::NAME, picturify_movie::metadata::VERSION,
+                metadata::NAME,
+                metadata::VERSION,
+                picturify_core::metadata::NAME,
+                picturify_core::metadata::VERSION,
+                picturify_processing::metadata::NAME,
+                picturify_processing::metadata::VERSION,
+                picturify_movie::metadata::NAME,
+                picturify_movie::metadata::VERSION,
             ))
             .subcommands(vec![ImageCommand::get(), MovieCommand::get()])
     }

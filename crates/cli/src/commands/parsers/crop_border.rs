@@ -1,9 +1,11 @@
+use std::ffi::OsStr;
+
 use clap::builder::TypedValueParser;
 use clap::error::ErrorKind;
 use clap::{Arg, Command, Error};
-use picturify_processing::processors::geometry::crop::CropBorder;
 use regex::Regex;
-use std::ffi::OsStr;
+
+use picturify_processing::processors::geometry::crop::CropBorder;
 
 #[derive(Debug, Copy, Clone)]
 pub struct CropBorderValueParser;

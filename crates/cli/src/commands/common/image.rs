@@ -2,6 +2,7 @@ use crate::commands::common::command::Command;
 use crate::commands::image::color::brightness::BrightnessCommand;
 use crate::commands::image::color::grayscale::GrayscaleCommand;
 use crate::commands::image::color::negative::NegativeCommand;
+use crate::commands::image::color::quantization::QuantizationCommand;
 use crate::commands::image::color::sepia::SepiaCommand;
 use crate::commands::image::common::none::NoneCommand;
 use crate::commands::image::edge::sobel::SobelCommand;
@@ -28,6 +29,7 @@ impl Command for ImageCommand {
                 NegativeCommand::get(),
                 GrayscaleCommand::get(),
                 BrightnessCommand::get(),
+                QuantizationCommand::get(),
                 // noise
                 KuwaharaCommand::get(),
                 MedianBlurCommand::get(),

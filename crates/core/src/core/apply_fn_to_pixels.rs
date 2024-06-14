@@ -1,9 +1,10 @@
-use crate::geometry::coord::Coord;
-use crate::threading::progress::Progress;
 use image::Rgba;
 use palette::convert::FromColorUnclamped;
 use palette::rgb::Rgb;
 use palette::{Clamp, IntoColor, LinSrgba, Srgba, WithAlpha};
+
+use crate::geometry::coord::Coord;
+use crate::threading::progress::Progress;
 
 pub struct Offset {
     pub skip_rows: usize,

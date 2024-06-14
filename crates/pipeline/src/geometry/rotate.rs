@@ -1,5 +1,3 @@
-use crate::common::pipeline_progress::PipelineProgress;
-use crate::pipeline::Pipeline;
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::geometry::angle::Angle;
 use picturify_processing::common::execution::Processor;
@@ -9,6 +7,9 @@ use picturify_processing::processors::geometry::rotate_fixed::{
 use picturify_processing::processors::geometry::rotate_flexible::{
     RotateFlexibleProcessor, RotateFlexibleProcessorOptions,
 };
+
+use crate::common::pipeline_progress::PipelineProgress;
+use crate::pipeline::Pipeline;
 
 #[derive(Copy, Clone)]
 pub struct RotatePipelineOptions {

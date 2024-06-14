@@ -1,8 +1,10 @@
-use indicatif::{ProgressBar, ProgressStyle};
-use picturify_movie::progress::{MovieProgress, ProgressStage};
 use std::sync::{Arc, RwLock};
 use std::thread::sleep;
 use std::time::Duration;
+
+use indicatif::{ProgressBar, ProgressStyle};
+
+use picturify_movie::progress::{MovieProgress, ProgressStage};
 
 pub fn run_progress_bar_for_movie(movie_progress: Arc<RwLock<MovieProgress>>) {
     let bar = ProgressBar::new_spinner();

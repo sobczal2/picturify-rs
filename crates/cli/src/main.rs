@@ -1,39 +1,23 @@
+use std::time::Instant;
+
+#[allow(unused_imports)]
+use log::{error, info, warn, LevelFilter};
+use simplelog::*;
+
 use crate::commands::common::command::Command;
 use crate::commands::common::picturify::PicturifyCommand;
 use crate::error::CliPicturifyError;
 use crate::handlers::common::handler::CommandHandler;
 use crate::handlers::common::image::ImageCommandHandler;
 use crate::handlers::common::movie::MovieCommandHandler;
-#[allow(unused_imports)]
-use log::{error, info, warn, LevelFilter};
-use simplelog::*;
-use std::time::Instant;
-use rand::random;
 
 mod commands;
 mod error;
 mod handlers;
-mod progress;
 mod metadata;
+mod progress;
 
 fn main() {
-    
-    #[cfg(target_os = "windows")]
-    if random::<i32>() % 3 == 0 {
-        println!("Oh you're using Windows? That's awkward, I'm gonna crash now.");
-        std::process::exit(1);
-    }
-    
-    #[cfg(debug_assertions)]
-    TermLogger::init(
-        LevelFilter::Debug,
-        Config::default(),
-        TerminalMode::Mixed,
-        ColorChoice::Auto,
-    )
-    .unwrap();
-
-    #[cfg(not(debug_assertions))]
     TermLogger::init(
         LevelFilter::Info,
         Config::default(),
@@ -41,7 +25,7 @@ fn main() {
         ColorChoice::Auto,
     )
     .unwrap();
-    
+
     let start = Instant::now();
 
     let matches = PicturifyCommand::get().get_matches();

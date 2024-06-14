@@ -1,37 +1,38 @@
 use picturify_core::core::fast_image::FastImage;
 use picturify_processing::common::execution::Processor;
-use picturify_processing::processors::color::negative::{
-    NegativeProcessor, NegativeProcessorOptions,
+use picturify_processing::processors::color::quantization::{
+    QuantizationProcessor, QuantizationProcessorOptions,
 };
 
 use crate::common::pipeline_progress::PipelineProgress;
 use crate::pipeline::Pipeline;
 
-pub struct NegativePipelineOptions {
+pub struct QuantizationPipelineOptions {
+    pub levels: u8,
     pub fast: bool,
 }
 
-pub struct NegativePipeline {
-    #[allow(dead_code)]
-    options: NegativePipelineOptions,
+pub struct QuantizationPipeline {
+    options: QuantizationPipelineOptions,
 }
 
-impl NegativePipeline {
-    pub fn new(options: NegativePipelineOptions) -> Self {
+impl QuantizationPipeline {
+    pub fn new(options: QuantizationPipelineOptions) -> Self {
         Self { options }
     }
 }
 
-const NEGATIVE_PROCESSOR_NAME: &str = "Negative";
+const QUANTIZATION_PROCESSOR_NAME: &str = "Quantization";
 
-impl Pipeline for NegativePipeline {
+impl Pipeline for QuantizationPipeline {
     fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
         let mut pipeline_progress = pipeline_progress.unwrap_or_default();
 
-        pipeline_progress.new_individual(NEGATIVE_PROCESSOR_NAME.to_string());
+        pipeline_progress.new_individual(QUANTIZATION_PROCESSOR_NAME.to_string());
         pipeline_progress.setup_combined(1);
 
-        let processor = NegativeProcessor::new(NegativeProcessorOptions {
+        let processor = QuantizationProcessor::new(QuantizationProcessorOptions {
+            levels: self.options.levels,
             use_fast_approximation: self.options.fast,
         });
 

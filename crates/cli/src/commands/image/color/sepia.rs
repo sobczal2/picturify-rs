@@ -7,7 +7,7 @@ impl Command for SepiaCommand {
     fn get() -> clap::Command {
         let cmd = clap::Command::new(Self::name())
             .arg(ArgType::Fast.to_arg())
-            .about("Run sepia filter on the core");
+            .about("Run sepia filter on the image");
         add_input_output_args(cmd)
     }
 

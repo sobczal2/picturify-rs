@@ -1,13 +1,16 @@
+use std::sync::{Arc, RwLock};
+use std::thread::spawn;
+
+use clap::ArgMatches;
+
+use picturify_movie::movie_pipe::MoviePipe;
+use picturify_movie::progress::MovieProgress;
+use picturify_pipeline::color::negative::{NegativePipeline, NegativePipelineOptions};
+
 use crate::commands::common::arg::ArgType;
 use crate::error::CliPicturifyResult;
 use crate::handlers::common::handler::CommandHandler;
 use crate::progress::movie_progress_bar::run_progress_bar_for_movie;
-use clap::ArgMatches;
-use picturify_movie::movie_pipe::MoviePipe;
-use picturify_movie::progress::MovieProgress;
-use picturify_pipeline::color::negative::{NegativePipeline, NegativePipelineOptions};
-use std::sync::{Arc, RwLock};
-use std::thread::spawn;
 
 pub struct NegativeCommandHandler;
 

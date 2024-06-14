@@ -1,8 +1,9 @@
-use crate::common::pipeline_progress::PipelineProgress;
-use crate::pipeline::Pipeline;
 use picturify_core::core::fast_image::FastImage;
 use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::color::sepia::{SepiaProcessor, SepiaProcessorOptions};
+
+use crate::common::pipeline_progress::PipelineProgress;
+use crate::pipeline::Pipeline;
 
 pub struct SepiaPipelineOptions {
     pub fast: bool,

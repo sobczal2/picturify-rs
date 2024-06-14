@@ -1,7 +1,9 @@
+use clap::{value_parser, Arg, ArgAction, Command};
+
+use picturify_processing::processors::color::grayscale::GrayscaleStrategy;
+
 use crate::commands::parsers::angle::AngleValueParser;
 use crate::commands::parsers::crop_border::CropBorderValueParser;
-use clap::{value_parser, Arg, ArgAction, Command};
-use picturify_processing::processors::color::grayscale::GrayscaleStrategy;
 
 pub enum ArgType {
     Input,
@@ -16,6 +18,7 @@ pub enum ArgType {
     Angle,
     Border,
     Rgb,
+    Levels,
 }
 
 impl ArgType {
@@ -90,6 +93,12 @@ impl ArgType {
                 .help("Use RGB version of the algorithm")
                 .default_value("false")
                 .value_parser(value_parser!(bool)),
+            ArgType::Levels => Arg::new(self.to_id())
+                .short('l')
+                .long("levels")
+                .help("Number of levels")
+                .required(true)
+                .value_parser(value_parser!(u8)),
         }
     }
 
@@ -107,6 +116,7 @@ impl ArgType {
             ArgType::Angle => "angle",
             ArgType::Border => "crop-border",
             ArgType::Rgb => "rgb",
+            ArgType::Levels => "levels",
         }
     }
 }

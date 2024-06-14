@@ -1,6 +1,8 @@
-use indicatif::{ProgressBar, ProgressStyle};
-use picturify_pipeline::common::pipeline_progress::PipelineProgress;
 use std::thread::sleep;
+
+use indicatif::{ProgressBar, ProgressStyle};
+
+use picturify_pipeline::common::pipeline_progress::PipelineProgress;
 
 pub fn run_progress_bar_for_pipeline(pipeline_progress: PipelineProgress) {
     let bar = ProgressBar::new(100);

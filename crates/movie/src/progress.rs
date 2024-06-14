@@ -1,6 +1,7 @@
-use picturify_core::threading::progress::Progress;
 use std::ops::Deref;
 use std::sync::{Arc, RwLock};
+
+use picturify_core::threading::progress::Progress;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ProgressStage {
