@@ -8,14 +8,22 @@ use crate::handlers::common::movie::MovieCommandHandler;
 use log::{error, info, warn, LevelFilter};
 use simplelog::*;
 use std::time::Instant;
+use rand::random;
 
 mod commands;
 mod error;
 mod handlers;
-mod metadata;
 mod progress;
+mod metadata;
 
 fn main() {
+    
+    #[cfg(target_os = "windows")]
+    if random::<i32>() % 3 == 0 {
+        println!("Oh you're using Windows? That's awkward, I'm gonna crash now.");
+        std::process::exit(1);
+    }
+    
     #[cfg(debug_assertions)]
     TermLogger::init(
         LevelFilter::Debug,
@@ -33,8 +41,7 @@ fn main() {
         ColorChoice::Auto,
     )
     .unwrap();
-
-    welcome();
+    
     let start = Instant::now();
 
     let matches = PicturifyCommand::get().get_matches();
@@ -62,14 +69,4 @@ fn main() {
         ),
         _ => info!("Execution time: {}s", duration.as_secs()),
     }
-}
-
-#[cfg(not(target_os = "windows"))]
-fn welcome() {
-    info!("Welcome to Picturify CLI");
-}
-
-#[cfg(target_os = "windows")]
-fn welcome() {
-    warn!("Welcome to Picturify CLI. You are using Windows, please reconsider your life choices.");
 }

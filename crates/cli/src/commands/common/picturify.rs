@@ -1,29 +1,31 @@
 use crate::commands::common::command::Command;
 use crate::commands::common::image::ImageCommand;
 use crate::commands::common::movie::MovieCommand;
-use crate::metadata::get_metadata;
+use crate::metadata;
 
 pub struct PicturifyCommand;
 
 impl Command for PicturifyCommand {
     fn get() -> clap::Command {
-        let picturify_metadata = get_metadata();
-
         clap::Command::new(Self::name())
-            .version(picturify_metadata.cli_version.to_string())
+            .version(metadata::VERSION)
+            .author(metadata::AUTHORS)
             .about(format!(
-                "Picturify CLI - a CLI tool for core processing using the Picturify library\n\
-                CLI Version: {}\n\
-                Core Version: {}\n\
-                Processing Version: {}\n",
-                picturify_metadata.cli_version,
-                picturify_metadata.core_version,
-                picturify_metadata.processing_version
+                "{} - a CLI tool for core processing using the Picturify library\n\n\
+                \t{} v{}\n\
+                \t{} v{}\n\
+                \t{} v{}\n\
+                \t{} v{}\n",
+                metadata::NAME,
+                metadata::NAME, metadata::VERSION,
+                picturify_core::metadata::NAME, picturify_core::metadata::VERSION,
+                picturify_processing::metadata::NAME, picturify_processing::metadata::VERSION,
+                picturify_movie::metadata::NAME, picturify_movie::metadata::VERSION,
             ))
             .subcommands(vec![ImageCommand::get(), MovieCommand::get()])
     }
 
     fn name() -> &'static str {
-        "picturify"
+        metadata::NAME
     }
 }

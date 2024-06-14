@@ -4,3 +4,4 @@ pub mod edge;
 pub mod geometry;
 pub mod noise;
 pub mod pipeline;
+pub mod metadata;

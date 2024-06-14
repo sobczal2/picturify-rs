@@ -4,6 +4,7 @@ pub mod error;
 pub mod geometry;
 pub mod pixel;
 pub mod threading;
+pub mod metadata;
 
 pub use image;
 pub use palette;
