@@ -1,6 +1,6 @@
 [package]
 name = "picturify-pipeline"
-version = "0.1.0"
+version = "0.1.0-alpha"
 authors = ["81999946+sobczal2@users.noreply.github.com"]
 edition = "2021"
 
