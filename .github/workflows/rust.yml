@@ -1,4 +1,4 @@
-name: Rust
+name: Build
 
 on:
   push:
@@ -43,6 +43,9 @@ jobs:
         key: ${{ runner.os }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
         restore-keys: |
           ${{ runner.os }}-cargo-build-
+
+    - name: Install cmake
+      run: sudo apt-get update && sudo apt-get install -y cmake
 
     - name: Build
       run: cargo build --verbose
