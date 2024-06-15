@@ -1,6 +1,6 @@
 use crate::geometry::angle::Angle;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Size {
     width: usize,
     height: usize,

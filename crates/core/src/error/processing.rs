@@ -1,5 +1,7 @@
 use thiserror::Error;
 
+pub type ProcessingResult<T> = Result<T, ProcessingError>;
+
 #[derive(Debug, Error)]
 pub enum ProcessingError {
     #[error("Channel selection not supported")]

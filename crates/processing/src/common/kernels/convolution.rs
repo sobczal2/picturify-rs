@@ -1,43 +1,30 @@
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::processing::{ProcessingError, ProcessingResult};
 use picturify_core::geometry::coord::Coord;
 use picturify_core::geometry::size::Size;
 use picturify_core::image::Rgba;
 use picturify_core::palette::LinSrgba;
-use picturify_core::utils::vec::rotate_left_2d;
+use crate::common::functions::gaussian_2d;
 
-use crate::helpers::functions::gaussian_2d;
-
-pub fn create_sobel_kernel_x() -> Vec<Vec<f32>> {
-    vec![
-        vec![1.0, 0.0, -1.0],
-        vec![2.0, 0.0, -2.0],
-        vec![1.0, 0.0, -1.0],
-    ]
-}
-
-pub fn create_sobel_kernel_y() -> Vec<Vec<f32>> {
-    rotate_left_2d(create_sobel_kernel_x())
-}
-
-pub fn create_prewitt_kernel_x() -> Vec<Vec<f32>> {
-    vec![
-        vec![1.0, 1.0, 1.0],
-        vec![0.0, 0.0, 0.0],
-        vec![-1.0, -1.0, -1.0],
-    ]
-}
-
-pub fn create_prewitt_kernel_y() -> Vec<Vec<f32>> {
-    rotate_left_2d(create_prewitt_kernel_x())
-}
-
+#[derive(Clone, Debug)]
 pub struct ConvolutionKernel {
     pub values: Vec<Vec<f32>>,
 }
 
 impl ConvolutionKernel {
-    pub fn new(values: Vec<Vec<f32>>) -> Self {
-        ConvolutionKernel { values }
+    pub fn new(values: Vec<Vec<f32>>) -> ProcessingResult<Self> {
+        let kernel = ConvolutionKernel { values };
+
+        if !kernel.validate() {
+            return Err(ProcessingError::InvalidKernel);
+        }
+
+        Ok(kernel)
+    }
+
+    pub fn validate(&self) -> bool {
+        let width = self.values[0].len();
+        self.values.iter().all(|row| row.len() == width)
     }
 
     pub fn new_mean(radius: usize) -> Self {
@@ -84,6 +71,12 @@ impl ConvolutionKernel {
     #[inline(always)]
     pub fn size(&self) -> Size {
         (self.values[0].len(), self.values.len()).into()
+    }
+
+    #[inline(always)]
+    pub fn radius(&self) -> usize {
+        let (width, _): (usize, usize) = self.size().into();
+        width / 2
     }
 
     #[inline(always)]

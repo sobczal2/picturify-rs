@@ -2,7 +2,7 @@ use picturify_core::core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
 
 use crate::common::execution::Processor;
-use crate::helpers::kernels::ConvolutionKernel;
+use crate::common::kernels::convolution::ConvolutionKernel;
 use crate::processors::internal::convolution_rgb::{
     ConvolutionRgbProcessor, ConvolutionRgbProcessorOptions,
 };

@@ -36,6 +36,15 @@ impl Coord {
     pub fn to_index(&self, width: i32) -> usize {
         (self.y * width + self.x) as usize
     }
+    #[inline]
+    pub fn x(&self) -> i32 {
+        self.x
+    }
+    
+    #[inline]
+    pub fn y(&self) -> i32 {
+        self.y
+    }
 }
 
 impl Add for Coord {
@@ -69,6 +78,23 @@ impl SubAssign for Coord {
     fn sub_assign(&mut self, other: Self) {
         self.x -= other.x;
         self.y -= other.y;
+    }
+}
+
+impl Sub<i32> for Coord {
+    type Output = Self;
+
+    #[inline]
+    fn sub(self, other: i32) -> Self {
+        Coord::new(self.x - other, self.y - other)
+    }
+}
+
+impl SubAssign<i32> for Coord {
+    #[inline]
+    fn sub_assign(&mut self, other: i32) {
+        self.x -= other;
+        self.y -= other;
     }
 }
 

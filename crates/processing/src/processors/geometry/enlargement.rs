@@ -79,7 +79,7 @@ impl Processor for EnlargementProcessor {
         );
 
         let mut new_image = FastImage::empty(new_size);
-        let shift = (self.options.border.left, self.options.border.top).into();
+        let shift: Coord = (self.options.border.left, self.options.border.top).into();
 
         match self.options.strategy {
             EnlargementStrategy::Constant(pixel) => {
