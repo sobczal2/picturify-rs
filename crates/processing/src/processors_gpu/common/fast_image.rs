@@ -38,8 +38,6 @@ impl CFastImage {
             u8_vec[i] = ((*self.data.offset(i as isize)) * 255.0) as u8;
         }
         
-        println!("width: {}, height: {}", self.size.width, self.size.height);
-        println!("u8_vec: {:?}", u8_vec.len());
         FastImage::from_rgba_vec((self.size.width as u32, self.size.height as u32).into(), u8_vec)
     }
 }

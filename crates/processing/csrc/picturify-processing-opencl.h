@@ -1,7 +1,7 @@
 #ifndef CSRC_LIBRARY_H
 #define CSRC_LIBRARY_H
 #include "common/fast_image.h"
-
-void half_image(const CFastImage* fast_image);
+#include "common/status.h"
+#include "color/sepia.h"
 
 #endif //CSRC_LIBRARY_H

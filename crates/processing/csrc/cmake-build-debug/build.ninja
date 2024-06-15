@@ -61,6 +61,18 @@ build CMakeFiles/picturify-processing-opencl.dir/common/fast_image.c.o: C_COMPIL
   OBJECT_DIR = CMakeFiles/picturify-processing-opencl.dir
   OBJECT_FILE_DIR = CMakeFiles/picturify-processing-opencl.dir/common
 
+build CMakeFiles/picturify-processing-opencl.dir/color/sepia.c.o: C_COMPILER__picturify-processing-opencl_unscanned_Debug /home/sobczal/Devel/rust/picturify-rs/crates/processing/csrc/color/sepia.c || cmake_object_order_depends_target_picturify-processing-opencl
+  DEP_FILE = CMakeFiles/picturify-processing-opencl.dir/color/sepia.c.o.d
+  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles/picturify-processing-opencl.dir
+  OBJECT_FILE_DIR = CMakeFiles/picturify-processing-opencl.dir/color
+
+build CMakeFiles/picturify-processing-opencl.dir/common/status.c.o: C_COMPILER__picturify-processing-opencl_unscanned_Debug /home/sobczal/Devel/rust/picturify-rs/crates/processing/csrc/common/status.c || cmake_object_order_depends_target_picturify-processing-opencl
+  DEP_FILE = CMakeFiles/picturify-processing-opencl.dir/common/status.c.o.d
+  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles/picturify-processing-opencl.dir
+  OBJECT_FILE_DIR = CMakeFiles/picturify-processing-opencl.dir/common
+
 
 # =============================================================================
 # Link build statements for STATIC_LIBRARY target picturify-processing-opencl
@@ -69,7 +81,7 @@ build CMakeFiles/picturify-processing-opencl.dir/common/fast_image.c.o: C_COMPIL
 #############################################
 # Link the static library libpicturify-processing-opencl.a
 
-build libpicturify-processing-opencl.a: C_STATIC_LIBRARY_LINKER__picturify-processing-opencl_Debug CMakeFiles/picturify-processing-opencl.dir/picturify-processing-opencl.c.o CMakeFiles/picturify-processing-opencl.dir/common/fast_image.c.o
+build libpicturify-processing-opencl.a: C_STATIC_LIBRARY_LINKER__picturify-processing-opencl_Debug CMakeFiles/picturify-processing-opencl.dir/picturify-processing-opencl.c.o CMakeFiles/picturify-processing-opencl.dir/common/fast_image.c.o CMakeFiles/picturify-processing-opencl.dir/color/sepia.c.o CMakeFiles/picturify-processing-opencl.dir/common/status.c.o
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = CMakeFiles/picturify-processing-opencl.dir
   POST_BUILD = :

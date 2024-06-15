@@ -1,4 +1,5 @@
 use clap::ArgMatches;
+use log::warn;
 
 use picturify_pipeline::color::sepia::{SepiaPipeline, SepiaPipelineOptions};
 
@@ -13,8 +14,13 @@ impl CommandHandler for SepiaCommandHandler {
     fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
         let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
+        let gpu = args.get_one::<bool>(ArgType::Gpu.to_id()).unwrap();
+        
+        if *gpu && *fast {
+            warn!("Fast flag is ignored when using GPU");
+        }
 
-        let pipeline = SepiaPipeline::new(SepiaPipelineOptions { fast: *fast });
+        let pipeline = SepiaPipeline::new(SepiaPipelineOptions { fast: *fast, use_gpu: *gpu });
 
         let result_image = run_pipeline(image, Box::new(pipeline))?;
 

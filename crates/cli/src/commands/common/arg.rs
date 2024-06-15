@@ -23,6 +23,7 @@ pub enum ArgType {
     Levels,
     Size,
     ScaleStrategy,
+    Gpu,
 }
 
 impl ArgType {
@@ -113,6 +114,12 @@ impl ArgType {
                 .help("Scale strategy")
                 .default_value("nearest-neighbor")
                 .value_parser(ScaleStrategyValueParser::new()),
+            ArgType::Gpu => Arg::new(self.to_id())
+                .long("gpu")
+                .action(ArgAction::SetTrue)
+                .help("Use GPU version of the algorithm")
+                .default_value("false")
+                .value_parser(value_parser!(bool)),
         }
     }
 
@@ -133,6 +140,7 @@ impl ArgType {
             ArgType::Levels => "levels",
             ArgType::Size => "size",
             ArgType::ScaleStrategy => "scale-strategy",
+            ArgType::Gpu => "gpu",
         }
     }
 }
