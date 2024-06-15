@@ -11,3 +11,7 @@ picturify-processing.workspace = true
 picturify-core.workspace = true
 log.workspace = true
 clap.workspace = true
+
+[features]
+default = []
+gpu = ["picturify-processing/gpu"]

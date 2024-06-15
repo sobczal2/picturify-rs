@@ -23,6 +23,7 @@ pub enum ArgType {
     Levels,
     Size,
     ScaleStrategy,
+    #[cfg(feature = "gpu")]
     Gpu,
 }
 
@@ -114,6 +115,7 @@ impl ArgType {
                 .help("Scale strategy")
                 .default_value("nearest-neighbor")
                 .value_parser(ScaleStrategyValueParser::new()),
+            #[cfg(feature = "gpu")]
             ArgType::Gpu => Arg::new(self.to_id())
                 .long("gpu")
                 .action(ArgAction::SetTrue)
@@ -140,6 +142,7 @@ impl ArgType {
             ArgType::Levels => "levels",
             ArgType::Size => "size",
             ArgType::ScaleStrategy => "scale-strategy",
+            #[cfg(feature = "gpu")]
             ArgType::Gpu => "gpu",
         }
     }
