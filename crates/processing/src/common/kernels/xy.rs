@@ -42,39 +42,33 @@ impl XyKernels {
         let (width, height): (usize, usize) = self.x.size().into();
         XyKernelsIterator {
             xy_kernels: self,
-            current_x: 0,
-            current_y: 0,
+            current: 0,
             width,
-            height,
+            total_size: width * height,
         }
     }
 }
 
 pub struct XyKernelsIterator<'a> {
     xy_kernels: &'a XyKernels,
-    current_x: usize,
-    current_y: usize,
+    current: usize,
     width: usize,
-    height: usize,
+    total_size: usize,
 }
 
 impl<'a> Iterator for XyKernelsIterator<'a> {
     type Item = (Coord, f32, f32);
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.current_y >= self.height {
+        if self.current >= self.total_size {
             return None;
         }
 
-        let coord = Coord::new(self.current_x as i32, self.current_y as i32);
+        let coord= Coord::from_1d_index(self.current, self.width);
         let x_value = self.xy_kernels.get_x(coord);
         let y_value = self.xy_kernels.get_y(coord);
-
-        self.current_x += 1;
-        if self.current_x >= self.width {
-            self.current_x = 0;
-            self.current_y += 1;
-        }
+        
+        self.current += 1;
 
         Some((coord, x_value, y_value))
     }

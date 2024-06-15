@@ -8,12 +8,21 @@ use crate::common::functions::gaussian_2d;
 
 #[derive(Clone, Debug)]
 pub struct ConvolutionKernel {
-    pub values: Vec<Vec<f32>>,
+    values: Vec<f32>,
+    width: usize,
+    height: usize,
 }
 
 impl ConvolutionKernel {
     pub fn new(values: Vec<Vec<f32>>) -> ProcessingResult<Self> {
-        let kernel = ConvolutionKernel { values };
+        let width = values[0].len();
+        let height = values.len();
+
+        let kernel = ConvolutionKernel {
+            values: values.into_iter().flatten().collect(),
+            width,
+            height,
+        };
 
         if !kernel.validate() {
             return Err(ProcessingError::InvalidKernel);
@@ -23,24 +32,24 @@ impl ConvolutionKernel {
     }
 
     pub fn validate(&self) -> bool {
-        let width = self.values[0].len();
-        self.values.iter().all(|row| row.len() == width)
+        self.values.len() == self.width * self.height
     }
 
     pub fn new_mean(radius: usize) -> Self {
         let value = 1.0 / ((2 * radius + 1) * (2 * radius + 1)) as f32;
         let values = vec![vec![value; 2 * radius + 1]; 2 * radius + 1];
-        ConvolutionKernel { values }
+        ConvolutionKernel::new(values).unwrap()
     }
 
     pub fn new_sharpen() -> Self {
-        ConvolutionKernel {
-            values: vec![
+        ConvolutionKernel::new(
+            vec![
                 vec![0.0, -1.0, 0.0],
                 vec![-1.0, 5.0, -1.0],
                 vec![0.0, -1.0, 0.0],
             ],
-        }
+        )
+            .unwrap()
     }
 
     pub fn new_gaussian(radius: usize, sigma: f32) -> Self {
@@ -65,12 +74,12 @@ impl ConvolutionKernel {
             .iter_mut()
             .for_each(|row| row.iter_mut().for_each(|value| *value /= sum));
 
-        ConvolutionKernel { values }
+        ConvolutionKernel::new(values).unwrap()
     }
 
     #[inline(always)]
     pub fn size(&self) -> Size {
-        (self.values[0].len(), self.values.len()).into()
+        (self.width, self.height).into()
     }
 
     #[inline(always)]
@@ -81,8 +90,7 @@ impl ConvolutionKernel {
 
     #[inline(always)]
     pub fn get(&self, coord: Coord) -> f32 {
-        let (x, y): (usize, usize) = coord.into();
-        self.values[y][x]
+        self.values[coord.array_index(self.width)]
     }
 
     pub fn convolve_rgb_fast(&self, image: &FastImage, coord: Coord) -> Rgba<u8> {

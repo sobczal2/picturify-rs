@@ -38,8 +38,8 @@ impl Processor for GradientBasedProcessor {
         let max_magnitude = Arc::new(Mutex::new(f32::MIN));
 
         let kernels = self.options.xy_kernels.clone();
-        
-        let get_pixel_fn: fn(image: &FastImage, coord: Coord) -> Box<dyn  RgbaF32Pixel> = if self.options.use_fast_approximation {
+
+        let get_pixel_fn: fn(image: &FastImage, coord: Coord) -> Box<dyn RgbaF32Pixel> = if self.options.use_fast_approximation {
             |image, coord| {
                 Box::new(FastImage::get_image_pixel(image, coord))
             }
@@ -58,46 +58,38 @@ impl Processor for GradientBasedProcessor {
             .for_each(|(y_mag, row)| {
                 let mut row_min_magnitude = f32::MAX;
                 let mut row_max_magnitude = f32::MIN;
-                
-                row.iter_mut().enumerate().for_each(|(x_mag, magnitude)| {
-                    let pixel_coord: Coord = (x_mag + kernel_radius, y_mag + kernel_radius).into();
 
-                    let mut magnitude_x = 0.0;
-                    let mut magnitude_y = 0.0;
+                row
+                    .iter_mut()
+                    .enumerate()
+                    .for_each(|(x_mag, magnitude)| {
+                        let pixel_coord: Coord = (x_mag + kernel_radius, y_mag + kernel_radius).into();
 
-                    kernels
-                        .iter()
-                        .for_each(|(coord, x_value, y_value)| {
-                            let red: f32;
-                            let green: f32;
-                            let blue: f32;
+                        let mut magnitude_x = 0.0;
+                        let mut magnitude_y = 0.0;
 
-                            let actual_coord = (pixel_coord + coord) - kernel_radius as i32;
+                        kernels
+                            .iter()
+                            .for_each(|(coord, x_value, y_value)| {
+                                let actual_coord = (pixel_coord + coord) - kernel_radius as i32;
 
-                            let pixel = get_pixel_fn(&image, actual_coord);
+                                let pixel = get_pixel_fn(&image, actual_coord);
 
-                            red = pixel.red_f32();
-                            green = pixel.green_f32();
-                            blue = pixel.blue_f32();
+                                let colors = pixel.red_f32() + pixel.green_f32() + pixel.blue_f32();
 
-                            magnitude_x += x_value * (red + green + blue);
-                            magnitude_y += y_value * (red + green + blue);
-                        });
+                                magnitude_x += x_value * colors;
+                                magnitude_y += y_value * colors;
+                            });
 
-                    magnitude_x /= 3.0;
-                    magnitude_y /= 3.0;
+                        magnitude_x /= 3.0;
+                        magnitude_y /= 3.0;
 
-                    let actual_magnitude = (magnitude_x.powi(2) + magnitude_y.powi(2)).sqrt();
-                    *magnitude = actual_magnitude;
+                        let actual_magnitude = (magnitude_x.powi(2) + magnitude_y.powi(2)).sqrt();
+                        *magnitude = actual_magnitude;
 
-                    if actual_magnitude < row_min_magnitude {
-                        row_min_magnitude = actual_magnitude;
-                    }
-
-                    if actual_magnitude > row_max_magnitude {
-                        row_max_magnitude = actual_magnitude;
-                    }
-                });
+                        row_min_magnitude = row_min_magnitude.min(actual_magnitude);
+                        row_max_magnitude = row_max_magnitude.max(actual_magnitude);
+                    });
 
                 if row_min_magnitude < *min_magnitude.lock().unwrap() {
                     *min_magnitude.lock().unwrap() = row_min_magnitude;
