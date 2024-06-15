@@ -10,3 +10,6 @@ edition = "2021"
 picturify-core.workspace = true
 log.workspace = true
 clap.workspace = true
+
+[build-dependencies]
+cmake.workspace = true

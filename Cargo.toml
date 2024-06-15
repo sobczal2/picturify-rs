@@ -33,3 +33,4 @@ uuid = { version = "1.8.0", features = ["v4"] }
 regex = "1.10.5"
 rand = "0.8.5"
 colored = "2.1.0"
+cmake = "0.1.50"
