@@ -452,7 +452,9 @@ where
 
 impl ReadFromFile for FastImage {
     fn read_from_file(path: &str) -> PicturifyResult<Box<Self>> {
-        let dynamic_image = Reader::open(path)?.decode()?;
+        let mut reader = Reader::open(path)?;
+        reader.no_limits();
+        let dynamic_image = reader.decode()?;
         Ok(Box::new(FastImage {
             inner: dynamic_image.into_rgba8(),
         }))
