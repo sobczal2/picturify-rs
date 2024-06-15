@@ -26,6 +26,9 @@ fn main() {
         ColorChoice::Auto,
     )
     .unwrap();
+    
+    #[cfg(target_os = "windows")]
+    warn!("You are using windows, please reconsider your life choices");
 
     let start = Instant::now();
 
