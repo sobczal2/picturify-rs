@@ -1,14 +1,12 @@
-use std::process::{exit, ExitCode, Termination};
-use std::time::Instant;
+use std::process::ExitCode;
 
 #[allow(unused_imports)]
 use log::{error, info, warn, LevelFilter};
-use log::debug;
 use simplelog::*;
 
 use crate::commands::common::command::Command;
 use crate::commands::common::picturify::PicturifyCommand;
-use crate::error::{CliPicturifyError, CliPicturifyResult};
+use crate::error::CliPicturifyError;
 use crate::handlers::common::handler::CommandHandler;
 use crate::handlers::common::image::ImageCommandHandler;
 use crate::handlers::common::movie::MovieCommandHandler;
@@ -28,11 +26,9 @@ fn main() -> ExitCode {
         ColorChoice::Auto,
     )
     .unwrap();
-    
+
     #[cfg(target_os = "windows")]
     warn!("You are using windows, please reconsider your life choices");
-
-    let start = Instant::now();
 
     let matches = PicturifyCommand::get().get_matches();
 
@@ -44,11 +40,9 @@ fn main() -> ExitCode {
             Err(CliPicturifyError::MissingCommand)
         }
     };
-    
+
     match result {
-        Ok(_) => {
-            ExitCode::SUCCESS
-        }
+        Ok(_) => ExitCode::SUCCESS,
         Err(e) => {
             error!("{}", e);
             ExitCode::FAILURE

@@ -3,8 +3,7 @@ extern crate cmake;
 #[cfg(feature = "gpu")]
 use cmake::Config;
 
-fn main()
-{
+fn main() {
     #[cfg(feature = "gpu")]
     {
         let dst = Config::new("csrc")

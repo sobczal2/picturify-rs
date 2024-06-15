@@ -23,7 +23,7 @@ impl CommandHandler for SepiaCommandHandler {
         if *gpu && *fast {
             warn!("Fast flag is ignored when using GPU");
         }
-        
+
         let pipeline = SepiaPipeline::new(SepiaPipelineOptions {
             fast: *fast,
             #[cfg(feature = "gpu")]

@@ -2,7 +2,9 @@ use picturify_core::core::fast_image::FastImage;
 use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::color::sepia::{SepiaProcessor, SepiaProcessorOptions};
 #[cfg(feature = "gpu")]
-use picturify_processing::processors_gpu::color::sepia::{SepiaGpuProcessor, SepiaGpuProcessorOptions};
+use picturify_processing::processors_gpu::color::sepia::{
+    SepiaGpuProcessor, SepiaGpuProcessorOptions,
+};
 
 use crate::common::pipeline_progress::PipelineProgress;
 use crate::pipeline::Pipeline;
@@ -39,7 +41,7 @@ impl Pipeline for SepiaPipeline {
                 use_fast_approximation: self.options.fast,
             })),
         };
-        
+
         #[cfg(not(feature = "gpu"))]
         let processor: Box<dyn Processor> = Box::new(SepiaProcessor::new(SepiaProcessorOptions {
             use_fast_approximation: self.options.fast,

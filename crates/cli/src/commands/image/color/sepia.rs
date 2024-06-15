@@ -12,11 +12,10 @@ impl CommandForImage for SepiaCommand {
                 .arg(ArgType::Fast.to_arg())
                 .arg(ArgType::Gpu.to_arg())
         }
-        
+
         #[cfg(not(feature = "gpu"))]
         {
-            Self::get_base()
-                .arg(ArgType::Fast.to_arg())
+            Self::get_base().arg(ArgType::Fast.to_arg())
         }
     }
 
