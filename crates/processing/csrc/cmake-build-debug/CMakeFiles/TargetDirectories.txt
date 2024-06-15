@@ -1,0 +1,7 @@
+/home/sobczal/Devel/rust/picturify-rs/crates/processing/csrc/cmake-build-debug/CMakeFiles/picturify-processing-opencl.dir
+/home/sobczal/Devel/rust/picturify-rs/crates/processing/csrc/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/sobczal/Devel/rust/picturify-rs/crates/processing/csrc/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/sobczal/Devel/rust/picturify-rs/crates/processing/csrc/cmake-build-debug/CMakeFiles/list_install_components.dir
+/home/sobczal/Devel/rust/picturify-rs/crates/processing/csrc/cmake-build-debug/CMakeFiles/install.dir
+/home/sobczal/Devel/rust/picturify-rs/crates/processing/csrc/cmake-build-debug/CMakeFiles/install/local.dir
+/home/sobczal/Devel/rust/picturify-rs/crates/processing/csrc/cmake-build-debug/CMakeFiles/install/strip.dir
