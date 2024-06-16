@@ -2,6 +2,7 @@ use colored::Colorize;
 use std::fmt::Display;
 
 pub enum Group {
+    Blob,
     Color,
     Common,
     Edge,
@@ -11,7 +12,7 @@ pub enum Group {
 
 impl Group {
     fn names() -> Vec<&'static str> {
-        vec!["COLOR", "COMMON", "EDGE", "GEOMETRY", "NOISE"]
+        vec!["BLOB", "COLOR", "COMMON", "EDGE", "GEOMETRY", "NOISE"]
     }
 
     fn max_len() -> usize {
@@ -24,6 +25,7 @@ impl Display for Group {
         let max_len = Group::max_len() + 2;
 
         let name = match self {
+            Group::Blob => "BLOB",
             Group::Color => "COLOR",
             Group::Common => "COMMON",
             Group::Edge => "EDGE",
@@ -36,6 +38,7 @@ impl Display for Group {
         let result = format!("{:<width$}", name, width = max_len);
 
         match self {
+            Group::Blob => write!(f, "{}", result.cyan()),
             Group::Color => write!(f, "{}", result.red()),
             Group::Common => write!(f, "{}", result.green()),
             Group::Edge => write!(f, "{}", result.blue()),

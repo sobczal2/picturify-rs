@@ -76,6 +76,31 @@ impl ConvolutionKernel {
 
         ConvolutionKernel::new(values).unwrap()
     }
+    
+    pub fn new_laplacian_of_gaussian(radius: usize, sigma: f32) -> Self {
+        let mut values = vec![vec![0.0; 2 * radius + 1]; 2 * radius + 1];
+
+        let sigma_squared = sigma * sigma;
+        let two_sigma_squared = 2.0 * sigma_squared;
+
+        let mut sum = 0.0;
+
+        values.iter_mut().enumerate().for_each(|(i, row)| {
+            row.iter_mut().enumerate().for_each(|(j, value)| {
+                let x = i as f32 - radius as f32;
+                let y = j as f32 - radius as f32;
+
+                *value = gaussian_2d(x, y, two_sigma_squared) * (x * x + y * y - 2.0 * sigma_squared) / (sigma_squared * sigma_squared * sigma_squared);
+                sum += *value;
+            });
+        });
+
+        values
+            .iter_mut()
+            .for_each(|row| row.iter_mut().for_each(|value| *value /= sum));
+
+        ConvolutionKernel::new(values).unwrap()
+    }
 
     #[inline(always)]
     pub fn size(&self) -> Size {
