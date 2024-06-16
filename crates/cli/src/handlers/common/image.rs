@@ -4,6 +4,7 @@ use clap::ArgMatches;
 
 use crate::commands::common::command::{Command, CommandForImage};
 use crate::commands::common::image::ImageCommand;
+use crate::commands::image::blob::laplacian_of_gaussian::LaplacianOfGaussianCommand;
 use crate::commands::image::color::brightness::BrightnessCommand;
 use crate::commands::image::color::grayscale::GrayscaleCommand;
 use crate::commands::image::color::negative::NegativeCommand;
@@ -23,6 +24,7 @@ use crate::commands::image::noise::median_blur::MedianBlurCommand;
 use crate::commands::image::noise::sharpen::SharpenCommand;
 use crate::error::{CliPicturifyError, CliPicturifyResult};
 use crate::handlers::common::handler::CommandHandler;
+use crate::handlers::image::blob::laplacian_of_gaussian::LaplacianOfGaussianCommandHandler;
 use crate::handlers::image::color::brightness::BrightnessCommandHandler;
 use crate::handlers::image::color::grayscale::GrayscaleCommandHandler;
 use crate::handlers::image::color::negative::NegativeCommandHandler;
@@ -48,6 +50,9 @@ impl CommandHandler for ImageCommandHandler {
         match args.subcommand() {
             Some((name, args)) => {
                 let mut handlers: HashMap<&str, Box<dyn CommandHandler>> = HashMap::new();
+
+                // blob
+                handlers.insert(LaplacianOfGaussianCommand::name(), Box::new(LaplacianOfGaussianCommandHandler));
 
                 // common
                 handlers.insert(

@@ -1,5 +1,5 @@
 use std::path::PathBuf;
-use clap::{Arg, value_parser};
+use clap::{Arg, ArgAction, value_parser};
 use clap::builder::{IntoResettable, OsStr};
 
 pub trait PicturifyArg {
@@ -51,6 +51,7 @@ impl PicturifyArg for FastArg {
             .short('f')
             .long("fast")
             .help("Fast mode")
+            .action(ArgAction::SetTrue)
             .default_value(default_value)
             .value_parser(value_parser!(bool))
     }

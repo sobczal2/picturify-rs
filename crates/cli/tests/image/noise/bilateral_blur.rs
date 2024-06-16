@@ -9,7 +9,7 @@ fn bilateral_blur_standard_args_should_succeed() {
         .arg("bilateral-blur")
         .arg("--ss")
         .arg("1.0")
-        .arg("--si")
+        .arg("--is")
         .arg("1.0")
         .with_io(&test_files);
 

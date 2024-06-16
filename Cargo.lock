@@ -1021,6 +1021,7 @@ dependencies = [
  "picturify-movie",
  "picturify-pipeline",
  "picturify-processing",
+ "picturify-testing",
  "predicates",
  "rand",
  "regex",
@@ -1082,11 +1083,19 @@ dependencies = [
 
 [[package]]
 name = "picturify-processing-benchmark"
-version = "0.1.0"
+version = "0.1.0-alpha"
 dependencies = [
  "criterion",
  "picturify-core",
  "picturify-processing",
+]
+
+[[package]]
+name = "picturify-testing"
+version = "0.1.0-alpha"
+dependencies = [
+ "assert_cmd",
+ "uuid",
 ]
 
 [[package]]

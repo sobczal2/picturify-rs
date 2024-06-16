@@ -41,15 +41,15 @@ pub struct BilateralBlurSpatialSigmaArg;
 impl PicturifyArg for BilateralBlurSpatialSigmaArg {
     fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
         Arg::new(Self::id())
-            .long("sigma-spatial")
+            .long("spatial-sigma")
             .alias("ss")
-            .help("Sigma spatial value")
+            .help("Spatial sigma value")
             .default_value(default_value)
             .value_parser(value_parser!(f32))
     }
 
     fn id() -> &'static str {
-        "sigma-spatial"
+        "spatial-sigma"
     }
 }
 
@@ -58,15 +58,15 @@ pub struct BilateralBlurIntensitySigmaArg;
 impl PicturifyArg for BilateralBlurIntensitySigmaArg {
     fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
         Arg::new(Self::id())
-            .long("sigma-intensity")
-            .alias("si")
+            .long("intensity-sigma")
+            .alias("is")
             .help("Sigma intensity value")
             .default_value(default_value)
             .value_parser(value_parser!(f32))
     }
 
     fn id() -> &'static str {
-        "sigma-intensity"
+        "intensity-sigma"
     }
 }
 

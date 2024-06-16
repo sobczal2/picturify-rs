@@ -1,4 +1,5 @@
 use crate::commands::common::command::{Command, CommandForImage};
+use crate::commands::image::blob::laplacian_of_gaussian::LaplacianOfGaussianCommand;
 use crate::commands::image::color::brightness::BrightnessCommand;
 use crate::commands::image::color::grayscale::GrayscaleCommand;
 use crate::commands::image::color::negative::NegativeCommand;
@@ -24,6 +25,8 @@ impl Command for ImageCommand {
         clap::Command::new("image")
             .about("Run processing pipeline on the image")
             .subcommands(&[
+                // blob
+                LaplacianOfGaussianCommand::get(),
                 // common
                 PassthroughCommand::get(),
                 // color
