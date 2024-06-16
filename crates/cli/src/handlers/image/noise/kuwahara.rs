@@ -2,7 +2,8 @@ use clap::ArgMatches;
 
 use picturify_pipeline::noise::kuwahara::{KuwaharaPipeline, KuwaharaPipelineOptions};
 
-use crate::commands::common::arg::ArgType;
+use crate::commands::common::args::common::{FastArg, PicturifyArg};
+use crate::commands::image::noise::kuwahara::KuwaharaRadiusArg;
 use crate::error::CliPicturifyResult;
 use crate::handlers::common::handler::{run_pipeline, CommandHandler};
 use crate::handlers::common::image_io::{read_image, write_image};
@@ -12,8 +13,8 @@ pub struct KuwaharaCommandHandler;
 impl CommandHandler for KuwaharaCommandHandler {
     fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
-        let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
-        let radius = args.get_one::<usize>(ArgType::Radius.to_id()).unwrap();
+        let fast = args.get_one::<bool>(FastArg::id()).unwrap();
+        let radius = args.get_one::<usize>(KuwaharaRadiusArg::id()).unwrap();
 
         let pipeline = KuwaharaPipeline::new(KuwaharaPipelineOptions {
             fast: *fast,

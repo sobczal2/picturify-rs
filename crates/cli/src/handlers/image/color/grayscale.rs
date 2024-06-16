@@ -3,7 +3,8 @@ use clap::ArgMatches;
 use picturify_pipeline::color::grayscale::{GrayscalePipeline, GrayscalePipelineOptions};
 use picturify_processing::processors::color::grayscale::GrayscaleStrategy;
 
-use crate::commands::common::arg::ArgType;
+use crate::commands::common::args::common::{FastArg, PicturifyArg};
+use crate::commands::image::color::grayscale::GrayscaleStrategyArg;
 use crate::error::CliPicturifyResult;
 use crate::handlers::common::handler::{run_pipeline, CommandHandler};
 use crate::handlers::common::image_io::{read_image, write_image};
@@ -14,9 +15,9 @@ impl CommandHandler for GrayscaleCommandHandler {
     fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
         let strategy = args
-            .get_one::<GrayscaleStrategy>(ArgType::GrayscaleStrategy.to_id())
+            .get_one::<GrayscaleStrategy>(GrayscaleStrategyArg::id())
             .unwrap();
-        let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
+        let fast = args.get_one::<bool>(FastArg::id()).unwrap();
         let pipeline = GrayscalePipeline::new(GrayscalePipelineOptions {
             strategy: *strategy,
             fast: *fast,

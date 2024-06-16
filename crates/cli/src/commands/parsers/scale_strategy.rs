@@ -23,7 +23,7 @@ impl TypedValueParser for ScaleStrategyValueParser {
         value: &OsStr,
     ) -> Result<Self::Value, Error> {
         match value.to_str().unwrap() {
-            "nearest_neighbor" => Ok(ScaleStrategy::NearestNeighbor),
+            "nearest-neighbor" => Ok(ScaleStrategy::NearestNeighbor),
             "nn" => Ok(ScaleStrategy::NearestNeighbor),
             "bilinear" => Ok(ScaleStrategy::Bilinear),
             "bl" => Ok(ScaleStrategy::Bilinear),

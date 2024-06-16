@@ -7,7 +7,8 @@ use picturify_movie::movie_pipe::MoviePipe;
 use picturify_movie::progress::MovieProgress;
 use picturify_pipeline::edge::sobel::{SobelPipeline, SobelPipelineOptions};
 
-use crate::commands::common::arg::ArgType;
+use crate::commands::common::args::common::{FastArg, InputArg, PicturifyArg};
+use crate::commands::movie::edge::sobel::SobelRgbArg;
 use crate::error::CliPicturifyResult;
 use crate::handlers::common::handler::CommandHandler;
 use crate::progress::movie_progress_bar::run_progress_bar_for_movie;
@@ -16,8 +17,8 @@ pub struct SobelCommandHandler;
 
 impl CommandHandler for SobelCommandHandler {
     fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
-        let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
-        let rgb = args.get_one::<bool>(ArgType::Rgb.to_id()).unwrap();
+        let fast = args.get_one::<bool>(FastArg::id()).unwrap();
+        let rgb = args.get_one::<bool>(SobelRgbArg::id()).unwrap();
         let sobel_pipeline = SobelPipeline::new(SobelPipelineOptions {
             fast: *fast,
             rgb: *rgb,
@@ -31,11 +32,11 @@ impl CommandHandler for SobelCommandHandler {
         });
 
         let source = args
-            .get_one::<String>(ArgType::Input.to_id())
+            .get_one::<String>(InputArg::id())
             .unwrap()
             .to_string();
         let destination = args
-            .get_one::<String>(ArgType::Output.to_id())
+            .get_one::<String>(InputArg::id())
             .unwrap()
             .to_string();
         MoviePipe::process(

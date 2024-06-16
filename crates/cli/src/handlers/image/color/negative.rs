@@ -2,7 +2,7 @@ use clap::ArgMatches;
 
 use picturify_pipeline::color::negative::{NegativePipeline, NegativePipelineOptions};
 
-use crate::commands::common::arg::ArgType;
+use crate::commands::common::args::common::{FastArg, PicturifyArg};
 use crate::error::CliPicturifyResult;
 use crate::handlers::common::handler::{run_pipeline, CommandHandler};
 use crate::handlers::common::image_io::{read_image, write_image};
@@ -12,7 +12,7 @@ pub struct NegativeCommandHandler;
 impl CommandHandler for NegativeCommandHandler {
     fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
-        let fast = args.get_one::<bool>(ArgType::Fast.to_id()).unwrap();
+        let fast = args.get_one::<bool>(FastArg::id()).unwrap();
 
         let pipeline = NegativePipeline::new(NegativePipelineOptions { fast: *fast });
 

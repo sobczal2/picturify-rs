@@ -1,12 +1,40 @@
-use crate::commands::common::arg::ArgType;
+use clap::Arg;
+use clap::builder::{IntoResettable, OsStr};
+
+use crate::commands::common::args::common::PicturifyArg;
 use crate::commands::common::command::CommandForImage;
+use crate::commands::parsers::crop_border::CropBorderValueParser;
 use crate::common::filter_group::Group;
+
+struct CropDefaultArgs {
+}
+
+const DEFAULT_ARGS: CropDefaultArgs = CropDefaultArgs {
+};
+
+pub struct CropBorderArg;
+
+impl PicturifyArg for CropBorderArg {
+    fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
+        Arg::new(Self::id())
+            .short('b')
+            .long("border")
+            .help("Border in format <width>x<height>+<left>+<top>")
+            .default_value(default_value)
+            .value_parser(CropBorderValueParser::new())
+    }
+
+    fn id() -> &'static str {
+        "strategy"
+    }
+}
 
 pub struct CropCommand;
 
 impl CommandForImage for CropCommand {
     fn get() -> clap::Command {
-        Self::get_base().arg(ArgType::Border.to_arg())
+        Self::get_base()
+            .arg(CropBorderArg::new(None))
     }
 
     fn name() -> &'static str {

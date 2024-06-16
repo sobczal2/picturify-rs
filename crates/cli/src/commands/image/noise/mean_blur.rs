@@ -1,14 +1,43 @@
-use crate::commands::common::arg::ArgType;
+use clap::{Arg, value_parser};
+use clap::builder::{IntoResettable, OsStr};
+use crate::commands::common::args::common::{FastArg, PicturifyArg};
 use crate::commands::common::command::CommandForImage;
 use crate::common::filter_group::Group;
+
+struct MeanBlurDefaultArgs {
+    radius: &'static str,
+    fast: &'static str,
+}
+
+const DEFAULT_ARGS: MeanBlurDefaultArgs = MeanBlurDefaultArgs {
+    radius: "1",
+    fast: "false",
+};
+
+pub struct MeanBlurRadiusArg;
+
+impl PicturifyArg for MeanBlurRadiusArg {
+    fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
+        Arg::new(Self::id())
+            .short('r')
+            .long("radius")
+            .help("Kernel radius")
+            .default_value(default_value)
+            .value_parser(value_parser!(usize))
+    }
+
+    fn id() -> &'static str {
+        "radius"
+    }
+}
 
 pub struct MeanBlurCommand;
 
 impl CommandForImage for MeanBlurCommand {
     fn get() -> clap::Command {
         Self::get_base()
-            .arg(ArgType::Radius.to_arg())
-            .arg(ArgType::Fast.to_arg())
+            .arg(FastArg::new(DEFAULT_ARGS.fast))
+            .arg(MeanBlurRadiusArg::new(DEFAULT_ARGS.radius))
     }
 
     fn name() -> &'static str {

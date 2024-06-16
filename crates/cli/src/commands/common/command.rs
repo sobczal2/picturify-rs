@@ -1,6 +1,6 @@
-use crate::commands::common::arg::ArgType;
 use crate::common::filter_group::Group;
 use colored::Colorize;
+use crate::commands::common::args::common::{InputArg, OutputArg, PicturifyArg};
 
 pub trait Command {
     fn get() -> clap::Command;
@@ -11,8 +11,8 @@ pub trait CommandForImage {
     fn get_base() -> clap::Command {
         clap::Command::new(Self::name())
             .about(Self::about())
-            .arg(ArgType::Input.to_arg())
-            .arg(ArgType::Output.to_arg())
+            .arg(InputArg::new(None))
+            .arg(OutputArg::new(None))
     }
     fn name() -> &'static str;
     fn display_name() -> String {
