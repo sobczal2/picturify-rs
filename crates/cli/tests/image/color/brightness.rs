@@ -7,7 +7,7 @@ fn brightness_standard_args_should_succeed() {
     let mut cmd = get_picturify_cli_cmd();
     cmd.arg("image")
         .arg("brightness")
-        .arg("--fa")
+        .arg("-f")
         .arg("1.0")
         .with_io(&test_files);
 
