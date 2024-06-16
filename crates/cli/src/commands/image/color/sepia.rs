@@ -1,4 +1,6 @@
-use crate::commands::common::args::common::{FastArg, GpuArg, PicturifyArg};
+#[cfg(feature = "gpu")]
+use crate::commands::common::args::common::GpuArg;
+use crate::commands::common::args::common::{FastArg, PicturifyArg};
 use crate::commands::common::command::CommandForImage;
 use crate::common::filter_group::Group;
 
@@ -21,14 +23,13 @@ impl CommandForImage for SepiaCommand {
         #[cfg(feature = "gpu")]
         {
             Self::get_base()
-                .arg(FastArg::new(DEFAULT_ARGS.fast))
-                .arg(GpuArg::new(DEFAULT_ARGS.gpu))
+                .arg(FastArg::create(DEFAULT_ARGS.fast))
+                .arg(GpuArg::create(DEFAULT_ARGS.gpu))
         }
 
         #[cfg(not(feature = "gpu"))]
         {
-            Self::get_base()
-                .arg(FastArg::new(DEFAULT_ARGS.fast))
+            Self::get_base().arg(FastArg::create(DEFAULT_ARGS.fast))
         }
     }
 

@@ -21,7 +21,7 @@ use crate::commands::image::noise::sharpen::SharpenCommand;
 pub struct ImageCommand;
 
 impl Command for ImageCommand {
-    fn get() -> clap::Command {
+    fn create() -> clap::Command {
         clap::Command::new("image")
             .about("Run processing pipeline on the image")
             .subcommands(&[

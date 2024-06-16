@@ -7,5 +7,5 @@ fn empty_no_args_should_print_missing_command() {
 
     assert
         .failure()
-        .stderr(predicates::str::contains("Missing command"));
+        .stderr(predicates::str::contains("missing subcommand"));
 }

@@ -14,7 +14,7 @@ impl CommandHandler for BrightnessCommandHandler {
     fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
         let factor = args.get_one::<f32>(BrightnessFactorArg::id()).unwrap();
-        
+
         let pipeline = BrightnessPipeline::new(BrightnessPipelineOptions { factor: *factor });
 
         let result_image = run_pipeline(image, Box::new(pipeline))?;

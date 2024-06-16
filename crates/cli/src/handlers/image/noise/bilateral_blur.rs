@@ -5,7 +5,9 @@ use picturify_pipeline::noise::bilateral_blur::{
 };
 
 use crate::commands::common::args::common::{FastArg, PicturifyArg};
-use crate::commands::image::noise::bilateral_blur::{BilateralBlurRadiusArg, BilateralBlurIntensitySigmaArg, BilateralBlurSpatialSigmaArg};
+use crate::commands::image::noise::bilateral_blur::{
+    BilateralBlurIntensitySigmaArg, BilateralBlurRadiusArg, BilateralBlurSpatialSigmaArg,
+};
 use crate::error::CliPicturifyResult;
 use crate::handlers::common::handler::{run_pipeline, CommandHandler};
 use crate::handlers::common::image_io::{read_image, write_image};
@@ -17,9 +19,13 @@ impl CommandHandler for BilateralBlurCommandHandler {
         let image = read_image(args.clone())?;
         let fast = args.get_one::<bool>(FastArg::id()).unwrap();
         let radius = args.get_one::<usize>(BilateralBlurRadiusArg::id()).unwrap();
-        let spatial_sigma = args.get_one::<f32>(BilateralBlurSpatialSigmaArg::id()).unwrap();
-        let intensity_sigma = args.get_one::<f32>(BilateralBlurIntensitySigmaArg::id()).unwrap();
-        
+        let spatial_sigma = args
+            .get_one::<f32>(BilateralBlurSpatialSigmaArg::id())
+            .unwrap();
+        let intensity_sigma = args
+            .get_one::<f32>(BilateralBlurIntensitySigmaArg::id())
+            .unwrap();
+
         let pipeline = BilateralBlurPipeline::new(BilateralBlurPipelineOptions {
             fast: *fast,
             radius: *radius,

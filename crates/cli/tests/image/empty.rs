@@ -1,4 +1,4 @@
-use crate::common::helpers::get_picturify_cli_cmd;
+use picturify_testing::helpers::get_picturify_cli_cmd;
 
 #[test]
 fn empty_no_args_should_print_missing_subcommand() {
@@ -8,5 +8,5 @@ fn empty_no_args_should_print_missing_subcommand() {
 
     assert
         .failure()
-        .stderr(predicates::str::contains("Missing subcommand"));
+        .stderr(predicates::str::contains("missing subcommand"));
 }

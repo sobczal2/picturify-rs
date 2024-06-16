@@ -1,11 +1,17 @@
-use picturify_core::core::fast_image::FastImage;
-use picturify_core::palette::Srgba;
-use picturify_processing::processors::blob::laplacian_of_gaussian::{LaplacianOfGaussianProcessor, LaplacianOfGaussianProcessorOptions};
-use picturify_processing::processors::geometry::crop::{CropBorder, CropProcessorOptions};
-use picturify_processing::processors::geometry::enlargement::{EnlargementBorder, EnlargementProcessorOptions, EnlargementStrategy};
-use crate::common::enlargement_crop_pipeline::{EnlargementCropPipeline, EnlargementCropPipelineOptions};
+use crate::common::enlargement_crop_pipeline::{
+    EnlargementCropPipeline, EnlargementCropPipelineOptions,
+};
 use crate::common::pipeline_progress::PipelineProgress;
 use crate::pipeline::Pipeline;
+use picturify_core::core::fast_image::FastImage;
+use picturify_core::palette::Srgba;
+use picturify_processing::processors::blob::laplacian_of_gaussian::{
+    LaplacianOfGaussianProcessor, LaplacianOfGaussianProcessorOptions,
+};
+use picturify_processing::processors::geometry::crop::{CropBorder, CropProcessorOptions};
+use picturify_processing::processors::geometry::enlargement::{
+    EnlargementBorder, EnlargementProcessorOptions, EnlargementStrategy,
+};
 
 pub struct LaplacianOfGaussianPipelineOptions {
     pub radius: usize,

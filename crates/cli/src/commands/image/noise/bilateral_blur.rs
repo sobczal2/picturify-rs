@@ -1,9 +1,8 @@
-use clap::{Arg, value_parser};
-use clap::builder::{IntoResettable, OsStr};
 use crate::commands::common::args::common::{FastArg, PicturifyArg};
 use crate::commands::common::command::CommandForImage;
 use crate::common::filter_group::Group;
-
+use clap::builder::{IntoResettable, OsStr};
+use clap::{value_parser, Arg};
 
 struct BilateralBlurDefaultArgs {
     radius: &'static str,
@@ -22,7 +21,7 @@ const DEFAULT_ARGS: BilateralBlurDefaultArgs = BilateralBlurDefaultArgs {
 pub struct BilateralBlurRadiusArg;
 
 impl PicturifyArg for BilateralBlurRadiusArg {
-    fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
+    fn create(default_value: impl IntoResettable<OsStr>) -> Arg {
         Arg::new(Self::id())
             .short('r')
             .long("radius")
@@ -39,7 +38,7 @@ impl PicturifyArg for BilateralBlurRadiusArg {
 pub struct BilateralBlurSpatialSigmaArg;
 
 impl PicturifyArg for BilateralBlurSpatialSigmaArg {
-    fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
+    fn create(default_value: impl IntoResettable<OsStr>) -> Arg {
         Arg::new(Self::id())
             .long("spatial-sigma")
             .alias("ss")
@@ -56,7 +55,7 @@ impl PicturifyArg for BilateralBlurSpatialSigmaArg {
 pub struct BilateralBlurIntensitySigmaArg;
 
 impl PicturifyArg for BilateralBlurIntensitySigmaArg {
-    fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
+    fn create(default_value: impl IntoResettable<OsStr>) -> Arg {
         Arg::new(Self::id())
             .long("intensity-sigma")
             .alias("is")
@@ -75,10 +74,14 @@ pub struct BilateralBlurCommand;
 impl CommandForImage for BilateralBlurCommand {
     fn get() -> clap::Command {
         Self::get_base()
-            .arg(FastArg::new(DEFAULT_ARGS.fast))
-            .arg(BilateralBlurRadiusArg::new(DEFAULT_ARGS.radius))
-            .arg(BilateralBlurSpatialSigmaArg::new(DEFAULT_ARGS.sigma_spatial))
-            .arg(BilateralBlurIntensitySigmaArg::new(DEFAULT_ARGS.sigma_intensity))
+            .arg(FastArg::create(DEFAULT_ARGS.fast))
+            .arg(BilateralBlurRadiusArg::create(DEFAULT_ARGS.radius))
+            .arg(BilateralBlurSpatialSigmaArg::create(
+                DEFAULT_ARGS.sigma_spatial,
+            ))
+            .arg(BilateralBlurIntensitySigmaArg::create(
+                DEFAULT_ARGS.sigma_intensity,
+            ))
     }
 
     fn name() -> &'static str {

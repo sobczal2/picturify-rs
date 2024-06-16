@@ -1,3 +1,4 @@
+use clap::error::ErrorKind;
 use thiserror::Error;
 
 use picturify_core::error::PicturifyError;
@@ -7,18 +8,22 @@ pub type CliPicturifyResult<T> = Result<T, CliPicturifyError>;
 
 #[derive(Error, Debug)]
 pub enum CliPicturifyError {
-    #[error("Picturify error - {0}")]
-    PicturifyError(#[from] PicturifyError),
-    #[error("Missing argument: {0}")]
-    MissingArgument(String),
-    #[error("Invalid command: {0}")]
-    InvalidCommand(String),
-    #[error("Missing command")]
-    MissingCommand,
-    #[error("Missing subcommand")]
-    MissingSubcommand,
-    #[error("Movie Picturify error - {0}")]
-    MoviePicturifyError(#[from] MoviePicturifyError),
+    #[error("Cli {0}")]
+    Picturify(#[from] PicturifyError),
+    #[error("Cli {0}")]
+    MoviePicturify(#[from] MoviePicturifyError),
     #[error("Threading error")]
-    ThreadingError,
+    Threading,
+    #[error("Cli {0}")]
+    Clap(#[from] clap::Error),
+}
+
+impl CliPicturifyError {
+    pub fn invalid_subcommand() -> Self {
+        CliPicturifyError::Clap(clap::Error::raw(ErrorKind::InvalidSubcommand, "invalid subcommand"))
+    }
+    
+    pub fn missing_subcommand() -> Self {
+        CliPicturifyError::Clap(clap::Error::raw(ErrorKind::MissingSubcommand, "missing subcommand"))
+    }
 }

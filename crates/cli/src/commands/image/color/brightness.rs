@@ -1,13 +1,13 @@
-use clap::{Arg, value_parser};
-use clap::builder::{IntoResettable, OsStr};
 use crate::commands::common::args::common::PicturifyArg;
 use crate::commands::common::command::CommandForImage;
 use crate::common::filter_group::Group;
+use clap::builder::{IntoResettable, OsStr};
+use clap::{value_parser, Arg};
 
 pub struct BrightnessFactorArg;
 
 impl PicturifyArg for BrightnessFactorArg {
-    fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
+    fn create(default_value: impl IntoResettable<OsStr>) -> Arg {
         Arg::new(Self::id())
             .short('f')
             .long("factor")
@@ -25,8 +25,7 @@ pub struct BrightnessCommand;
 
 impl CommandForImage for BrightnessCommand {
     fn get() -> clap::Command {
-        Self::get_base()
-            .arg(BrightnessFactorArg::new(None))
+        Self::get_base().arg(BrightnessFactorArg::create(None))
     }
 
     fn name() -> &'static str {

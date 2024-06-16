@@ -1,5 +1,5 @@
-use picturify_core::geometry::coord::Coord;
 use crate::common::kernels::convolution::ConvolutionKernel;
+use picturify_core::geometry::coord::Coord;
 
 #[derive(Clone)]
 pub struct XyKernels {
@@ -64,10 +64,10 @@ impl<'a> Iterator for XyKernelsIterator<'a> {
             return None;
         }
 
-        let coord= Coord::from_1d_index(self.current, self.width);
+        let coord = Coord::from_1d_index(self.current, self.width);
         let x_value = self.xy_kernels.get_x(coord);
         let y_value = self.xy_kernels.get_y(coord);
-        
+
         self.current += 1;
 
         Some((coord, x_value, y_value))

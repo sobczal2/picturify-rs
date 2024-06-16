@@ -49,7 +49,7 @@ impl PipelineProgressBar {
     pub fn stop(self) -> CliPicturifyResult<()> {
         self.join_handle
             .join()
-            .map_err(|_| CliPicturifyError::ThreadingError)
+            .map_err(|_| CliPicturifyError::Threading)
     }
 }
 

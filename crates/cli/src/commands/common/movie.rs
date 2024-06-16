@@ -5,7 +5,7 @@ use crate::commands::movie::edge::sobel::SobelCommand;
 pub struct MovieCommand;
 
 impl Command for MovieCommand {
-    fn get() -> clap::Command {
+    fn create() -> clap::Command {
         clap::Command::new("movie")
             .about("Run processing pipeline on the movie")
             .subcommands(&[NegativeCommand::get(), SobelCommand::get()])

@@ -8,12 +8,12 @@ use picturify_core::core::fast_image::FastImage;
 use picturify_core::core::io::{ReadFromFile, WriteToFile};
 
 use crate::commands::common::args::common::{InputArg, OutputArg, PicturifyArg};
-use crate::error::{CliPicturifyError, CliPicturifyResult};
+use crate::error::{CliPicturifyResult};
 
 pub fn read_image(args: ArgMatches) -> CliPicturifyResult<FastImage> {
     let input = args
         .get_one::<PathBuf>(InputArg::id())
-        .ok_or(CliPicturifyError::MissingArgument("Input".to_string()))?;
+        .expect("Input argument is required");
 
     let read_start = Instant::now();
     let image = FastImage::read_from_file(input)?;
@@ -26,7 +26,7 @@ pub fn read_image(args: ArgMatches) -> CliPicturifyResult<FastImage> {
 pub fn write_image(image: FastImage, args: ArgMatches) -> CliPicturifyResult<()> {
     let output = args
         .get_one::<PathBuf>(OutputArg::id())
-        .ok_or(CliPicturifyError::MissingArgument("Output".to_string()))?;
+        .expect("Input argument is required");
 
     let write_start = Instant::now();
     image.write_to_file(output)?;

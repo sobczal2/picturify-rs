@@ -1,16 +1,16 @@
-use std::path::PathBuf;
-use clap::{Arg, ArgAction, value_parser};
 use clap::builder::{IntoResettable, OsStr};
+use clap::{value_parser, Arg, ArgAction};
+use std::path::PathBuf;
 
 pub trait PicturifyArg {
-    fn new(default_value: impl IntoResettable<OsStr>) -> Arg;
+    fn create(default_value: impl IntoResettable<OsStr>) -> Arg;
     fn id() -> &'static str;
 }
 
 pub struct InputArg;
 
 impl PicturifyArg for InputArg {
-    fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
+    fn create(default_value: impl IntoResettable<OsStr>) -> Arg {
         Arg::new(Self::id())
             .short('i')
             .long("input")
@@ -28,7 +28,7 @@ impl PicturifyArg for InputArg {
 pub struct OutputArg;
 
 impl PicturifyArg for OutputArg {
-    fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
+    fn create(default_value: impl IntoResettable<OsStr>) -> Arg {
         Arg::new(Self::id())
             .short('o')
             .long("output")
@@ -46,7 +46,7 @@ impl PicturifyArg for OutputArg {
 pub struct FastArg;
 
 impl PicturifyArg for FastArg {
-    fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
+    fn create(default_value: impl IntoResettable<OsStr>) -> Arg {
         Arg::new(Self::id())
             .short('f')
             .long("fast")
@@ -64,7 +64,7 @@ impl PicturifyArg for FastArg {
 pub struct GpuArg;
 
 impl PicturifyArg for GpuArg {
-    fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
+    fn create(default_value: impl IntoResettable<OsStr>) -> Arg {
         Arg::new(Self::id())
             .short('g')
             .long("gpu")

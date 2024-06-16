@@ -1,7 +1,7 @@
-use picturify_core::error::processing::{ProcessingError, ProcessingResult};
-use picturify_core::utils::vec::rotate_left_2d;
 use crate::common::kernels::convolution::ConvolutionKernel;
 use crate::common::kernels::xy::XyKernels;
+use picturify_core::error::processing::{ProcessingError, ProcessingResult};
+use picturify_core::utils::vec::rotate_left_2d;
 
 pub struct PrewittKernels;
 

@@ -1,5 +1,5 @@
-use clap::Arg;
 use clap::builder::{IntoResettable, OsStr};
+use clap::Arg;
 
 use crate::commands::common::args::common::PicturifyArg;
 use crate::commands::common::command::CommandForImage;
@@ -9,7 +9,7 @@ use crate::common::filter_group::Group;
 pub struct CropBorderArg;
 
 impl PicturifyArg for CropBorderArg {
-    fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
+    fn create(default_value: impl IntoResettable<OsStr>) -> Arg {
         Arg::new(Self::id())
             .short('b')
             .long("border")
@@ -27,8 +27,7 @@ pub struct CropCommand;
 
 impl CommandForImage for CropCommand {
     fn get() -> clap::Command {
-        Self::get_base()
-            .arg(CropBorderArg::new(None))
+        Self::get_base().arg(CropBorderArg::create(None))
     }
 
     fn name() -> &'static str {

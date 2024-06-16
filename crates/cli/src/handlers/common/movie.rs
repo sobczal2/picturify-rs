@@ -27,12 +27,12 @@ impl CommandHandler for MovieCommandHandler {
                 if let Some(handler) = handlers.get(name) {
                     handler.handle(args.clone())
                 } else {
-                    Err(CliPicturifyError::InvalidCommand(name.to_string()))
+                    Err(CliPicturifyError::invalid_subcommand())
                 }
             }
             None => {
-                MovieCommand::get().print_help().unwrap();
-                Err(CliPicturifyError::MissingSubcommand)
+                MovieCommand::create().print_help().unwrap();
+                Err(CliPicturifyError::missing_subcommand())
             }
         }
     }

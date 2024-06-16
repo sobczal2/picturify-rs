@@ -1,24 +1,22 @@
-use clap::{Arg, value_parser};
-use clap::builder::{IntoResettable, OsStr};
-use log::LevelFilter;
-use crate::commands::common::args::common::{PicturifyArg};
+use crate::commands::common::args::common::PicturifyArg;
 use crate::commands::common::command::Command;
 use crate::commands::common::image::ImageCommand;
 use crate::commands::common::movie::MovieCommand;
 use crate::metadata;
+use clap::builder::{IntoResettable, OsStr};
+use clap::{value_parser, Arg};
+use log::LevelFilter;
 
 struct PicturifyDefaultArgs {
     verbosity: &'static str,
 }
 
-const DEFAULT_ARGS: PicturifyDefaultArgs = PicturifyDefaultArgs {
-    verbosity: "info",
-};
+const DEFAULT_ARGS: PicturifyDefaultArgs = PicturifyDefaultArgs { verbosity: "info" };
 
 pub struct PicturifyVerbosityArg;
 
 impl PicturifyArg for PicturifyVerbosityArg {
-    fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
+    fn create(default_value: impl IntoResettable<OsStr>) -> Arg {
         Arg::new(Self::id())
             .short('v')
             .long("verbosity")
@@ -36,7 +34,7 @@ impl PicturifyArg for PicturifyVerbosityArg {
 pub struct PicturifyCommand;
 
 impl Command for PicturifyCommand {
-    fn get() -> clap::Command {
+    fn create() -> clap::Command {
         clap::Command::new(metadata::NAME)
             .version(metadata::VERSION)
             .author(metadata::AUTHORS)
@@ -56,7 +54,7 @@ impl Command for PicturifyCommand {
                 picturify_movie::metadata::NAME,
                 picturify_movie::metadata::VERSION,
             ))
-            .subcommands(vec![ImageCommand::get(), MovieCommand::get()])
-            .arg(PicturifyVerbosityArg::new(DEFAULT_ARGS.verbosity))
+            .subcommands(vec![ImageCommand::create(), MovieCommand::create()])
+            .arg(PicturifyVerbosityArg::create(DEFAULT_ARGS.verbosity))
     }
 }

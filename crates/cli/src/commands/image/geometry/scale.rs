@@ -1,10 +1,10 @@
-use clap::Arg;
-use clap::builder::{IntoResettable, OsStr};
 use crate::commands::common::args::common::PicturifyArg;
 use crate::commands::common::command::CommandForImage;
 use crate::commands::parsers::scale_strategy::ScaleStrategyValueParser;
 use crate::commands::parsers::size::SizeValueParser;
 use crate::common::filter_group::Group;
+use clap::builder::{IntoResettable, OsStr};
+use clap::Arg;
 
 struct ScaleDefaultArgs {
     strategy: &'static str,
@@ -17,7 +17,7 @@ const DEFAULT_ARGS: ScaleDefaultArgs = ScaleDefaultArgs {
 pub struct ScaleSizeArg;
 
 impl PicturifyArg for ScaleSizeArg {
-    fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
+    fn create(default_value: impl IntoResettable<OsStr>) -> Arg {
         Arg::new(Self::id())
             .long("size")
             .help("Size to scale to (e.g. 800x600)")
@@ -33,7 +33,7 @@ impl PicturifyArg for ScaleSizeArg {
 pub struct ScaleStrategyArg;
 
 impl PicturifyArg for ScaleStrategyArg {
-    fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
+    fn create(default_value: impl IntoResettable<OsStr>) -> Arg {
         Arg::new(Self::id())
             .long("strategy")
             .help("Scaling strategy (nearest-neighbor(nn), bilinear(bl))")
@@ -51,8 +51,8 @@ pub struct ScaleCommand;
 impl CommandForImage for ScaleCommand {
     fn get() -> clap::Command {
         Self::get_base()
-            .arg(ScaleSizeArg::new(None))
-            .arg(ScaleStrategyArg::new(DEFAULT_ARGS.strategy))
+            .arg(ScaleSizeArg::create(None))
+            .arg(ScaleStrategyArg::create(DEFAULT_ARGS.strategy))
     }
 
     fn name() -> &'static str {

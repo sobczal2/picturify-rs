@@ -22,6 +22,7 @@ predicates.workspace = true
 uuid.workspace = true
 rand.workspace = true
 colored.workspace = true
+itertools.workspace = true
 
 [features]
 default = []

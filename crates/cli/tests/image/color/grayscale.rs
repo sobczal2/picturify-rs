@@ -1,5 +1,5 @@
-use crate::common::helpers::get_picturify_cli_cmd;
-use crate::common::test_files::{TestFiles, WithIo};
+use picturify_testing::helpers::get_picturify_cli_cmd;
+use picturify_testing::test_files::{TestFiles, WithIo};
 
 #[test]
 fn grayscale_standard_args_should_succeed() {

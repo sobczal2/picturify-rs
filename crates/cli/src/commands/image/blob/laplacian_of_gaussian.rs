@@ -1,8 +1,8 @@
-use clap::{Arg, value_parser};
-use clap::builder::{IntoResettable, OsStr};
 use crate::commands::common::args::common::{FastArg, PicturifyArg};
 use crate::commands::common::command::CommandForImage;
 use crate::common::filter_group::Group;
+use clap::builder::{IntoResettable, OsStr};
+use clap::{value_parser, Arg};
 
 struct BilateralBlurDefaultArgs {
     radius: &'static str,
@@ -19,7 +19,7 @@ const DEFAULT_ARGS: BilateralBlurDefaultArgs = BilateralBlurDefaultArgs {
 pub struct LaplacianOfGaussianRadiusArg;
 
 impl PicturifyArg for LaplacianOfGaussianRadiusArg {
-    fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
+    fn create(default_value: impl IntoResettable<OsStr>) -> Arg {
         Arg::new(Self::id())
             .short('r')
             .long("radius")
@@ -36,7 +36,7 @@ impl PicturifyArg for LaplacianOfGaussianRadiusArg {
 pub struct LaplacianOfGaussianSigmaArg;
 
 impl PicturifyArg for LaplacianOfGaussianSigmaArg {
-    fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
+    fn create(default_value: impl IntoResettable<OsStr>) -> Arg {
         Arg::new(Self::id())
             .short('s')
             .long("sigma")
@@ -55,9 +55,9 @@ pub struct LaplacianOfGaussianCommand;
 impl CommandForImage for LaplacianOfGaussianCommand {
     fn get() -> clap::Command {
         Self::get_base()
-            .arg(FastArg::new(DEFAULT_ARGS.fast))
-            .arg(LaplacianOfGaussianRadiusArg::new(DEFAULT_ARGS.radius))
-            .arg(LaplacianOfGaussianSigmaArg::new(DEFAULT_ARGS.sigma))
+            .arg(FastArg::create(DEFAULT_ARGS.fast))
+            .arg(LaplacianOfGaussianRadiusArg::create(DEFAULT_ARGS.radius))
+            .arg(LaplacianOfGaussianSigmaArg::create(DEFAULT_ARGS.sigma))
     }
 
     fn name() -> &'static str {

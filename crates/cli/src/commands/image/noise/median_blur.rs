@@ -1,8 +1,8 @@
-use clap::{Arg, value_parser};
-use clap::builder::{IntoResettable, OsStr};
 use crate::commands::common::args::common::{FastArg, PicturifyArg};
 use crate::commands::common::command::CommandForImage;
 use crate::common::filter_group::Group;
+use clap::builder::{IntoResettable, OsStr};
+use clap::{value_parser, Arg};
 
 struct MedianBlurDefaultArgs {
     radius: &'static str,
@@ -17,7 +17,7 @@ const DEFAULT_ARGS: MedianBlurDefaultArgs = MedianBlurDefaultArgs {
 pub struct MedianBlurRadiusArg;
 
 impl PicturifyArg for MedianBlurRadiusArg {
-    fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
+    fn create(default_value: impl IntoResettable<OsStr>) -> Arg {
         Arg::new(Self::id())
             .short('r')
             .long("radius")
@@ -36,8 +36,8 @@ pub struct MedianBlurCommand;
 impl CommandForImage for MedianBlurCommand {
     fn get() -> clap::Command {
         Self::get_base()
-            .arg(FastArg::new(DEFAULT_ARGS.fast))
-            .arg(MedianBlurRadiusArg::new(DEFAULT_ARGS.radius))
+            .arg(FastArg::create(DEFAULT_ARGS.fast))
+            .arg(MedianBlurRadiusArg::create(DEFAULT_ARGS.radius))
     }
 
     fn name() -> &'static str {

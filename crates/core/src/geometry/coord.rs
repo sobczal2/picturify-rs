@@ -14,7 +14,7 @@ impl Coord {
     pub fn new(x: i32, y: i32) -> Self {
         Coord { x, y }
     }
-    
+
     #[inline(always)]
     pub fn from_1d_index(index: usize, width: usize) -> Self {
         Coord::new((index % width) as i32, (index / width) as i32)

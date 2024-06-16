@@ -1,15 +1,15 @@
 use crate::common::execution::Processor;
+use crate::common::kernels::xy::XyKernels;
 use picturify_core::core::apply_fn_to_pixels::{
     ApplyFnToImagePixels, ApplyFnToPalettePixels, Offset,
 };
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingError;
+use picturify_core::geometry::coord::Coord;
+use picturify_core::pixel::traits::RgbaF32Pixel;
 use picturify_core::rayon::prelude::*;
 use picturify_core::threading::progress::{Progress, ProgressIteratorExt};
 use std::sync::{Arc, Mutex};
-use picturify_core::geometry::coord::Coord;
-use picturify_core::pixel::traits::RgbaF32Pixel;
-use crate::common::kernels::xy::XyKernels;
 
 pub struct GradientBasedRgbProcessorOptions {
     pub use_fast_approximation: bool,
@@ -48,15 +48,12 @@ impl Processor for GradientBasedRgbProcessor {
 
         let kernels = self.options.xy_kernels.clone();
 
-        let get_pixel_fn: fn(image: &FastImage, coord: Coord) -> Box<dyn  RgbaF32Pixel> = if self.options.use_fast_approximation {
-            |image, coord| {
-                Box::new(FastImage::get_image_pixel(image, coord))
-            }
-        } else {
-            |image, coord| {
-                Box::new(FastImage::get_lin_srgba_pixel(image, coord))
-            }
-        };
+        let get_pixel_fn: fn(image: &FastImage, coord: Coord) -> Box<dyn RgbaF32Pixel> =
+            if self.options.use_fast_approximation {
+                |image, coord| Box::new(FastImage::get_image_pixel(image, coord))
+            } else {
+                |image, coord| Box::new(FastImage::get_lin_srgba_pixel(image, coord))
+            };
 
         progress.setup((width - kernel_radius) * 2);
         red_magnitude_vec
@@ -80,7 +77,8 @@ impl Processor for GradientBasedRgbProcessor {
                     .enumerate()
                     .for_each(
                         |(x_mag, ((red_magnitude, green_magnitude), blue_magnitude))| {
-                            let pixel_coord: Coord = (x_mag + kernel_radius, y_mag + kernel_radius).into();
+                            let pixel_coord: Coord =
+                                (x_mag + kernel_radius, y_mag + kernel_radius).into();
 
                             let mut red_magnitude_x = 0.0;
                             let mut red_magnitude_y = 0.0;
@@ -89,28 +87,22 @@ impl Processor for GradientBasedRgbProcessor {
                             let mut blue_magnitude_x = 0.0;
                             let mut blue_magnitude_y = 0.0;
 
-                            kernels
-                                .iter()
-                                .for_each(|(coord, x_value, y_value)| {
-                                    let red: f32;
-                                    let green: f32;
-                                    let blue: f32;
+                            kernels.iter().for_each(|(coord, x_value, y_value)| {
+                                let actual_coord = (pixel_coord + coord) - kernel_radius as i32;
 
-                                    let actual_coord = (pixel_coord + coord) - kernel_radius as i32;
+                                let pixel = get_pixel_fn(&image, actual_coord);
 
-                                    let pixel = get_pixel_fn(&image, actual_coord);
+                                let red = pixel.red_f32();
+                                let green = pixel.green_f32();
+                                let blue = pixel.blue_f32();
 
-                                    red = pixel.red_f32();
-                                    green = pixel.green_f32();
-                                    blue = pixel.blue_f32();
-
-                                    red_magnitude_x += x_value * red;
-                                    red_magnitude_y += y_value * red;
-                                    green_magnitude_x += x_value * green;
-                                    green_magnitude_y += y_value * green;
-                                    blue_magnitude_x += x_value * blue;
-                                    blue_magnitude_y += y_value * blue;
-                                });
+                                red_magnitude_x += x_value * red;
+                                red_magnitude_y += y_value * red;
+                                green_magnitude_x += x_value * green;
+                                green_magnitude_y += y_value * green;
+                                blue_magnitude_x += x_value * blue;
+                                blue_magnitude_y += y_value * blue;
+                            });
 
                             let red_actual_magnitude =
                                 (red_magnitude_x.powi(2) + red_magnitude_y.powi(2)).sqrt();

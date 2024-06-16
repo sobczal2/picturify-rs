@@ -26,14 +26,8 @@ impl CommandHandler for NegativeCommandHandler {
             run_progress_bar_for_movie(movie_progress_clone);
         });
 
-        let source = args
-            .get_one::<String>(InputArg::id())
-            .unwrap()
-            .to_string();
-        let destination = args
-            .get_one::<String>(InputArg::id())
-            .unwrap()
-            .to_string();
+        let source = args.get_one::<String>(InputArg::id()).unwrap().to_string();
+        let destination = args.get_one::<String>(InputArg::id()).unwrap().to_string();
         MoviePipe::process(
             source,
             destination,

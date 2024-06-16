@@ -6,16 +6,13 @@ struct NegativeDefaultArgs {
     fast: &'static str,
 }
 
-const DEFAULT_ARGS: NegativeDefaultArgs = NegativeDefaultArgs {
-    fast: "false",
-};
+const DEFAULT_ARGS: NegativeDefaultArgs = NegativeDefaultArgs { fast: "false" };
 
 pub struct NegativeCommand;
 
 impl CommandForMovie for NegativeCommand {
     fn get() -> clap::Command {
-        Self::get_base()
-            .arg(FastArg::new(DEFAULT_ARGS.fast))
+        Self::get_base().arg(FastArg::create(DEFAULT_ARGS.fast))
     }
 
     fn name() -> &'static str {

@@ -1,8 +1,8 @@
-use clap::{Arg, ArgAction, value_parser};
-use clap::builder::{IntoResettable, OsStr};
 use crate::commands::common::args::common::{FastArg, PicturifyArg};
 use crate::commands::common::command::CommandForImage;
 use crate::common::filter_group::Group;
+use clap::builder::{IntoResettable, OsStr};
+use clap::{value_parser, Arg, ArgAction};
 
 struct PrewittDefaultArgs {
     fast: &'static str,
@@ -17,7 +17,7 @@ const DEFAULT_ARGS: PrewittDefaultArgs = PrewittDefaultArgs {
 pub struct PrewittRgbArg;
 
 impl PicturifyArg for PrewittRgbArg {
-    fn new(default_value: impl IntoResettable<OsStr>) -> Arg {
+    fn create(default_value: impl IntoResettable<OsStr>) -> Arg {
         Arg::new(Self::id())
             .long("rgb")
             .help("Use RGB channels")
@@ -36,8 +36,8 @@ pub struct PrewittCommand;
 impl CommandForImage for PrewittCommand {
     fn get() -> clap::Command {
         Self::get_base()
-            .arg(FastArg::new(DEFAULT_ARGS.fast))
-            .arg(PrewittRgbArg::new(DEFAULT_ARGS.rgb))
+            .arg(FastArg::create(DEFAULT_ARGS.fast))
+            .arg(PrewittRgbArg::create(DEFAULT_ARGS.rgb))
     }
 
     fn name() -> &'static str {

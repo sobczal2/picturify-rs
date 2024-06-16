@@ -1,10 +1,10 @@
 use crate::common::execution::Processor;
+use crate::common::kernels::prewitt::PrewittKernels;
 use crate::processors::edge::gradient_based_rgb::{
     GradientBasedRgbProcessor, GradientBasedRgbProcessorOptions,
 };
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::threading::progress::Progress;
-use crate::common::kernels::prewitt::PrewittKernels;
 
 pub struct PrewittRgbProcessorOptions {
     pub use_fast_approximation: bool,

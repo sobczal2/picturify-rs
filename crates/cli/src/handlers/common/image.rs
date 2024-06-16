@@ -52,7 +52,10 @@ impl CommandHandler for ImageCommandHandler {
                 let mut handlers: HashMap<&str, Box<dyn CommandHandler>> = HashMap::new();
 
                 // blob
-                handlers.insert(LaplacianOfGaussianCommand::name(), Box::new(LaplacianOfGaussianCommandHandler));
+                handlers.insert(
+                    LaplacianOfGaussianCommand::name(),
+                    Box::new(LaplacianOfGaussianCommandHandler),
+                );
 
                 // common
                 handlers.insert(
@@ -102,12 +105,12 @@ impl CommandHandler for ImageCommandHandler {
                 if let Some(handler) = handlers.get(name) {
                     handler.handle(args.clone())
                 } else {
-                    Err(CliPicturifyError::InvalidCommand(name.to_string()))
+                    Err(CliPicturifyError::invalid_subcommand())
                 }
             }
             None => {
-                ImageCommand::get().print_help().unwrap();
-                Err(CliPicturifyError::MissingSubcommand)
+                ImageCommand::create().print_help().unwrap();
+                Err(CliPicturifyError::missing_subcommand())
             }
         }
     }

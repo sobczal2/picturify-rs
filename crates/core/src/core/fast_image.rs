@@ -1,9 +1,9 @@
-use std::path::Path;
 use image::buffer::{EnumeratePixels, Pixels, PixelsMut, Rows, RowsMut};
 use image::io::Reader;
 use image::{DynamicImage, ImageFormat, Rgba, RgbaImage};
 use palette::{LinSrgba, Srgba};
 use rayon::prelude::*;
+use std::path::Path;
 
 use crate::conversions::image_palette_bridge::{rgba_to_srgba, srgba_to_rgba};
 use crate::core::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels, Offset};
@@ -102,8 +102,8 @@ impl FastImage {
 // Slower implementation, use if you need to work with the pixel's color space
 impl ApplyFnToPalettePixels for FastImage {
     fn apply_fn_to_srgba<F>(&mut self, f: F, progress: Option<Progress>)
-        where
-            F: Fn(Srgba, Coord) -> Srgba,
+    where
+        F: Fn(Srgba, Coord) -> Srgba,
     {
         if let Some(mut progress) = progress {
             let (_, height) = self.size().into();
@@ -127,8 +127,8 @@ impl ApplyFnToPalettePixels for FastImage {
     }
 
     fn par_apply_fn_to_srgba<F>(&mut self, f: F, progress: Option<Progress>)
-        where
-            F: Fn(Srgba, Coord) -> Srgba + Send + Sync,
+    where
+        F: Fn(Srgba, Coord) -> Srgba + Send + Sync,
     {
         if let Some(mut progress) = progress {
             let (_, height) = self.size().into();
@@ -156,8 +156,8 @@ impl ApplyFnToPalettePixels for FastImage {
     }
 
     fn apply_fn_to_srgba_with_offset<F>(&mut self, f: F, progress: Option<Progress>, offset: Offset)
-        where
-            F: Fn(Srgba, Coord) -> Srgba,
+    where
+        F: Fn(Srgba, Coord) -> Srgba,
     {
         if let Some(mut progress) = progress {
             let max_value = offset.take_rows;
@@ -239,8 +239,8 @@ impl ApplyFnToPalettePixels for FastImage {
 
 #[inline(always)]
 fn run_on_srgba_pixel<F>(pixel: &mut Rgba<u8>, coord: Coord, f: F)
-    where
-        F: Fn(Srgba, Coord) -> Srgba,
+where
+    F: Fn(Srgba, Coord) -> Srgba,
 {
     let srgba = rgba_to_srgba(*pixel);
     let new_srgba = f(srgba, coord);
@@ -250,8 +250,8 @@ fn run_on_srgba_pixel<F>(pixel: &mut Rgba<u8>, coord: Coord, f: F)
 // Speedy implementation, use if you don't need to work with the pixel's color space
 impl ApplyFnToImagePixels for FastImage {
     fn apply_fn_to_image_pixel<F>(&mut self, f: F, progress: Option<Progress>)
-        where
-            F: Fn(&mut Rgba<u8>, Coord),
+    where
+        F: Fn(&mut Rgba<u8>, Coord),
     {
         if let Some(mut progress) = progress {
             let (_, height) = self.size().into();
@@ -275,8 +275,8 @@ impl ApplyFnToImagePixels for FastImage {
     }
 
     fn par_apply_fn_to_image_pixel<F>(&mut self, f: F, progress: Option<Progress>)
-        where
-            F: Fn(&mut Rgba<u8>, Coord) + Send + Sync,
+    where
+        F: Fn(&mut Rgba<u8>, Coord) + Send + Sync,
     {
         if let Some(mut progress) = progress {
             let (_, height) = self.size().into();
@@ -393,8 +393,8 @@ impl ApplyFnToImagePixels for FastImage {
 
 impl ReadPixels for FastImage {
     fn read_srgba_pixel<F>(&self, f: F, progress: Option<Progress>)
-        where
-            F: Fn(Srgba, Coord),
+    where
+        F: Fn(Srgba, Coord),
     {
         if let Some(mut progress) = progress {
             let (_, height) = self.size().into();
@@ -414,8 +414,8 @@ impl ReadPixels for FastImage {
     }
 
     fn par_read_srgba_pixel<F>(&self, f: F, progress: Option<Progress>)
-        where
-            F: Fn(Srgba, Coord) + Send + Sync,
+    where
+        F: Fn(Srgba, Coord) + Send + Sync,
     {
         if let Some(mut progress) = progress {
             let (_, height) = self.size().into();
@@ -442,8 +442,8 @@ impl ReadPixels for FastImage {
 
 #[inline(always)]
 fn read_srgba_pixel_process_row<F>(f: &F, row: EnumeratePixels<Rgba<u8>>)
-    where
-        F: Fn(Srgba, Coord),
+where
+    F: Fn(Srgba, Coord),
 {
     row.into_iter().for_each(|(x, y, pixel)| {
         let srgba = rgba_to_srgba(*pixel);
@@ -452,7 +452,10 @@ fn read_srgba_pixel_process_row<F>(f: &F, row: EnumeratePixels<Rgba<u8>>)
 }
 
 impl ReadFromFile for FastImage {
-    fn read_from_file<'a, P>(path: P) -> PicturifyResult<Self> where P: AsRef<Path> {
+    fn read_from_file<P>(path: P) -> PicturifyResult<Self>
+    where
+        P: AsRef<Path>,
+    {
         let mut reader = Reader::open(path)?;
         reader.no_limits();
         let dynamic_image = reader.decode()?;
@@ -464,8 +467,8 @@ impl ReadFromFile for FastImage {
 
 impl WriteToFile for FastImage {
     fn write_to_file<P>(&self, path: P) -> PicturifyResult<()>
-        where
-            P: AsRef<Path>,
+    where
+        P: AsRef<Path>,
     {
         let path = path.as_ref();
         let format = ImageFormat::from_path(path)?;

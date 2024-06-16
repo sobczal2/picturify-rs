@@ -12,6 +12,7 @@ extern "C" {
 
 pub struct SepiaGpuProcessorOptions {}
 
+#[allow(dead_code)]
 pub struct SepiaGpuProcessor {
     options: SepiaGpuProcessorOptions,
 }

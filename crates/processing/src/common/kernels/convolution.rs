@@ -1,5 +1,5 @@
+use crate::common::functions::gaussian_2d;
 use core::fmt;
-use std::fmt::{Display};
 use log::debug;
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::{ProcessingError, ProcessingResult};
@@ -7,7 +7,7 @@ use picturify_core::geometry::coord::Coord;
 use picturify_core::geometry::size::Size;
 use picturify_core::image::Rgba;
 use picturify_core::palette::LinSrgba;
-use crate::common::functions::gaussian_2d;
+use std::fmt::Display;
 
 #[derive(Clone, Debug)]
 pub struct ConvolutionKernel {
@@ -26,7 +26,7 @@ impl ConvolutionKernel {
             width,
             height,
         };
-        
+
         debug!("Created kernel: \n{}", kernel);
 
         if !kernel.validate() {
@@ -47,14 +47,12 @@ impl ConvolutionKernel {
     }
 
     pub fn new_sharpen() -> Self {
-        ConvolutionKernel::new(
-            vec![
-                vec![0.0, -1.0, 0.0],
-                vec![-1.0, 5.0, -1.0],
-                vec![0.0, -1.0, 0.0],
-            ],
-        )
-            .unwrap()
+        ConvolutionKernel::new(vec![
+            vec![0.0, -1.0, 0.0],
+            vec![-1.0, 5.0, -1.0],
+            vec![0.0, -1.0, 0.0],
+        ])
+        .unwrap()
     }
 
     pub fn new_gaussian(radius: usize, sigma: f32) -> Self {
@@ -89,7 +87,8 @@ impl ConvolutionKernel {
         let two_sigma_squared = 2.0 * sigma_squared;
 
         fn gaussian_2d(x: f32, y: f32, two_sigma_squared: f32) -> f32 {
-            (- (x * x + y * y) / two_sigma_squared).exp() / (std::f32::consts::PI * two_sigma_squared)
+            (-(x * x + y * y) / two_sigma_squared).exp()
+                / (std::f32::consts::PI * two_sigma_squared)
         }
 
         values.iter_mut().enumerate().for_each(|(i, row)| {
@@ -97,7 +96,9 @@ impl ConvolutionKernel {
                 let x = i as f32 - radius as f32;
                 let y = j as f32 - radius as f32;
 
-                *value = gaussian_2d(x, y, two_sigma_squared) * (x * x + y * y - 2.0 * sigma_squared) / (sigma_squared * sigma_squared);
+                *value = gaussian_2d(x, y, two_sigma_squared)
+                    * (x * x + y * y - 2.0 * sigma_squared)
+                    / (sigma_squared * sigma_squared);
             });
         });
 
@@ -105,11 +106,12 @@ impl ConvolutionKernel {
         let num_elements = (2 * radius + 1) * (2 * radius + 1);
         let mean = sum / num_elements as f32;
 
-        values.iter_mut().for_each(|row| row.iter_mut().for_each(|value| *value -= mean));
+        values
+            .iter_mut()
+            .for_each(|row| row.iter_mut().for_each(|value| *value -= mean));
 
         ConvolutionKernel::new(values).unwrap()
     }
-
 
     #[inline(always)]
     pub fn size(&self) -> Size {
