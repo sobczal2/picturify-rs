@@ -19,7 +19,7 @@ impl PicturifyArg for CropBorderArg {
     }
 
     fn id() -> &'static str {
-        "strategy"
+        "border"
     }
 }
 
