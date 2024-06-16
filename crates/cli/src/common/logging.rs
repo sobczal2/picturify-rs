@@ -1,5 +1,5 @@
 use log::LevelFilter;
-use picturify_core::logging::logger::PicturifyLogger;
+use picturify_core::log_info;
 
 #[derive(Debug, Clone)]
 pub enum LogLevel {
@@ -26,5 +26,5 @@ impl From<LogLevel> for LevelFilter {
 
 pub fn log_help(cmd: &mut clap::Command) {
     let help = cmd.render_help();
-    PicturifyLogger::log_info(help.ansi());
+    log_info!(help.ansi());
 }

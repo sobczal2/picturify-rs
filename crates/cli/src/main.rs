@@ -3,8 +3,8 @@ use std::process::ExitCode;
 
 use itertools::Itertools;
 use log::LevelFilter;
-use picturify_core::logging::logger::PicturifyLogger;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
+use picturify_core::log_error;
 
 use crate::commands::common::command::Command;
 use crate::commands::common::picturify::PicturifyCommand;
@@ -38,7 +38,7 @@ fn main() -> ExitCode {
             match result {
                 Ok(_) => ExitCode::SUCCESS,
                 Err(e) => {
-                    PicturifyLogger::log_error(e);
+                    log_error!(e);
                     ExitCode::FAILURE
                 }
             }

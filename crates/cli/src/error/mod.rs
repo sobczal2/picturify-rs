@@ -3,7 +3,7 @@ use std::process::ExitCode;
 use thiserror::Error;
 
 use picturify_core::error::PicturifyError;
-use picturify_core::logging::logger::PicturifyLogger;
+use picturify_core::{log_error, log_info};
 use picturify_movie::error::MoviePicturifyError;
 
 pub type CliPicturifyResult<T> = Result<T, CliPicturifyError>;
@@ -37,11 +37,11 @@ pub fn handle_clap_error(error: clap::Error) -> ExitCode {
         ErrorKind::DisplayHelp
         | ErrorKind::DisplayHelpOnMissingArgumentOrSubcommand
         | ErrorKind::DisplayVersion => {
-            PicturifyLogger::log_info(message.clone().ansi());
+            log_info!(message.clone().ansi());
             ExitCode::SUCCESS
         }
         _ => {
-            PicturifyLogger::log_error(message.clone().ansi());
+            log_error!(message.clone().ansi());
             ExitCode::FAILURE
         }
     }

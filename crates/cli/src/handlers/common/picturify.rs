@@ -1,4 +1,6 @@
+use std::time::Instant;
 use clap::ArgMatches;
+use picturify_core::log_debug;
 
 use crate::commands::common::command::Command;
 use crate::commands::common::picturify::PicturifyCommand;
@@ -12,7 +14,9 @@ pub struct PicturifyCommandHandler;
 
 impl CommandHandler for PicturifyCommandHandler {
     fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
-        match args.subcommand() {
+        let now = Instant::now();
+        
+        let result = match args.subcommand() {
             Some(("image", args)) => {
                 ImageCommandHandler::handle(&ImageCommandHandler, args.clone())
             }
@@ -27,6 +31,11 @@ impl CommandHandler for PicturifyCommandHandler {
                 log_help(&mut PicturifyCommand::create());
                 Err(CliPicturifyError::missing_subcommand())
             }
-        }
+        };
+        
+        let elapsed = now.elapsed();
+        log_debug!(format!("Command took {}ms", elapsed.as_millis()));
+        
+        result
     }
 }
