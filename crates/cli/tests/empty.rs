@@ -1,7 +1,4 @@
-use crate::common::helpers::get_picturify_cli_cmd;
-
-mod common;
-mod image;
+use picturify_testing::helpers::get_picturify_cli_cmd;
 
 #[test]
 fn empty_no_args_should_print_missing_command() {

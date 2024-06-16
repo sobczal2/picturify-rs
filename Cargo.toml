@@ -7,7 +7,8 @@ members = [
     "crates/playground",
     "crates/processing",
     "crates/movie",
-    "benches/processing-bench"
+    "benches/processing-bench",
+    "crates/testing"
 ]
 
 [workspace.dependencies]
@@ -18,6 +19,7 @@ picturify-pipeline = { path = "crates/pipeline" }
 picturify-playground = { path = "crates/playground" }
 picturify-processing = { path = "crates/processing" }
 picturify-movie = { path = "crates/movie" }
+picturify-testing = { path = "crates/testing" }
 log = "0.4.21"
 simplelog = "0.12.2"
 indicatif = "0.17.8"

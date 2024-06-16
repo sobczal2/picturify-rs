@@ -26,3 +26,6 @@ colored.workspace = true
 [features]
 default = []
 gpu = ["picturify-pipeline/gpu"]
+
+[dev-dependencies]
+picturify-testing.workspace = true

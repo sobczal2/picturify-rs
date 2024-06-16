@@ -3,8 +3,7 @@ use std::path::{Path, PathBuf};
 
 use assert_cmd::Command;
 use uuid::Uuid;
-
-use crate::common::helpers::{get_null_path, get_sample_100x100_png_path};
+use crate::helpers::{get_null_path, get_sample_100x100_png_path};
 
 pub struct TestFiles {
     input: PathBuf,
