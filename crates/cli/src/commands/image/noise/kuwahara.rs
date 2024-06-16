@@ -7,13 +7,11 @@ use crate::common::filter_group::Group;
 struct KuwaharaBlurDefaultArgs {
     radius: &'static str,
     fast: &'static str,
-    sigma: &'static str,
 }
 
 const DEFAULT_ARGS: KuwaharaBlurDefaultArgs = KuwaharaBlurDefaultArgs {
     radius: "1",
     fast: "false",
-    sigma: "1.0",
 };
 
 pub struct KuwaharaRadiusArg;

@@ -52,7 +52,7 @@ impl CommandForImage for ScaleCommand {
     fn get() -> clap::Command {
         Self::get_base()
             .arg(ScaleSizeArg::new(None))
-            .arg(ScaleStrategyArg::new(None))
+            .arg(ScaleStrategyArg::new(DEFAULT_ARGS.strategy))
     }
 
     fn name() -> &'static str {

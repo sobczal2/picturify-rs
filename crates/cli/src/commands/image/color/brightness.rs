@@ -4,10 +4,6 @@ use crate::commands::common::args::common::PicturifyArg;
 use crate::commands::common::command::CommandForImage;
 use crate::common::filter_group::Group;
 
-struct BrightnessDefaultArgs {}
-
-const DEFAULT_ARGS: BrightnessDefaultArgs = BrightnessDefaultArgs {};
-
 pub struct BrightnessFactorArg;
 
 impl PicturifyArg for BrightnessFactorArg {

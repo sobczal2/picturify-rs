@@ -23,7 +23,7 @@ impl PicturifyArg for PrewittRgbArg {
             .help("Use RGB channels")
             .action(ArgAction::SetTrue)
             .default_value(default_value)
-            .value_parser(value_parser!(f32))
+            .value_parser(value_parser!(bool))
     }
 
     fn id() -> &'static str {

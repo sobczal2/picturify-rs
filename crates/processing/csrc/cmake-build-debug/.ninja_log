@@ -1,0 +1,8 @@
+# ninja log v6
+0	11	1718453882065845247	CMakeFiles/picturify-processing-opencl.dir/common/fast_image.c.o	f29f066b34437d7f
+1	19	1718453882065845247	CMakeFiles/picturify-processing-opencl.dir/common/status.c.o	deb818c1c1405656
+0	40	1718453882065845247	CMakeFiles/picturify-processing-opencl.dir/picturify-processing-opencl.c.o	4d9fa1c163251049
+0	40	1718453882065845247	CMakeFiles/picturify-processing-opencl.dir/color/sepia.c.o	265a228de8d047b4
+40	66	1718453882105846011	libpicturify-processing-opencl.a	9301c6acd1a5fada
+1	27	1718453947519083345	CMakeFiles/picturify-processing-opencl.dir/picturify-processing-opencl.c.o	4d9fa1c163251049
+27	54	1718453947547083869	libpicturify-processing-opencl.a	9301c6acd1a5fada

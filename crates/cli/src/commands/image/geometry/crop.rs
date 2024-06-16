@@ -6,12 +6,6 @@ use crate::commands::common::command::CommandForImage;
 use crate::commands::parsers::crop_border::CropBorderValueParser;
 use crate::common::filter_group::Group;
 
-struct CropDefaultArgs {
-}
-
-const DEFAULT_ARGS: CropDefaultArgs = CropDefaultArgs {
-};
-
 pub struct CropBorderArg;
 
 impl PicturifyArg for CropBorderArg {
