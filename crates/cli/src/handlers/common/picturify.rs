@@ -2,6 +2,7 @@ use clap::ArgMatches;
 
 use crate::commands::common::command::Command;
 use crate::commands::common::picturify::PicturifyCommand;
+use crate::common::logging::log_help;
 use crate::error::{CliPicturifyError, CliPicturifyResult};
 use crate::handlers::common::handler::CommandHandler;
 use crate::handlers::common::image::ImageCommandHandler;
@@ -19,11 +20,11 @@ impl CommandHandler for PicturifyCommandHandler {
                 MovieCommandHandler::handle(&MovieCommandHandler, args.clone())
             }
             Some(_) => {
-                PicturifyCommand::create().print_help().unwrap();
+                log_help(&mut PicturifyCommand::create());
                 Err(CliPicturifyError::invalid_subcommand())
             }
             None => {
-                PicturifyCommand::create().print_help().unwrap();
+                log_help(&mut PicturifyCommand::create());
                 Err(CliPicturifyError::missing_subcommand())
             }
         }

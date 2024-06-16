@@ -8,6 +8,7 @@ impl Command for MovieCommand {
     fn create() -> clap::Command {
         clap::Command::new("movie")
             .about("Run processing pipeline on the movie")
+            .disable_version_flag(true)
             .subcommands(&[NegativeCommand::get(), SobelCommand::get()])
     }
 }

@@ -7,6 +7,7 @@ pub mod conversions;
 pub mod core;
 pub mod error;
 pub mod geometry;
+pub mod logging;
 pub mod metadata;
 pub mod pixel;
 pub mod threading;

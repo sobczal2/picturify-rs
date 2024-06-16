@@ -1,6 +1,6 @@
 use clap::ArgMatches;
 #[cfg(feature = "gpu")]
-use log::warn;
+use picturify_core::logging::logger::PicturifyLogger;
 
 use picturify_pipeline::color::sepia::{SepiaPipeline, SepiaPipelineOptions};
 
@@ -23,7 +23,7 @@ impl CommandHandler for SepiaCommandHandler {
 
         #[cfg(feature = "gpu")]
         if *gpu && *fast {
-            warn!("Fast flag is ignored when using GPU");
+            PicturifyLogger::log_warn("Fast flag is ignored when using GPU");
         }
 
         let pipeline = SepiaPipeline::new(SepiaPipelineOptions {

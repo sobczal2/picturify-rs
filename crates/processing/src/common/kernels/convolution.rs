@@ -1,6 +1,5 @@
 use crate::common::functions::gaussian_2d;
 use core::fmt;
-use log::debug;
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::{ProcessingError, ProcessingResult};
 use picturify_core::geometry::coord::Coord;
@@ -26,8 +25,6 @@ impl ConvolutionKernel {
             width,
             height,
         };
-
-        debug!("Created kernel: \n{}", kernel);
 
         if !kernel.validate() {
             return Err(ProcessingError::InvalidKernel);

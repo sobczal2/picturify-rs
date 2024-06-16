@@ -1,13 +1,16 @@
 use std::env::args;
+use std::process::ExitCode;
+
+use itertools::Itertools;
+use log::LevelFilter;
+use picturify_core::logging::logger::PicturifyLogger;
+use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
+
 use crate::commands::common::command::Command;
 use crate::commands::common::picturify::PicturifyCommand;
+use crate::error::handle_clap_error;
 use crate::handlers::common::handler::CommandHandler;
 use crate::handlers::common::picturify::PicturifyCommandHandler;
-use log::{error, LevelFilter};
-use std::process::ExitCode;
-use itertools::Itertools;
-use simplelog::{ColorChoice, Config, TerminalMode, TermLogger};
-use crate::error::CliPicturifyError;
 
 mod commands;
 mod common;
@@ -20,9 +23,9 @@ const DEFAULT_VERBOSITY: LevelFilter = LevelFilter::Info;
 
 fn main() -> ExitCode {
     setup_logger();
-    
+
     #[cfg(target_os = "windows")]
-    warn!("You are using windows, please reconsider your life choices");
+    PicturifyLogger::log_war("You are using windows, please reconsider your life choices");
 
     let handler = PicturifyCommandHandler;
 
@@ -35,16 +38,12 @@ fn main() -> ExitCode {
             match result {
                 Ok(_) => ExitCode::SUCCESS,
                 Err(e) => {
-                    error!("{}", e);
+                    PicturifyLogger::log_error(e);
                     ExitCode::FAILURE
                 }
             }
         }
-        Err(e) => {
-            let error: CliPicturifyError = e.into();
-            error!("{}", error);
-            ExitCode::FAILURE
-        }
+        Err(e) => handle_clap_error(e),
     }
 }
 
@@ -64,5 +63,5 @@ fn setup_logger() {
         TerminalMode::Mixed,
         ColorChoice::Auto,
     )
-        .expect("Failed to initialize logger");
+    .expect("Failed to initialize logger");
 }

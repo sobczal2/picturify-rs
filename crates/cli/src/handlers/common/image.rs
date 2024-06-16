@@ -22,6 +22,7 @@ use crate::commands::image::noise::kuwahara::KuwaharaCommand;
 use crate::commands::image::noise::mean_blur::MeanBlurCommand;
 use crate::commands::image::noise::median_blur::MedianBlurCommand;
 use crate::commands::image::noise::sharpen::SharpenCommand;
+use crate::common::logging::log_help;
 use crate::error::{CliPicturifyError, CliPicturifyResult};
 use crate::handlers::common::handler::CommandHandler;
 use crate::handlers::image::blob::laplacian_of_gaussian::LaplacianOfGaussianCommandHandler;
@@ -109,7 +110,7 @@ impl CommandHandler for ImageCommandHandler {
                 }
             }
             None => {
-                ImageCommand::create().print_help().unwrap();
+                log_help(&mut ImageCommand::create());
                 Err(CliPicturifyError::missing_subcommand())
             }
         }

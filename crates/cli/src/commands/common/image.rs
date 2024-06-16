@@ -24,6 +24,7 @@ impl Command for ImageCommand {
     fn create() -> clap::Command {
         clap::Command::new("image")
             .about("Run processing pipeline on the image")
+            .disable_version_flag(true)
             .subcommands(&[
                 // blob
                 LaplacianOfGaussianCommand::get(),

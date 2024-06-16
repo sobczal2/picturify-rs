@@ -1,12 +1,13 @@
 use std::collections::HashMap;
 
 use clap::ArgMatches;
-use log::warn;
+use picturify_core::logging::logger::PicturifyLogger;
 
 use crate::commands::common::command::{Command, CommandForMovie};
 use crate::commands::common::movie::MovieCommand;
 use crate::commands::movie::color::negative::NegativeCommand;
 use crate::commands::movie::edge::sobel::SobelCommand;
+use crate::common::logging::log_help;
 use crate::error::{CliPicturifyError, CliPicturifyResult};
 use crate::handlers::common::handler::CommandHandler;
 use crate::handlers::movie::color::negative::NegativeCommandHandler;
@@ -16,7 +17,7 @@ pub struct MovieCommandHandler;
 
 impl CommandHandler for MovieCommandHandler {
     fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
-        warn!("movie subcommand is not yet stable, expect bugs");
+        PicturifyLogger::log_warn("movie subcommand is not yet stable, expect bugs");
         match args.subcommand() {
             Some((name, args)) => {
                 let mut handlers: HashMap<&str, Box<dyn CommandHandler>> = HashMap::new();
@@ -31,7 +32,7 @@ impl CommandHandler for MovieCommandHandler {
                 }
             }
             None => {
-                MovieCommand::create().print_help().unwrap();
+                log_help(&mut MovieCommand::create());
                 Err(CliPicturifyError::missing_subcommand())
             }
         }
