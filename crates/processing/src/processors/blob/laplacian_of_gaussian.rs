@@ -24,9 +24,11 @@ impl Processor for LaplacianOfGaussianProcessor {
     fn process(&self, image: FastImage, progress: Progress) -> FastImage {
         let radius = self.options.radius;
         let sigma = self.options.sigma;
-
+        
+        let kernel = ConvolutionKernel::new_laplacian_of_gaussian(radius, sigma);
+        
         let processor = ConvolutionRgbProcessor::new(ConvolutionRgbProcessorOptions {
-            kernel: ConvolutionKernel::new_laplacian_of_gaussian(radius, sigma),
+            kernel,
             use_fast_approximation: self.options.use_fast_approximation,
         });
 

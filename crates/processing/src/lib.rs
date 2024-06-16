@@ -1,3 +1,5 @@
+extern crate core;
+
 pub mod common;
 pub mod metadata;
 pub mod processors;

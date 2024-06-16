@@ -1,3 +1,6 @@
+use core::fmt;
+use std::fmt::{Display};
+use log::debug;
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::{ProcessingError, ProcessingResult};
 use picturify_core::geometry::coord::Coord;
@@ -23,6 +26,8 @@ impl ConvolutionKernel {
             width,
             height,
         };
+        
+        debug!("Created kernel: \n{}", kernel);
 
         if !kernel.validate() {
             return Err(ProcessingError::InvalidKernel);
@@ -76,31 +81,35 @@ impl ConvolutionKernel {
 
         ConvolutionKernel::new(values).unwrap()
     }
-    
+
     pub fn new_laplacian_of_gaussian(radius: usize, sigma: f32) -> Self {
         let mut values = vec![vec![0.0; 2 * radius + 1]; 2 * radius + 1];
 
         let sigma_squared = sigma * sigma;
         let two_sigma_squared = 2.0 * sigma_squared;
 
-        let mut sum = 0.0;
+        fn gaussian_2d(x: f32, y: f32, two_sigma_squared: f32) -> f32 {
+            (- (x * x + y * y) / two_sigma_squared).exp() / (std::f32::consts::PI * two_sigma_squared)
+        }
 
         values.iter_mut().enumerate().for_each(|(i, row)| {
             row.iter_mut().enumerate().for_each(|(j, value)| {
                 let x = i as f32 - radius as f32;
                 let y = j as f32 - radius as f32;
 
-                *value = gaussian_2d(x, y, two_sigma_squared) * (x * x + y * y - 2.0 * sigma_squared) / (sigma_squared * sigma_squared * sigma_squared);
-                sum += *value;
+                *value = gaussian_2d(x, y, two_sigma_squared) * (x * x + y * y - 2.0 * sigma_squared) / (sigma_squared * sigma_squared);
             });
         });
 
-        values
-            .iter_mut()
-            .for_each(|row| row.iter_mut().for_each(|value| *value /= sum));
+        let sum: f32 = values.iter().flat_map(|row| row.iter()).sum();
+        let num_elements = (2 * radius + 1) * (2 * radius + 1);
+        let mean = sum / num_elements as f32;
+
+        values.iter_mut().for_each(|row| row.iter_mut().for_each(|value| *value -= mean));
 
         ConvolutionKernel::new(values).unwrap()
     }
+
 
     #[inline(always)]
     pub fn size(&self) -> Size {
@@ -187,5 +196,22 @@ impl ConvolutionKernel {
             result_blue_f32.clamp(0.0, 1.0),
             result_alpha,
         )
+    }
+}
+
+impl Display for ConvolutionKernel {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut result = String::new();
+
+        for i in 0..self.height {
+            result.push('|');
+            for j in 0..self.width {
+                result.push_str(&format!("{:>10.5} ", self.values[i * self.width + j]));
+            }
+            result.push('|');
+            result.push('\n');
+        }
+
+        write!(f, "{}", result)
     }
 }

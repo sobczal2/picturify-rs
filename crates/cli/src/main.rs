@@ -10,6 +10,7 @@ use crate::error::CliPicturifyError;
 use crate::handlers::common::handler::CommandHandler;
 use crate::handlers::common::image::ImageCommandHandler;
 use crate::handlers::common::movie::MovieCommandHandler;
+use crate::handlers::common::picturify::PicturifyCommandHandler;
 
 mod commands;
 mod common;
@@ -19,27 +20,12 @@ mod metadata;
 mod progress;
 
 fn main() -> ExitCode {
-    TermLogger::init(
-        LevelFilter::Info,
-        Config::default(),
-        TerminalMode::Mixed,
-        ColorChoice::Auto,
-    )
-    .unwrap();
-
     #[cfg(target_os = "windows")]
     warn!("You are using windows, please reconsider your life choices");
 
-    let matches = PicturifyCommand::get().get_matches();
-
-    let result = match matches.subcommand() {
-        Some(("image", args)) => ImageCommandHandler::handle(&ImageCommandHandler, args.clone()),
-        Some(("movie", args)) => MovieCommandHandler::handle(&MovieCommandHandler, args.clone()),
-        _ => {
-            PicturifyCommand::get().print_help().unwrap();
-            Err(CliPicturifyError::MissingCommand)
-        }
-    };
+    let handler = PicturifyCommandHandler;
+    
+    let result = handler.handle(PicturifyCommand::get().get_matches());
 
     match result {
         Ok(_) => ExitCode::SUCCESS,
