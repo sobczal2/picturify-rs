@@ -1,4 +1,4 @@
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 use picturify_core::core::apply_fn_to_pixels::ApplyFnToImagePixels;
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
@@ -45,7 +45,7 @@ impl ScaleProcessor {
     }
 }
 
-impl Processor for ScaleProcessor {
+impl CpuProcessor for ScaleProcessor {
     fn process(
         &self,
         image: FastImage,

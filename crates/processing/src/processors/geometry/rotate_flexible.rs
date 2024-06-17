@@ -6,7 +6,7 @@ use picturify_core::geometry::coord::Coord;
 use picturify_core::geometry::size::Size;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 
 pub struct RotateFlexibleProcessorOptions {
     pub angle: Angle,
@@ -22,7 +22,7 @@ impl RotateFlexibleProcessor {
     }
 }
 
-impl Processor for RotateFlexibleProcessor {
+impl CpuProcessor for RotateFlexibleProcessor {
     fn process(
         &self,
         image: FastImage,

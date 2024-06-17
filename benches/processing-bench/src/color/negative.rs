@@ -3,7 +3,7 @@ use std::fmt::Display;
 use criterion::{criterion_group, BenchmarkId, Criterion};
 
 use picturify_core::threading::progress::Progress;
-use picturify_processing::common::execution::Processor;
+use picturify_processing::common::processors::CpuProcessor;
 use picturify_processing::processors::color::negative::{
     NegativeProcessor, NegativeProcessorOptions,
 };

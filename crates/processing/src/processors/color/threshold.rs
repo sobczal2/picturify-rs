@@ -3,7 +3,7 @@ use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 
 pub struct ThresholdProcessorOptions {
     pub red_threshold: u8,
@@ -21,7 +21,7 @@ impl ThresholdProcessor {
     }
 }
 
-impl Processor for ThresholdProcessor {
+impl CpuProcessor for ThresholdProcessor {
     fn process(
         &self,
         mut image: FastImage,

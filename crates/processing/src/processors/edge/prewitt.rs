@@ -1,4 +1,4 @@
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 use crate::common::kernels::prewitt::PrewittKernels;
 use crate::processors::edge::gradient_based::{
     GradientBasedProcessor, GradientBasedProcessorOptions,
@@ -21,7 +21,7 @@ impl PrewittProcessor {
     }
 }
 
-impl Processor for PrewittProcessor {
+impl CpuProcessor for PrewittProcessor {
     fn process(
         &self,
         image: FastImage,

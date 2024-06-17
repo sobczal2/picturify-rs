@@ -9,7 +9,7 @@ use picturify_core::image::Rgba;
 use picturify_core::palette::LinSrgba;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 
 #[derive(Clone, Copy)]
 pub enum GrayscaleStrategy {
@@ -51,7 +51,7 @@ impl GrayscaleProcessor {
     }
 }
 
-impl Processor for GrayscaleProcessor {
+impl CpuProcessor for GrayscaleProcessor {
     fn process(
         &self,
         mut image: FastImage,

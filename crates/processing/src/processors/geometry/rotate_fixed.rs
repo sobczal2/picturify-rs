@@ -6,7 +6,7 @@ use picturify_core::geometry::coord::Coord;
 use picturify_core::geometry::size::Size;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 
 #[derive(Copy, Clone)]
 pub enum RotateFixedStrategy {
@@ -67,7 +67,7 @@ impl RotateFixedProcessor {
     }
 }
 
-impl Processor for RotateFixedProcessor {
+impl CpuProcessor for RotateFixedProcessor {
     fn process(
         &self,
         image: FastImage,

@@ -3,7 +3,7 @@ use crate::pipeline::Pipeline;
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::pipeline::PipelinePicturifyResult;
 use picturify_core::geometry::size::Size;
-use picturify_processing::common::execution::Processor;
+use picturify_processing::common::processors::CpuProcessor;
 use picturify_processing::processors::geometry::scale::{
     ScaleProcessor, ScaleProcessorOptions, ScaleStrategy,
 };

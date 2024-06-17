@@ -3,7 +3,7 @@ use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 
 pub struct SepiaProcessorOptions {
     pub use_fast_approximation: bool,
@@ -19,7 +19,7 @@ impl SepiaProcessor {
     }
 }
 
-impl Processor for SepiaProcessor {
+impl CpuProcessor for SepiaProcessor {
     fn process(
         &self,
         mut image: FastImage,

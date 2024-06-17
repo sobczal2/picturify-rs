@@ -2,7 +2,7 @@ use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 use crate::common::kernels::convolution::ConvolutionKernel;
 use crate::processors::internal::convolution_rgb::{
     ConvolutionRgbProcessor, ConvolutionRgbProcessorOptions,
@@ -22,7 +22,7 @@ impl SharpenProcessor {
     }
 }
 
-impl Processor for SharpenProcessor {
+impl CpuProcessor for SharpenProcessor {
     fn process(
         &self,
         image: FastImage,

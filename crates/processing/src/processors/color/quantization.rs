@@ -4,7 +4,7 @@ use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::pixel::traits::RgbaU8Pixel;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 
 pub struct QuantizationProcessorOptions {
     pub levels: u8,
@@ -21,7 +21,7 @@ impl QuantizationProcessor {
     }
 }
 
-impl Processor for QuantizationProcessor {
+impl CpuProcessor for QuantizationProcessor {
     fn process(
         &self,
         image: FastImage,

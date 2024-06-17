@@ -1,6 +1,6 @@
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::pipeline::PipelinePicturifyResult;
-use picturify_processing::common::execution::Processor;
+use picturify_processing::common::processors::CpuProcessor;
 use picturify_processing::processors::color::grayscale::{
     GrayscaleProcessor, GrayscaleProcessorOptions, GrayscaleStrategy,
 };

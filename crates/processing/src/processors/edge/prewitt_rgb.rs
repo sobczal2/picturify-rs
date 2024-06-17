@@ -1,4 +1,4 @@
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 use crate::common::kernels::prewitt::PrewittKernels;
 use crate::processors::edge::gradient_based_rgb::{
     GradientBasedRgbProcessor, GradientBasedRgbProcessorOptions,
@@ -21,7 +21,7 @@ impl PrewittRgbProcessor {
     }
 }
 
-impl Processor for PrewittRgbProcessor {
+impl CpuProcessor for PrewittRgbProcessor {
     fn process(
         &self,
         image: FastImage,

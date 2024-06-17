@@ -1,4 +1,4 @@
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 use crate::common::kernels::sobel::SobelKernels;
 use crate::processors::edge::gradient_based_rgb::{
     GradientBasedRgbProcessor, GradientBasedRgbProcessorOptions,
@@ -21,7 +21,7 @@ impl SobelRgbProcessor {
     }
 }
 
-impl Processor for SobelRgbProcessor {
+impl CpuProcessor for SobelRgbProcessor {
     fn process(
         &self,
         image: FastImage,

@@ -1,4 +1,4 @@
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 use crate::common::kernels::convolution::ConvolutionKernel;
 use crate::processors::internal::convolution_rgb::{
     ConvolutionRgbProcessor, ConvolutionRgbProcessorOptions,
@@ -23,7 +23,7 @@ impl LaplacianOfGaussianProcessor {
     }
 }
 
-impl Processor for LaplacianOfGaussianProcessor {
+impl CpuProcessor for LaplacianOfGaussianProcessor {
     fn process(
         &self,
         image: FastImage,

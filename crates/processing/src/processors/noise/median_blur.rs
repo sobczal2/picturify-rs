@@ -5,7 +5,7 @@ use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::rayon::prelude::*;
 use picturify_core::threading::progress::{Progress, ProgressIteratorExt};
 
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 
 pub struct MedianBlurProcessorOptions {
     pub radius: usize,
@@ -21,7 +21,7 @@ impl MedianBlurProcessor {
     }
 }
 
-impl Processor for MedianBlurProcessor {
+impl CpuProcessor for MedianBlurProcessor {
     fn process(
         &self,
         image: FastImage,

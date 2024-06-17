@@ -4,7 +4,7 @@ use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::palette::Hsla;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 
 pub struct BrightnessProcessorOptions {
     pub factor: f32,
@@ -20,7 +20,7 @@ impl BrightnessProcessor {
     }
 }
 
-impl Processor for BrightnessProcessor {
+impl CpuProcessor for BrightnessProcessor {
     fn process(
         &self,
         mut image: FastImage,

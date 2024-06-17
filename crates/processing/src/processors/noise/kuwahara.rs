@@ -8,7 +8,7 @@ use picturify_core::geometry::coord::Coord;
 use picturify_core::palette::{Hsva, IntoColor};
 use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 
 pub struct KuwaharaProcessorOptions {
     pub radius: usize,
@@ -24,7 +24,7 @@ impl KuwaharaProcessor {
     }
 }
 
-impl Processor for KuwaharaProcessor {
+impl CpuProcessor for KuwaharaProcessor {
     fn process(
         &self,
         mut image: FastImage,

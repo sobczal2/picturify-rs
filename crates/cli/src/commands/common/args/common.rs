@@ -69,6 +69,7 @@ impl PicturifyArg for GpuArg {
             .short('g')
             .long("gpu")
             .help("Use GPU")
+            .action(ArgAction::SetTrue)
             .default_value(default_value)
             .value_parser(value_parser!(bool))
     }

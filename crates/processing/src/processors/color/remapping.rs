@@ -4,7 +4,7 @@ use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::palette::LinSrgba;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 
 pub enum RemappingFunction {
     Linear {
@@ -77,7 +77,7 @@ impl RemappingProcessor {
     }
 }
 
-impl Processor for RemappingProcessor {
+impl CpuProcessor for RemappingProcessor {
     fn process(
         &self,
         mut image: FastImage,

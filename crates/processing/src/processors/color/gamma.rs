@@ -1,4 +1,4 @@
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 use picturify_core::core::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
@@ -20,7 +20,7 @@ impl GammaProcessor {
     }
 }
 
-impl Processor for GammaProcessor {
+impl CpuProcessor for GammaProcessor {
     fn process(
         &self,
         image: FastImage,

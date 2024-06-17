@@ -2,7 +2,7 @@ use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 use crate::common::kernels::sobel::SobelKernels;
 use crate::processors::edge::gradient_based::{
     GradientBasedProcessor, GradientBasedProcessorOptions,
@@ -22,7 +22,7 @@ impl SobelProcessor {
     }
 }
 
-impl Processor for SobelProcessor {
+impl CpuProcessor for SobelProcessor {
     fn process(
         &self,
         image: FastImage,

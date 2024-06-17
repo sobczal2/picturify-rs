@@ -6,7 +6,7 @@ use crate::pipeline::Pipeline;
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::pipeline::PipelinePicturifyResult;
 use picturify_core::palette::Srgba;
-use picturify_processing::common::execution::Processor;
+use picturify_processing::common::processors::CpuProcessor;
 use picturify_processing::processors::edge::prewitt::{PrewittProcessor, PrewittProcessorOptions};
 use picturify_processing::processors::edge::prewitt_rgb::{
     PrewittRgbProcessor, PrewittRgbProcessorOptions,
@@ -39,7 +39,7 @@ impl Pipeline for PrewittPipeline {
         image: FastImage,
         pipeline_progress: Option<PipelineProgress>,
     ) -> PipelinePicturifyResult<FastImage> {
-        let processor: Box<dyn Processor> = match self.options.rgb {
+        let processor: Box<dyn CpuProcessor> = match self.options.rgb {
             true => Box::new(PrewittRgbProcessor::new(PrewittRgbProcessorOptions {
                 use_fast_approximation: self.options.fast,
             })),

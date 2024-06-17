@@ -1,6 +1,6 @@
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::pipeline::PipelinePicturifyResult;
-use picturify_processing::common::execution::Processor;
+use picturify_processing::common::processors::CpuProcessor;
 use picturify_processing::processors::geometry::crop::{CropProcessor, CropProcessorOptions};
 use picturify_processing::processors::geometry::enlargement::{
     EnlargementProcessor, EnlargementProcessorOptions,
@@ -12,7 +12,7 @@ use crate::pipeline::Pipeline;
 pub struct EnlargementCropPipelineOptions {
     pub fast: bool,
     pub processor_name: String,
-    pub processor: Box<dyn Processor>,
+    pub processor: Box<dyn CpuProcessor>,
     pub enlargement_processor_options: EnlargementProcessorOptions,
     pub crop_processor_options: CropProcessorOptions,
 }

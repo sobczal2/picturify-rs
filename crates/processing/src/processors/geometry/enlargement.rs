@@ -6,7 +6,7 @@ use picturify_core::geometry::size::Size;
 use picturify_core::palette::Srgba;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 
 #[derive(Copy, Clone)]
 pub enum EnlargementStrategy {
@@ -72,7 +72,7 @@ impl EnlargementProcessor {
     }
 }
 
-impl Processor for EnlargementProcessor {
+impl CpuProcessor for EnlargementProcessor {
     fn process(
         &self,
         image: FastImage,

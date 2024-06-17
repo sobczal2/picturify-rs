@@ -1,4 +1,4 @@
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 use crate::common::kernels::xy::XyKernels;
 use picturify_core::core::apply_fn_to_pixels::{
     ApplyFnToImagePixels, ApplyFnToPalettePixels, Offset,
@@ -26,7 +26,7 @@ impl GradientBasedProcessor {
     }
 }
 
-impl Processor for GradientBasedProcessor {
+impl CpuProcessor for GradientBasedProcessor {
     fn process(
         &self,
         mut image: FastImage,

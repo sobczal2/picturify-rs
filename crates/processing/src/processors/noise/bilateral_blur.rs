@@ -3,7 +3,7 @@ use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::execution::Processor;
+use crate::common::processors::CpuProcessor;
 use crate::common::functions::gaussian_1d;
 use crate::common::kernels::convolution::ConvolutionKernel;
 
@@ -25,7 +25,7 @@ impl BilateralBlurProcessor {
 }
 
 // TODO fix this
-impl Processor for BilateralBlurProcessor {
+impl CpuProcessor for BilateralBlurProcessor {
     fn process(
         &self,
         image: FastImage,

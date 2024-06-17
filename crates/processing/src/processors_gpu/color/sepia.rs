@@ -1,9 +1,8 @@
-use crate::common::execution::Processor;
+use crate::common::processors::{GpuProcessor};
 use crate::processors_gpu::common::fast_image::CFastImage;
 use picturify_core::core::fast_image::FastImage;
-use picturify_core::logging::logger::PicturifyLogger;
-use picturify_core::threading::progress::Progress;
 use std::ffi::c_int;
+use picturify_core::error::processing::ProcessingPicturifyResult;
 
 #[link(name = "picturify-processing-opencl", kind = "static")]
 extern "C" {
@@ -23,9 +22,8 @@ impl SepiaGpuProcessor {
     }
 }
 
-impl Processor for SepiaGpuProcessor {
-    fn process(&self, image: FastImage, _progress: Progress) -> FastImage {
-        PicturifyLogger::log_warn("Progress tracking is not supported for GPU processors");
+impl GpuProcessor for SepiaGpuProcessor {
+    fn process(&self, image: FastImage) -> ProcessingPicturifyResult<FastImage> {
         let mut c_image = CFastImage::from_fast_image(image);
         let status = unsafe { picturify_sepia(&mut c_image) };
 
@@ -33,6 +31,8 @@ impl Processor for SepiaGpuProcessor {
             panic!("OpenCL error");
         }
 
-        unsafe { c_image.to_fast_image() }
+        let image = unsafe { c_image.to_fast_image() };
+        
+        Ok(image)
     }
 }
