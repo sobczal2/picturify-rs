@@ -1,8 +1,8 @@
-use crate::common::processors::{GpuProcessor};
+use crate::common::processors::GpuProcessor;
 use crate::processors_gpu::common::fast_image::CFastImage;
 use picturify_core::core::fast_image::FastImage;
-use std::ffi::c_int;
 use picturify_core::error::processing::ProcessingPicturifyResult;
+use std::ffi::c_int;
 
 #[link(name = "picturify-processing-opencl", kind = "static")]
 extern "C" {
@@ -32,7 +32,7 @@ impl GpuProcessor for SepiaGpuProcessor {
         }
 
         let image = unsafe { c_image.to_fast_image() };
-        
+
         Ok(image)
     }
 }

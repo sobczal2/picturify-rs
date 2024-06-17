@@ -1,7 +1,10 @@
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::pipeline::PipelinePicturifyResult;
+#[cfg(feature = "gpu")]
 use picturify_core::log_warn;
-use picturify_processing::common::processors::{CpuProcessor, GpuProcessor};
+#[cfg(feature = "gpu")]
+use picturify_processing::common::processors::GpuProcessor;
+use picturify_processing::common::processors::CpuProcessor;
 use picturify_processing::processors::color::sepia::{SepiaProcessor, SepiaProcessorOptions};
 #[cfg(feature = "gpu")]
 use picturify_processing::processors_gpu::color::sepia::{
@@ -47,19 +50,28 @@ impl Pipeline for SepiaPipeline {
 }
 
 impl SepiaPipeline {
-    pub fn process_image_cpu(&self, image: FastImage, pipeline_progress: PipelineProgress) -> PipelinePicturifyResult<FastImage> {
+    pub fn process_image_cpu(
+        &self,
+        image: FastImage,
+        pipeline_progress: PipelineProgress,
+    ) -> PipelinePicturifyResult<FastImage> {
         let processor = SepiaProcessor::new(SepiaProcessorOptions {
             use_fast_approximation: self.options.fast,
         });
 
-        let final_image = processor.process(image, pipeline_progress.get_current_individual_progress())?;
+        let final_image =
+            processor.process(image, pipeline_progress.get_current_individual_progress())?;
         pipeline_progress.increment_combined();
 
         Ok(final_image)
     }
-    
+
     #[cfg(feature = "gpu")]
-    pub fn process_image_gpu(&self, image: FastImage, pipeline_progress: PipelineProgress) -> PipelinePicturifyResult<FastImage> {
+    pub fn process_image_gpu(
+        &self,
+        image: FastImage,
+        pipeline_progress: PipelineProgress,
+    ) -> PipelinePicturifyResult<FastImage> {
         let processor = SepiaGpuProcessor::new(SepiaGpuProcessorOptions {});
 
         if self.options.fast {
@@ -75,12 +87,20 @@ impl SepiaPipeline {
     }
 
     #[cfg(not(feature = "gpu"))]
-    pub fn process_image(&self, image: FastImage, pipeline_progress: PipelineProgress) -> PipelinePicturifyResult<FastImage> {
+    pub fn process_image(
+        &self,
+        image: FastImage,
+        pipeline_progress: PipelineProgress,
+    ) -> PipelinePicturifyResult<FastImage> {
         self.process_image_cpu(image, pipeline_progress)
     }
 
     #[cfg(feature = "gpu")]
-    pub fn process_image(&self, image: FastImage, pipeline_progress: PipelineProgress) -> PipelinePicturifyResult<FastImage> {
+    pub fn process_image(
+        &self,
+        image: FastImage,
+        pipeline_progress: PipelineProgress,
+    ) -> PipelinePicturifyResult<FastImage> {
         if self.options.use_gpu {
             self.process_image_gpu(image, pipeline_progress)
         } else {

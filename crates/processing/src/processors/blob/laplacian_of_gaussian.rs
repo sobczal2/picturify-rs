@@ -1,5 +1,5 @@
-use crate::common::processors::CpuProcessor;
 use crate::common::kernels::convolution::ConvolutionKernel;
+use crate::common::processors::CpuProcessor;
 use crate::processors::internal::convolution_rgb::{
     ConvolutionRgbProcessor, ConvolutionRgbProcessorOptions,
 };

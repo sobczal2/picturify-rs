@@ -2,8 +2,8 @@ use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::processors::CpuProcessor;
 use crate::common::kernels::sobel::SobelKernels;
+use crate::common::processors::CpuProcessor;
 use crate::processors::edge::gradient_based::{
     GradientBasedProcessor, GradientBasedProcessorOptions,
 };

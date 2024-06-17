@@ -3,9 +3,9 @@ use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::processors::CpuProcessor;
 use crate::common::functions::gaussian_1d;
 use crate::common::kernels::convolution::ConvolutionKernel;
+use crate::common::processors::CpuProcessor;
 
 pub struct BilateralBlurProcessorOptions {
     pub radius: usize,

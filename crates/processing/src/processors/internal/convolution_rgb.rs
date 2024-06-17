@@ -4,8 +4,8 @@ use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
-use crate::common::processors::CpuProcessor;
 use crate::common::kernels::convolution::ConvolutionKernel;
+use crate::common::processors::CpuProcessor;
 
 pub struct ConvolutionRgbProcessorOptions {
     pub kernel: ConvolutionKernel,

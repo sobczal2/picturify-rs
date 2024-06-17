@@ -1,5 +1,5 @@
-use crate::common::processors::CpuProcessor;
 use crate::common::kernels::prewitt::PrewittKernels;
+use crate::common::processors::CpuProcessor;
 use crate::processors::edge::gradient_based_rgb::{
     GradientBasedRgbProcessor, GradientBasedRgbProcessorOptions,
 };
