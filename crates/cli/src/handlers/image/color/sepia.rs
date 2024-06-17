@@ -1,29 +1,27 @@
-use clap::ArgMatches;
-#[cfg(feature = "gpu")]
-use picturify_core::logging::logger::PicturifyLogger;
-
-use picturify_pipeline::color::sepia::{SepiaPipeline, SepiaPipelineOptions};
-
 #[cfg(feature = "gpu")]
 use crate::commands::common::args::common::GpuArg;
 use crate::commands::common::args::common::{FastArg, PicturifyArg};
-use crate::error::CliPicturifyResult;
+use crate::error::{CliPicturifyResult, MapToCliPicturifyResult};
 use crate::handlers::common::handler::{run_pipeline, CommandHandler};
 use crate::handlers::common::image_io::{read_image, write_image};
+use clap::ArgMatches;
+#[cfg(feature = "gpu")]
+use picturify_core::log_warn;
+use picturify_pipeline::color::sepia::{SepiaPipeline, SepiaPipelineOptions};
 
 pub struct SepiaCommandHandler;
 
 impl CommandHandler for SepiaCommandHandler {
     fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
-        let fast = args.get_one::<bool>(FastArg::id()).unwrap();
+        let fast = args.get_one::<bool>(FastArg::id()).map_to_unknown_error()?;
 
         #[cfg(feature = "gpu")]
-        let gpu = args.get_one::<bool>(GpuArg::id()).unwrap();
+        let gpu = args.get_one::<bool>(GpuArg::id()).map_to_unknown_error()?;
 
         #[cfg(feature = "gpu")]
         if *gpu && *fast {
-            PicturifyLogger::log_warn("Fast flag is ignored when using GPU");
+            log_warn!("Fast flag is ignored when using GPU");
         }
 
         let pipeline = SepiaPipeline::new(SepiaPipelineOptions {

@@ -5,7 +5,7 @@ use picturify_processing::processors::geometry::crop::CropBorder;
 
 use crate::commands::common::args::common::PicturifyArg;
 use crate::commands::image::geometry::crop::CropBorderArg;
-use crate::error::CliPicturifyResult;
+use crate::error::{CliPicturifyResult, MapToCliPicturifyResult};
 use crate::handlers::common::handler::{run_pipeline, CommandHandler};
 use crate::handlers::common::image_io::{read_image, write_image};
 
@@ -14,7 +14,9 @@ pub struct CropCommandHandler;
 impl CommandHandler for CropCommandHandler {
     fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
-        let crop_border = args.get_one::<CropBorder>(CropBorderArg::id()).unwrap();
+        let crop_border = args
+            .get_one::<CropBorder>(CropBorderArg::id())
+            .map_to_unknown_error()?;
 
         let pipeline = CropPipeline::new(CropPipelineOptions {
             crop_border: *crop_border,

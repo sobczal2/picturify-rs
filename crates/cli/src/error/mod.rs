@@ -18,6 +18,27 @@ pub enum CliPicturifyError {
     Threading,
     #[error("Command error: {0}")]
     Command(String),
+    #[error("Internal error: {0}")]
+    Internal(String),
+}
+
+pub trait MapToCliPicturifyResult<T> {
+    fn map_to_unknown_error(self) -> CliPicturifyResult<T>;
+}
+
+impl<T, E> MapToCliPicturifyResult<T> for Result<T, E>
+where
+    E: std::fmt::Display,
+{
+    fn map_to_unknown_error(self) -> CliPicturifyResult<T> {
+        self.map_err(|e| CliPicturifyError::Internal(e.to_string()))
+    }
+}
+
+impl<T> MapToCliPicturifyResult<T> for Option<T> {
+    fn map_to_unknown_error(self) -> CliPicturifyResult<T> {
+        self.ok_or(CliPicturifyError::Internal("Unknown error".to_string()))
+    }
 }
 
 impl CliPicturifyError {

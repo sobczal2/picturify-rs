@@ -2,7 +2,7 @@ use crate::commands::common::args::common::{FastArg, PicturifyArg};
 use crate::commands::image::blob::laplacian_of_gaussian::{
     LaplacianOfGaussianRadiusArg, LaplacianOfGaussianSigmaArg,
 };
-use crate::error::CliPicturifyResult;
+use crate::error::{CliPicturifyResult, MapToCliPicturifyResult};
 use crate::handlers::common::handler::{run_pipeline, CommandHandler};
 use crate::handlers::common::image_io::{read_image, write_image};
 use clap::ArgMatches;
@@ -15,13 +15,13 @@ pub struct LaplacianOfGaussianCommandHandler;
 impl CommandHandler for LaplacianOfGaussianCommandHandler {
     fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
-        let fast = args.get_one::<bool>(FastArg::id()).unwrap();
+        let fast = args.get_one::<bool>(FastArg::id()).map_to_unknown_error()?;
         let radius = args
             .get_one::<usize>(LaplacianOfGaussianRadiusArg::id())
-            .unwrap();
+            .map_to_unknown_error()?;
         let sigma = args
             .get_one::<f32>(LaplacianOfGaussianSigmaArg::id())
-            .unwrap();
+            .map_to_unknown_error()?;
 
         let pipeline = LaplacianOfGaussianPipeline::new(LaplacianOfGaussianPipelineOptions {
             fast: *fast,

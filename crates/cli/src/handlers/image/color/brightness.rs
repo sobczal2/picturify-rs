@@ -4,7 +4,7 @@ use picturify_pipeline::color::brightness::{BrightnessPipeline, BrightnessPipeli
 
 use crate::commands::common::args::common::PicturifyArg;
 use crate::commands::image::color::brightness::BrightnessFactorArg;
-use crate::error::CliPicturifyResult;
+use crate::error::{CliPicturifyResult, MapToCliPicturifyResult};
 use crate::handlers::common::handler::{run_pipeline, CommandHandler};
 use crate::handlers::common::image_io::{read_image, write_image};
 
@@ -13,7 +13,9 @@ pub struct BrightnessCommandHandler;
 impl CommandHandler for BrightnessCommandHandler {
     fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
-        let factor = args.get_one::<f32>(BrightnessFactorArg::id()).unwrap();
+        let factor = args
+            .get_one::<f32>(BrightnessFactorArg::id())
+            .map_to_unknown_error()?;
 
         let pipeline = BrightnessPipeline::new(BrightnessPipelineOptions { factor: *factor });
 

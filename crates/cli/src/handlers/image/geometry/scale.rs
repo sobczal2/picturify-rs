@@ -1,6 +1,6 @@
 use crate::commands::common::args::common::PicturifyArg;
 use crate::commands::image::geometry::scale::{ScaleSizeArg, ScaleStrategyArg};
-use crate::error::CliPicturifyResult;
+use crate::error::{CliPicturifyResult, MapToCliPicturifyResult};
 use crate::handlers::common::handler::{run_pipeline, CommandHandler};
 use crate::handlers::common::image_io::{read_image, write_image};
 use clap::ArgMatches;
@@ -13,10 +13,12 @@ pub struct ScaleCommandHandler;
 impl CommandHandler for ScaleCommandHandler {
     fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
-        let size = args.get_one::<Size>(ScaleSizeArg::id()).unwrap();
+        let size = args
+            .get_one::<Size>(ScaleSizeArg::id())
+            .map_to_unknown_error()?;
         let strategy = args
             .get_one::<ScaleStrategy>(ScaleStrategyArg::id())
-            .unwrap();
+            .map_to_unknown_error()?;
 
         let pipeline = ScalePipeline::new(ScalePipelineOptions {
             size: *size,

@@ -25,7 +25,7 @@ impl TypedValueParser for AngleValueParser {
         arg: Option<&Arg>,
         value: &OsStr,
     ) -> Result<Self::Value, Error> {
-        let value = value.to_str().unwrap();
+        let value = value.to_str().unwrap_or("");
         value.parse::<Angle>().map_err(|_| {
             Error::raw(
                 ErrorKind::InvalidValue,

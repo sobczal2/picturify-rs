@@ -4,7 +4,7 @@ use picturify_pipeline::edge::sobel::{SobelPipeline, SobelPipelineOptions};
 
 use crate::commands::common::args::common::{FastArg, PicturifyArg};
 use crate::commands::image::edge::sobel::SobelRgbArg;
-use crate::error::CliPicturifyResult;
+use crate::error::{CliPicturifyResult, MapToCliPicturifyResult};
 use crate::handlers::common::handler::{run_pipeline, CommandHandler};
 use crate::handlers::common::image_io::{read_image, write_image};
 
@@ -13,8 +13,10 @@ pub struct SobelCommandHandler;
 impl CommandHandler for SobelCommandHandler {
     fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
         let image = read_image(args.clone())?;
-        let fast = args.get_one::<bool>(FastArg::id()).unwrap();
-        let rgb = args.get_one::<bool>(SobelRgbArg::id()).unwrap();
+        let fast = args.get_one::<bool>(FastArg::id()).map_to_unknown_error()?;
+        let rgb = args
+            .get_one::<bool>(SobelRgbArg::id())
+            .map_to_unknown_error()?;
 
         let pipeline = SobelPipeline::new(SobelPipelineOptions {
             fast: *fast,

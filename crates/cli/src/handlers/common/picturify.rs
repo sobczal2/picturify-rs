@@ -1,15 +1,15 @@
+use crate::commands::common::args::common::PicturifyArg;
+use clap::ArgMatches;
+use picturify_core::rayon::ThreadPoolBuilder;
+use picturify_core::{log_debug, log_error, log_warn};
 use std::thread::available_parallelism;
 use std::time::Instant;
-use clap::ArgMatches;
-use picturify_core::{log_debug, log_error, log_warn};
-use picturify_core::rayon::{ThreadPoolBuilder};
-use crate::commands::common::args::common::PicturifyArg;
 
 use crate::commands::common::command::Command;
 use crate::commands::common::picturify::{PicturifyCommand, PicturifyCpuCountArg};
 use crate::common::logging::log_help;
 use crate::common::threading::CpuCount;
-use crate::error::{CliPicturifyError, CliPicturifyResult};
+use crate::error::{CliPicturifyError, CliPicturifyResult, MapToCliPicturifyResult};
 use crate::handlers::common::handler::CommandHandler;
 use crate::handlers::common::image::ImageCommandHandler;
 use crate::handlers::common::movie::MovieCommandHandler;
@@ -18,7 +18,9 @@ pub struct PicturifyCommandHandler;
 
 impl CommandHandler for PicturifyCommandHandler {
     fn handle(&self, args: ArgMatches) -> CliPicturifyResult<()> {
-        let cpu_count = args.get_one::<CpuCount>(PicturifyCpuCountArg::id()).unwrap();
+        let cpu_count = args
+            .get_one::<CpuCount>(PicturifyCpuCountArg::id())
+            .map_to_unknown_error()?;
         setup_rayon(cpu_count.clone());
 
         let now = Instant::now();
@@ -70,6 +72,6 @@ fn setup_rayon(cpu_count: CpuCount) {
         .num_threads(num_threads)
         .build_global()
         .expect("Failed to create thread pool");
-    
+
     log_debug!(format!("Using {} threads", num_threads));
 }
