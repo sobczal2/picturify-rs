@@ -1,6 +1,6 @@
-use clap::Arg;
 use clap::builder::{PossibleValue, TypedValueParser};
 use clap::error::{Error, ErrorKind};
+use clap::Arg;
 use log::LevelFilter;
 use picturify_core::log_info;
 
@@ -58,7 +58,7 @@ impl TypedValueParser for LogLevelValueParser {
         }
     }
 
-    fn possible_values(&self) -> Option<Box<dyn Iterator<Item=PossibleValue> + '_>> {
+    fn possible_values(&self) -> Option<Box<dyn Iterator<Item = PossibleValue> + '_>> {
         Some(Box::new(
             ["off", "error", "warn", "info", "debug", "trace"]
                 .iter()

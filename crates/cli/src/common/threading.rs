@@ -1,7 +1,7 @@
-use std::ffi::OsStr;
-use clap::{Arg, Command, Error};
 use clap::builder::TypedValueParser;
 use clap::error::ErrorKind;
+use clap::{Arg, Command, Error};
+use std::ffi::OsStr;
 
 #[derive(Debug, Clone)]
 pub enum CpuCount {
@@ -23,13 +23,12 @@ impl TypedValueParser for CpuCountValueParser {
     ) -> Result<Self::Value, Error> {
         match value.to_str() {
             Some("auto") => Ok(CpuCount::Auto),
-            Some(value) => value
-                .parse()
-                .map(CpuCount::Count)
-                .map_err(|_| Error::raw(
+            Some(value) => value.parse().map(CpuCount::Count).map_err(|_| {
+                Error::raw(
                     ErrorKind::InvalidValue,
                     "Invalid CPU count, expected a positive integer or 'auto'\n",
-                )),
+                )
+            }),
             None => Err(Error::raw(
                 ErrorKind::InvalidValue,
                 "Invalid CPU count, expected a positive integer or 'auto'\n",

@@ -1,5 +1,5 @@
-use std::thread::sleep;
 use colored::Colorize;
+use std::thread::sleep;
 
 use indicatif::{ProgressBar, ProgressStyle};
 
@@ -21,11 +21,7 @@ pub fn run_progress_bar_for_pipeline(pipeline_progress: PipelineProgress) {
         let current_percentage = pipeline_progress.get_current_individual_percentage();
         bar.set_message(format!(
             "{} {}",
-            format!(
-                "[STEP: {}/{}]",
-                current_step + 1,
-                steps,
-            ).bold(),
+            format!("[STEP: {}/{}]", current_step + 1, steps,).bold(),
             current_name,
         ));
         bar.set_position(current_percentage as u64);
@@ -35,11 +31,7 @@ pub fn run_progress_bar_for_pipeline(pipeline_progress: PipelineProgress) {
     let last_name = pipeline_progress.get_last_individual_name();
     bar.set_message(format!(
         "{} {}",
-        format!(
-            "[STEP: {}/{}]",
-            steps,
-            steps,
-        ).bold(),
+        format!("[STEP: {}/{}]", steps, steps,).bold(),
         last_name,
     ));
     bar.set_position(100);

@@ -3,8 +3,8 @@ use std::process::ExitCode;
 
 use itertools::Itertools;
 use log::LevelFilter;
-use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
 use picturify_core::log_error;
+use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
 
 use crate::commands::common::command::Command;
 use crate::commands::common::picturify::PicturifyCommand;

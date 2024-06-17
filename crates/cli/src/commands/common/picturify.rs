@@ -1,5 +1,5 @@
-use clap::Arg;
 use clap::builder::{IntoResettable, OsStr};
+use clap::Arg;
 
 use crate::commands::common::args::common::PicturifyArg;
 use crate::commands::common::command::Command;
