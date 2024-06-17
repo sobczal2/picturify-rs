@@ -1,5 +1,6 @@
 use picturify_core::core::apply_fn_to_pixels::ApplyFnToImagePixels;
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
 use crate::common::execution::Processor;
@@ -21,7 +22,7 @@ impl ThresholdProcessor {
 }
 
 impl Processor for ThresholdProcessor {
-    fn process(&self, mut image: FastImage, progress: Progress) -> FastImage {
+    fn process(&self, mut image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         image.par_apply_fn_to_image_pixel(
             |pixel, _coord| {
                 pixel.0[0] = if pixel.0[0] > self.options.red_threshold {
@@ -43,6 +44,6 @@ impl Processor for ThresholdProcessor {
             Some(progress),
         );
 
-        image
+        Ok(image)
     }
 }

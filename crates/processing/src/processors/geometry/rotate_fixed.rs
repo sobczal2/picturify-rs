@@ -1,6 +1,6 @@
 use picturify_core::core::apply_fn_to_pixels::ApplyFnToImagePixels;
 use picturify_core::core::fast_image::FastImage;
-use picturify_core::error::processing::ProcessingError;
+use picturify_core::error::processing::{ProcessingPicturifyError, ProcessingPicturifyResult};
 use picturify_core::geometry::angle::Angle;
 use picturify_core::geometry::coord::Coord;
 use picturify_core::geometry::size::Size;
@@ -36,7 +36,7 @@ impl RotateFixedStrategy {
 }
 
 impl TryFrom<Angle> for RotateFixedStrategy {
-    type Error = ProcessingError;
+    type Error = ProcessingPicturifyError;
 
     fn try_from(value: Angle) -> Result<Self, Self::Error> {
         let angle = value.to_degrees();
@@ -47,7 +47,7 @@ impl TryFrom<Angle> for RotateFixedStrategy {
         } else if (angle - 270f32).abs() < 0.1 {
             Ok(RotateFixedStrategy::Deg270)
         } else {
-            Err(ProcessingError::InvalidAngle)
+            Err(ProcessingPicturifyError::InvalidAngle)
         }
     }
 }
@@ -68,7 +68,7 @@ impl RotateFixedProcessor {
 }
 
 impl Processor for RotateFixedProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> FastImage {
+    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         let new_size = self.options.strategy.get_new_size(image.size());
 
         let mut new_image = FastImage::empty(new_size);
@@ -81,6 +81,6 @@ impl Processor for RotateFixedProcessor {
             Some(progress),
         );
 
-        new_image
+        Ok(new_image)
     }
 }

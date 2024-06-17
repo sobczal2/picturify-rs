@@ -1,6 +1,8 @@
 use thiserror::Error;
 
 pub mod processing;
+pub mod pipeline;
+pub mod movie;
 
 pub type PicturifyResult<T> = Result<T, PicturifyError>;
 
@@ -13,7 +15,7 @@ pub enum PicturifyError {
     #[error("Invalid image format")]
     InvalidImageFormat,
     #[error("Processing error: {0}")]
-    ProcessingError(#[from] processing::ProcessingError),
+    ProcessingError(#[from] processing::ProcessingPicturifyError),
     #[error("Parse error: {0}")]
     ParseError(String),
 }

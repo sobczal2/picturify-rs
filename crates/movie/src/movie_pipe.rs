@@ -4,10 +4,10 @@ use std::process::{Command, Stdio};
 use std::sync::{Arc, RwLock};
 
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::movie::{MoviePicturifyError, MoviePicturifyResult};
 use picturify_pipeline::common::pipeline_progress::PipelineProgress;
 use picturify_pipeline::pipeline::Pipeline;
 
-use crate::error::{MoviePicturifyError, MoviePicturifyResult};
 use crate::progress::{MovieProgress, ProgressStage};
 
 pub struct MoviePipe;
@@ -127,7 +127,7 @@ impl MoviePipe {
             progress.read().unwrap().increment();
             let image = FastImage::from_rgba_vec((width, height).into(), buffer.clone());
             let progress = Some(PipelineProgress::new());
-            let processed_image = pipeline.run(image, progress);
+            let processed_image = pipeline.run(image, progress)?;
             ffmpeg_stdin
                 .write_all(&processed_image.to_rgba_vec())
                 .map_err(|_| MoviePicturifyError::FfmpegFailed)?;

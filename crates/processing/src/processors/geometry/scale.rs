@@ -1,6 +1,7 @@
 use crate::common::execution::Processor;
 use picturify_core::core::apply_fn_to_pixels::ApplyFnToImagePixels;
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::geometry::coord::Coord;
 use picturify_core::geometry::size::Size;
 use picturify_core::image::Rgba;
@@ -45,7 +46,7 @@ impl ScaleProcessor {
 }
 
 impl Processor for ScaleProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> FastImage {
+    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         let new_size = self.options.size;
         let strategy = self.options.strategy;
 
@@ -58,6 +59,6 @@ impl Processor for ScaleProcessor {
             Some(progress),
         );
 
-        new_image
+        Ok(new_image)
     }
 }

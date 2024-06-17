@@ -1,4 +1,5 @@
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::pipeline::PipelinePicturifyResult;
 use picturify_core::palette::Srgba;
 use picturify_processing::processors::geometry::crop::{CropBorder, CropProcessorOptions};
 use picturify_processing::processors::geometry::enlargement::{
@@ -32,7 +33,7 @@ impl KuwaharaPipeline {
 const KUWAHARA_PROCESSOR_NAME: &str = "Kuwahara";
 
 impl Pipeline for KuwaharaPipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
+    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
         let processor = KuwaharaProcessor::new(KuwaharaProcessorOptions {
             radius: self.options.radius,
         });

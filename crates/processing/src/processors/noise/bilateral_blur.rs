@@ -1,5 +1,6 @@
 use picturify_core::core::apply_fn_to_pixels::{ApplyFnToImagePixels, Offset};
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
 use crate::common::execution::Processor;
@@ -25,7 +26,7 @@ impl BilateralBlurProcessor {
 
 // TODO fix this
 impl Processor for BilateralBlurProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> FastImage {
+    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         let (width, height): (usize, usize) = image.size().into();
 
         let spatial_kernel =
@@ -95,6 +96,6 @@ impl Processor for BilateralBlurProcessor {
             );
         }
 
-        new_image
+        Ok(new_image)
     }
 }

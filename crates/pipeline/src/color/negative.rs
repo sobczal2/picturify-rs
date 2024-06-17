@@ -1,4 +1,5 @@
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::pipeline::PipelinePicturifyResult;
 use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::color::negative::{
     NegativeProcessor, NegativeProcessorOptions,
@@ -25,7 +26,7 @@ impl NegativePipeline {
 const NEGATIVE_PROCESSOR_NAME: &str = "Negative";
 
 impl Pipeline for NegativePipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
+    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
         let mut pipeline_progress = pipeline_progress.unwrap_or_default();
 
         pipeline_progress.new_individual(NEGATIVE_PROCESSOR_NAME.to_string());
@@ -36,8 +37,9 @@ impl Pipeline for NegativePipeline {
         });
 
         let final_image =
-            processor.process(image, pipeline_progress.get_current_individual_progress());
+            processor.process(image, pipeline_progress.get_current_individual_progress())?;
         pipeline_progress.increment_combined();
-        final_image
+        
+        Ok(final_image)
     }
 }

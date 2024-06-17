@@ -1,4 +1,5 @@
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::pipeline::PipelinePicturifyResult;
 use picturify_core::palette::Srgba;
 use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::edge::sobel::{SobelProcessor, SobelProcessorOptions};
@@ -34,7 +35,7 @@ impl SobelPipeline {
 const SOBEL_PROCESSOR_NAME: &str = "Sobel";
 
 impl Pipeline for SobelPipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
+    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
         let processor: Box<dyn Processor> = match self.options.rgb {
             true => Box::new(SobelRgbProcessor::new(SobelRgbProcessorOptions {
                 use_fast_approximation: self.options.fast,

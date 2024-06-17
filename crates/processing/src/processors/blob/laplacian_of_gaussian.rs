@@ -4,6 +4,7 @@ use crate::processors::internal::convolution_rgb::{
     ConvolutionRgbProcessor, ConvolutionRgbProcessorOptions,
 };
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
 pub struct LaplacianOfGaussianProcessorOptions {
@@ -23,7 +24,7 @@ impl LaplacianOfGaussianProcessor {
 }
 
 impl Processor for LaplacianOfGaussianProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> FastImage {
+    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         let radius = self.options.radius;
         let sigma = self.options.sigma;
 

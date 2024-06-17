@@ -4,7 +4,7 @@ use picturify_core::core::apply_fn_to_pixels::{
     ApplyFnToImagePixels, ApplyFnToPalettePixels, Offset,
 };
 use picturify_core::core::fast_image::FastImage;
-use picturify_core::error::processing::ProcessingError;
+use picturify_core::error::processing::{ProcessingPicturifyError, ProcessingPicturifyResult};
 use picturify_core::geometry::coord::Coord;
 use picturify_core::pixel::traits::RgbaF32Pixel;
 use picturify_core::rayon::prelude::*;
@@ -21,13 +21,13 @@ pub struct GradientBasedProcessor {
 }
 
 impl GradientBasedProcessor {
-    pub fn new(options: GradientBasedProcessorOptions) -> Result<Self, ProcessingError> {
+    pub fn new(options: GradientBasedProcessorOptions) -> Result<Self, ProcessingPicturifyError> {
         Ok(Self { options })
     }
 }
 
 impl Processor for GradientBasedProcessor {
-    fn process(&self, mut image: FastImage, mut progress: Progress) -> FastImage {
+    fn process(&self, mut image: FastImage, mut progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         let (width, height): (usize, usize) = image.size().into();
         let kernel_radius = self.options.xy_kernels.radius();
 
@@ -144,6 +144,6 @@ impl Processor for GradientBasedProcessor {
             );
         }
 
-        image
+        Ok(image)
     }
 }

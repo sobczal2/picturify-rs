@@ -1,5 +1,6 @@
 use picturify_core::core::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::pixel::traits::RgbaU8Pixel;
 use picturify_core::threading::progress::Progress;
 
@@ -21,7 +22,7 @@ impl QuantizationProcessor {
 }
 
 impl Processor for QuantizationProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> FastImage {
+    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         if self.options.use_fast_approximation {
             self.process_fast(image, progress)
         } else {
@@ -31,7 +32,7 @@ impl Processor for QuantizationProcessor {
 }
 
 impl QuantizationProcessor {
-    fn process_fast(&self, mut image: FastImage, progress: Progress) -> FastImage {
+    fn process_fast(&self, mut image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         let quantization_map = QuantizationLevelMap::new(self.options.levels);
         image.par_apply_fn_to_image_pixel(
             |pixel, _coord| {
@@ -49,10 +50,10 @@ impl QuantizationProcessor {
             },
             Some(progress),
         );
-        image
+        Ok(image)
     }
 
-    fn process_slow(&self, mut image: FastImage, progress: Progress) -> FastImage {
+    fn process_slow(&self, mut image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         let quantization_map = QuantizationLevelMap::new(self.options.levels);
         image.par_apply_fn_to_lin_srgba(
             |mut pixel, _coord| {
@@ -71,7 +72,7 @@ impl QuantizationProcessor {
             },
             Some(progress),
         );
-        image
+        Ok(image)
     }
 }
 

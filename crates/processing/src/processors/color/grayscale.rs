@@ -3,6 +3,7 @@ use clap::ValueEnum;
 
 use picturify_core::core::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::geometry::coord::Coord;
 use picturify_core::image::Rgba;
 use picturify_core::palette::LinSrgba;
@@ -51,7 +52,7 @@ impl GrayscaleProcessor {
 }
 
 impl Processor for GrayscaleProcessor {
-    fn process(&self, mut image: FastImage, progress: Progress) -> FastImage {
+    fn process(&self, mut image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         if self.options.use_fast_approximation {
             let function = match self.options.strategy {
                 GrayscaleStrategy::Average => {
@@ -75,7 +76,7 @@ impl Processor for GrayscaleProcessor {
             };
             image.par_apply_fn_to_lin_srgba(function, Some(progress));
         }
-        image
+        Ok(image)
     }
 }
 

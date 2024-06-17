@@ -4,6 +4,7 @@ use crate::common::enlargement_crop_pipeline::{
 use crate::common::pipeline_progress::PipelineProgress;
 use crate::pipeline::Pipeline;
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::pipeline::PipelinePicturifyResult;
 use picturify_core::palette::Srgba;
 use picturify_processing::processors::blob::laplacian_of_gaussian::{
     LaplacianOfGaussianProcessor, LaplacianOfGaussianProcessorOptions,
@@ -32,7 +33,7 @@ impl LaplacianOfGaussianPipeline {
 const LAPLACIAN_OF_GAUSSIAN_PROCESSOR_NAME: &str = "LaplacianOfGaussian";
 
 impl Pipeline for LaplacianOfGaussianPipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
+    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
         let processor = LaplacianOfGaussianProcessor::new(LaplacianOfGaussianProcessorOptions {
             radius: self.options.radius,
             sigma: self.options.sigma,
@@ -57,6 +58,8 @@ impl Pipeline for LaplacianOfGaussianPipeline {
             },
         });
 
-        pipeline.run(image, pipeline_progress)
+        let image = pipeline.run(image, pipeline_progress)?;
+        
+        Ok(image)
     }
 }

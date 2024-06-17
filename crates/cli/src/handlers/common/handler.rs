@@ -15,7 +15,7 @@ pub fn run_pipeline(
 ) -> CliPicturifyResult<FastImage> {
     let bar = PipelineProgressBar::start();
 
-    let result_image = pipeline.run(image, Some(bar.get_pipeline_progress()));
+    let result_image = pipeline.run(image, Some(bar.get_pipeline_progress()))?;
 
     bar.stop()?;
 

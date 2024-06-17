@@ -1,7 +1,8 @@
-use picturify_core::thiserror::Error;
+use thiserror::Error;
+use crate::error::pipeline::PipelinePicturifyError;
 
 pub type MoviePicturifyResult<T> = Result<T, MoviePicturifyError>;
-#[derive(Error, Debug)]
+#[derive(Debug, Error)]
 pub enum MoviePicturifyError {
     #[error("Ffmpeg not found")]
     FfmpegNotFound,
@@ -11,4 +12,6 @@ pub enum MoviePicturifyError {
     FfmpegFailed,
     #[error("Failed to execute ffprobe")]
     FfprobeFailed,
+    #[error("Pipeline error: {0}")]
+    PipelineError(#[from] PipelinePicturifyError),
 }

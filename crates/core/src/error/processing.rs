@@ -1,9 +1,9 @@
 use thiserror::Error;
 
-pub type ProcessingResult<T> = Result<T, ProcessingError>;
+pub type ProcessingPicturifyResult<T> = Result<T, ProcessingPicturifyError>;
 
 #[derive(Debug, Error)]
-pub enum ProcessingError {
+pub enum ProcessingPicturifyError {
     #[error("Channel selection not supported")]
     ChannelSelectionNotSupported,
     #[error("Invalid channel selector")]

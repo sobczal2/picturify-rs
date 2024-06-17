@@ -1,4 +1,5 @@
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::pipeline::PipelinePicturifyResult;
 use picturify_core::palette::Srgba;
 use picturify_processing::processors::geometry::crop::{CropBorder, CropProcessorOptions};
 use picturify_processing::processors::geometry::enlargement::{
@@ -29,7 +30,7 @@ impl SharpenPipeline {
 const SHARPEN_PROCESSOR_NAME: &str = "Sharpen";
 
 impl Pipeline for SharpenPipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
+    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
         let processor = SharpenProcessor::new(SharpenProcessorOptions {
             use_fast_approximation: self.options.fast,
         });

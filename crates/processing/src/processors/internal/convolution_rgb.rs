@@ -1,6 +1,7 @@
 use picturify_core::conversions::image_palette_bridge::lin_srgba_to_rgba;
 use picturify_core::core::apply_fn_to_pixels::{ApplyFnToImagePixels, Offset};
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
 use crate::common::execution::Processor;
@@ -22,7 +23,7 @@ impl ConvolutionRgbProcessor {
 }
 
 impl Processor for ConvolutionRgbProcessor {
-    fn process(&self, image: FastImage, mut progress: Progress) -> FastImage {
+    fn process(&self, image: FastImage, mut progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         let (width, height): (usize, usize) = image.size().into();
 
         let mut new_image = image.clone();
@@ -53,6 +54,6 @@ impl Processor for ConvolutionRgbProcessor {
             offset,
         );
 
-        new_image
+        Ok(new_image)
     }
 }

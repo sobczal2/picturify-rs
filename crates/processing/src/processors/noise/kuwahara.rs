@@ -3,6 +3,7 @@ use std::ops::Range;
 use picturify_core::core::apply_fn_to_pixels::{ApplyFnToPalettePixels, Offset};
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::core::util::image_rgba_to_palette_srgba;
+use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::geometry::coord::Coord;
 use picturify_core::palette::{Hsva, IntoColor};
 use picturify_core::threading::progress::Progress;
@@ -24,7 +25,7 @@ impl KuwaharaProcessor {
 }
 
 impl Processor for KuwaharaProcessor {
-    fn process(&self, mut image: FastImage, progress: Progress) -> FastImage {
+    fn process(&self, mut image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         let (width, height) = image.size().into();
 
         let radius = self.options.radius;
@@ -108,7 +109,7 @@ impl Processor for KuwaharaProcessor {
             offset,
         );
 
-        image
+        Ok(image)
     }
 }
 

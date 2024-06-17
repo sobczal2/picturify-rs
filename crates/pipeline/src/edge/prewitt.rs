@@ -4,6 +4,7 @@ use crate::common::enlargement_crop_pipeline::{
 use crate::common::pipeline_progress::PipelineProgress;
 use crate::pipeline::Pipeline;
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::pipeline::PipelinePicturifyResult;
 use picturify_core::palette::Srgba;
 use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::edge::prewitt::{PrewittProcessor, PrewittProcessorOptions};
@@ -33,7 +34,7 @@ impl PrewittPipeline {
 const PREWITT_PROCESSOR_NAME: &str = "Prewitt";
 
 impl Pipeline for PrewittPipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
+    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
         let processor: Box<dyn Processor> = match self.options.rgb {
             true => Box::new(PrewittRgbProcessor::new(PrewittRgbProcessorOptions {
                 use_fast_approximation: self.options.fast,

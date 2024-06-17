@@ -1,5 +1,6 @@
 use picturify_core::core::apply_fn_to_pixels::ApplyFnToPalettePixels;
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::geometry::coord::Coord;
 use picturify_core::geometry::size::Size;
 use picturify_core::palette::Srgba;
@@ -72,7 +73,7 @@ impl EnlargementProcessor {
 }
 
 impl Processor for EnlargementProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> FastImage {
+    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         let new_size = image.size().increase_by(
             self.options.border.left + self.options.border.right,
             self.options.border.top + self.options.border.bottom,
@@ -96,6 +97,6 @@ impl Processor for EnlargementProcessor {
             }
         }
 
-        new_image
+        Ok(new_image)
     }
 }

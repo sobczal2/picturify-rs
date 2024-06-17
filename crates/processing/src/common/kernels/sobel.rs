@@ -1,12 +1,12 @@
 use crate::common::kernels::convolution::ConvolutionKernel;
 use crate::common::kernels::xy::XyKernels;
-use picturify_core::error::processing::{ProcessingError, ProcessingResult};
+use picturify_core::error::processing::{ProcessingPicturifyError, ProcessingPicturifyResult};
 use picturify_core::utils::vec::rotate_left_2d;
 
 pub struct SobelKernels;
 
 impl SobelKernels {
-    pub fn create() -> ProcessingResult<XyKernels> {
+    pub fn create() -> ProcessingPicturifyResult<XyKernels> {
         let x = ConvolutionKernel::new(Self::create_sobel_kernel_x())?;
         let y = ConvolutionKernel::new(Self::create_sobel_kernel_y())?;
 
@@ -15,7 +15,7 @@ impl SobelKernels {
         if kernel.validate() {
             Ok(kernel)
         } else {
-            Err(ProcessingError::InvalidKernel)
+            Err(ProcessingPicturifyError::InvalidKernel)
         }
     }
     fn create_sobel_kernel_x() -> Vec<Vec<f32>> {

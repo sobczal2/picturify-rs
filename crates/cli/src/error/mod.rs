@@ -4,7 +4,8 @@ use thiserror::Error;
 
 use picturify_core::error::PicturifyError;
 use picturify_core::{log_error, log_info};
-use picturify_movie::error::MoviePicturifyError;
+use picturify_core::error::movie::MoviePicturifyError;
+use picturify_core::error::pipeline::PipelinePicturifyError;
 
 pub type CliPicturifyResult<T> = Result<T, CliPicturifyError>;
 
@@ -14,6 +15,8 @@ pub enum CliPicturifyError {
     Picturify(#[from] PicturifyError),
     #[error("Movie library error: {0}")]
     MoviePicturify(#[from] MoviePicturifyError),
+    #[error("Pipeline picturify error: {0}")]
+    PipelinePicturify(#[from] PipelinePicturifyError),
     #[error("Threading error")]
     Threading,
     #[error("Command error: {0}")]

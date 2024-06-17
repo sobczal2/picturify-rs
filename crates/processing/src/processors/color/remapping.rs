@@ -1,5 +1,6 @@
 use picturify_core::core::apply_fn_to_pixels::ApplyFnToPalettePixels;
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::palette::LinSrgba;
 use picturify_core::threading::progress::Progress;
 
@@ -77,12 +78,12 @@ impl RemappingProcessor {
 }
 
 impl Processor for RemappingProcessor {
-    fn process(&self, mut image: FastImage, progress: Progress) -> FastImage {
+    fn process(&self, mut image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         image.par_apply_fn_to_lin_srgba(
             |pixel, _coord| self.options.function.apply_to_pixel(pixel),
             Some(progress),
         );
 
-        image
+        Ok(image)
     }
 }

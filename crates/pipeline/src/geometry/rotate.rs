@@ -1,4 +1,5 @@
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::pipeline::PipelinePicturifyResult;
 use picturify_core::geometry::angle::Angle;
 use picturify_processing::common::execution::Processor;
 use picturify_processing::processors::geometry::rotate_fixed::{
@@ -29,7 +30,7 @@ impl RotatePipeline {
 const ROTATE_PROCESSOR_NAME: &str = "Rotate";
 
 impl Pipeline for RotatePipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> FastImage {
+    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
         match RotateFixedStrategy::try_from(self.options.angle) {
             Ok(strategy) => self.run_fixed(image, pipeline_progress, strategy),
             Err(_) => self.run_flexible(image, pipeline_progress),
@@ -43,7 +44,7 @@ impl RotatePipeline {
         image: FastImage,
         pipeline_progress: Option<PipelineProgress>,
         strategy: RotateFixedStrategy,
-    ) -> FastImage {
+    ) -> PipelinePicturifyResult<FastImage> {
         let mut pipeline_progress = pipeline_progress.unwrap_or_default();
 
         pipeline_progress.new_individual(ROTATE_PROCESSOR_NAME.to_string());
@@ -52,17 +53,17 @@ impl RotatePipeline {
         let processor = RotateFixedProcessor::new(RoteteFixedProcessorOptions { strategy });
 
         let final_image =
-            processor.process(image, pipeline_progress.get_current_individual_progress());
-
+            processor.process(image, pipeline_progress.get_current_individual_progress())?;
         pipeline_progress.increment_combined();
-        final_image
+        
+        Ok(final_image)
     }
 
     fn run_flexible(
         &self,
         image: FastImage,
         pipeline_progress: Option<PipelineProgress>,
-    ) -> FastImage {
+    ) -> PipelinePicturifyResult<FastImage> {
         let mut pipeline_progress = pipeline_progress.unwrap_or_default();
 
         pipeline_progress.new_individual(ROTATE_PROCESSOR_NAME.to_string());
@@ -73,9 +74,9 @@ impl RotatePipeline {
         });
 
         let final_image =
-            processor.process(image, pipeline_progress.get_current_individual_progress());
-
+            processor.process(image, pipeline_progress.get_current_individual_progress())?;
         pipeline_progress.increment_combined();
-        final_image
+        
+        Ok(final_image)
     }
 }

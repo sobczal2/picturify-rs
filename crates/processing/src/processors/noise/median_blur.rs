@@ -1,6 +1,7 @@
 use std::collections::VecDeque;
 
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::rayon::prelude::*;
 use picturify_core::threading::progress::{Progress, ProgressIteratorExt};
 
@@ -21,7 +22,7 @@ impl MedianBlurProcessor {
 }
 
 impl Processor for MedianBlurProcessor {
-    fn process(&self, image: FastImage, mut progress: Progress) -> FastImage {
+    fn process(&self, image: FastImage, mut progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         let (width, height): (usize, usize) = image.size().into();
         let radius = self.options.radius;
 
@@ -76,7 +77,7 @@ impl Processor for MedianBlurProcessor {
                     });
             });
 
-        new_fast_image
+        Ok(new_fast_image)
     }
 }
 

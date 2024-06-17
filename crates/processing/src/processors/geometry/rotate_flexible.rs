@@ -1,5 +1,6 @@
 use picturify_core::core::apply_fn_to_pixels::ApplyFnToImagePixels;
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::geometry::angle::Angle;
 use picturify_core::geometry::coord::Coord;
 use picturify_core::geometry::size::Size;
@@ -22,7 +23,7 @@ impl RotateFlexibleProcessor {
 }
 
 impl Processor for RotateFlexibleProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> FastImage {
+    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         let (width, height) = image.size().into();
         let size = Size::new(width, height);
         let new_size = size.rotate(self.options.angle);
@@ -46,6 +47,6 @@ impl Processor for RotateFlexibleProcessor {
             Some(progress),
         );
 
-        new_image
+        Ok(new_image)
     }
 }

@@ -4,6 +4,7 @@ use crate::processors::edge::gradient_based_rgb::{
     GradientBasedRgbProcessor, GradientBasedRgbProcessorOptions,
 };
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
 pub struct PrewittRgbProcessorOptions {
@@ -21,7 +22,7 @@ impl PrewittRgbProcessor {
 }
 
 impl Processor for PrewittRgbProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> FastImage {
+    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         let inner_processor_options = GradientBasedRgbProcessorOptions {
             use_fast_approximation: self.options.use_fast_approximation,
             xy_kernels: PrewittKernels::create().unwrap(),

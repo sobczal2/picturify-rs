@@ -1,4 +1,5 @@
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
 use crate::common::execution::Processor;
@@ -23,7 +24,7 @@ impl MeanBlurProcessor {
 }
 
 impl Processor for MeanBlurProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> FastImage {
+    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         let radius = self.options.radius;
 
         let processor = ConvolutionRgbProcessor::new(ConvolutionRgbProcessorOptions {

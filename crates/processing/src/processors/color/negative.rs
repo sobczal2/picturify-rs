@@ -1,5 +1,6 @@
 use picturify_core::core::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
 use crate::common::execution::Processor;
@@ -19,7 +20,7 @@ impl NegativeProcessor {
 }
 
 impl Processor for NegativeProcessor {
-    fn process(&self, mut image: FastImage, progress: Progress) -> FastImage {
+    fn process(&self, mut image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         if self.options.use_fast_approximation {
             image.par_apply_fn_to_image_pixel(
                 |pixel, _coord| {
@@ -41,6 +42,6 @@ impl Processor for NegativeProcessor {
             );
         }
 
-        image
+        Ok(image)
     }
 }

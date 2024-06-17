@@ -1,4 +1,5 @@
 use picturify_core::core::fast_image::FastImage;
+use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
 use crate::common::execution::Processor;
@@ -22,7 +23,7 @@ impl SharpenProcessor {
 }
 
 impl Processor for SharpenProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> FastImage {
+    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
         let processor = ConvolutionRgbProcessor::new(ConvolutionRgbProcessorOptions {
             kernel: ConvolutionKernel::new_sharpen(),
             use_fast_approximation: self.options.use_fast_approximation,

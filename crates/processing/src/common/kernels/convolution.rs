@@ -1,7 +1,7 @@
 use crate::common::functions::gaussian_2d;
 use core::fmt;
 use picturify_core::core::fast_image::FastImage;
-use picturify_core::error::processing::{ProcessingError, ProcessingResult};
+use picturify_core::error::processing::{ProcessingPicturifyError, ProcessingPicturifyResult};
 use picturify_core::geometry::coord::Coord;
 use picturify_core::geometry::size::Size;
 use picturify_core::image::Rgba;
@@ -16,7 +16,7 @@ pub struct ConvolutionKernel {
 }
 
 impl ConvolutionKernel {
-    pub fn new(values: Vec<Vec<f32>>) -> ProcessingResult<Self> {
+    pub fn new(values: Vec<Vec<f32>>) -> ProcessingPicturifyResult<Self> {
         let width = values[0].len();
         let height = values.len();
 
@@ -27,7 +27,7 @@ impl ConvolutionKernel {
         };
 
         if !kernel.validate() {
-            return Err(ProcessingError::InvalidKernel);
+            return Err(ProcessingPicturifyError::InvalidKernel);
         }
 
         Ok(kernel)
