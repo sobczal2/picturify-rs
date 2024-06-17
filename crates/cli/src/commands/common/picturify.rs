@@ -1,25 +1,29 @@
+use clap::Arg;
+use clap::builder::{IntoResettable, OsStr};
+
 use crate::commands::common::args::common::PicturifyArg;
 use crate::commands::common::command::Command;
 use crate::commands::common::image::ImageCommand;
 use crate::commands::common::movie::MovieCommand;
-use crate::common::logging::LogLevel;
+use crate::common::logging::LogLevelValueParser;
+use crate::common::threading::CpuCountValueParser;
 use crate::metadata;
-use clap::builder::{IntoResettable, OsStr, PossibleValue, TypedValueParser};
-use clap::error::{Error, ErrorKind};
-use clap::Arg;
 
 struct PicturifyDefaultArgs {
     verbosity: &'static str,
+    cpu_count: &'static str,
 }
 
-const DEFAULT_ARGS: PicturifyDefaultArgs = PicturifyDefaultArgs { verbosity: "info" };
+const DEFAULT_ARGS: PicturifyDefaultArgs = PicturifyDefaultArgs {
+    verbosity: "info",
+    cpu_count: "auto",
+};
 
 pub struct PicturifyVerbosityArg;
 
 impl PicturifyArg for PicturifyVerbosityArg {
     fn create(default_value: impl IntoResettable<OsStr>) -> Arg {
         Arg::new(Self::id())
-            .short('v')
             .long("verbosity")
             .help("Verbosity level")
             .default_value(default_value)
@@ -32,38 +36,20 @@ impl PicturifyArg for PicturifyVerbosityArg {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
-struct LogLevelValueParser;
+pub struct PicturifyCpuCountArg;
 
-impl TypedValueParser for LogLevelValueParser {
-    type Value = LogLevel;
-
-    fn parse_ref(
-        &self,
-        _cmd: &clap::Command,
-        _arg: Option<&Arg>,
-        value: &std::ffi::OsStr,
-    ) -> Result<Self::Value, Error> {
-        match value.to_str() {
-            Some("off") => Ok(LogLevel::Off),
-            Some("error") => Ok(LogLevel::Error),
-            Some("warn") => Ok(LogLevel::Warn),
-            Some("info") => Ok(LogLevel::Info),
-            Some("debug") => Ok(LogLevel::Debug),
-            Some("trace") => Ok(LogLevel::Trace),
-            _ => Err(Error::raw(
-                ErrorKind::InvalidValue,
-                "Invalid size, expected format: <width>x<height>\n",
-            )),
-        }
+impl PicturifyArg for PicturifyCpuCountArg {
+    fn create(default_value: impl IntoResettable<OsStr>) -> Arg {
+        Arg::new(Self::id())
+            .long("cpu-count")
+            .help("Number of CPU cores to use")
+            .default_value(default_value)
+            .global(true)
+            .value_parser(CpuCountValueParser)
     }
 
-    fn possible_values(&self) -> Option<Box<dyn Iterator<Item = PossibleValue> + '_>> {
-        Some(Box::new(
-            ["off", "error", "warn", "info", "debug", "trace"]
-                .iter()
-                .map(PossibleValue::new),
-        ))
+    fn id() -> &'static str {
+        "cpu-count"
     }
 }
 
@@ -92,5 +78,6 @@ impl Command for PicturifyCommand {
             ))
             .subcommands(vec![ImageCommand::create(), MovieCommand::create()])
             .arg(PicturifyVerbosityArg::create(DEFAULT_ARGS.verbosity))
+            .arg(PicturifyCpuCountArg::create(DEFAULT_ARGS.cpu_count))
     }
 }
