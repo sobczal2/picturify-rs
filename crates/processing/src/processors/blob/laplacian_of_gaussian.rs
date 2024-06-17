@@ -24,7 +24,11 @@ impl LaplacianOfGaussianProcessor {
 }
 
 impl Processor for LaplacianOfGaussianProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        image: FastImage,
+        progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         let radius = self.options.radius;
         let sigma = self.options.sigma;
 

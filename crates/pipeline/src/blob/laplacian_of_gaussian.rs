@@ -33,7 +33,11 @@ impl LaplacianOfGaussianPipeline {
 const LAPLACIAN_OF_GAUSSIAN_PROCESSOR_NAME: &str = "LaplacianOfGaussian";
 
 impl Pipeline for LaplacianOfGaussianPipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
+    fn run(
+        &self,
+        image: FastImage,
+        pipeline_progress: Option<PipelineProgress>,
+    ) -> PipelinePicturifyResult<FastImage> {
         let processor = LaplacianOfGaussianProcessor::new(LaplacianOfGaussianProcessorOptions {
             radius: self.options.radius,
             sigma: self.options.sigma,
@@ -59,7 +63,7 @@ impl Pipeline for LaplacianOfGaussianPipeline {
         });
 
         let image = pipeline.run(image, pipeline_progress)?;
-        
+
         Ok(image)
     }
 }

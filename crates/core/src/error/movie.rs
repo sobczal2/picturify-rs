@@ -1,5 +1,5 @@
-use thiserror::Error;
 use crate::error::pipeline::PipelinePicturifyError;
+use thiserror::Error;
 
 pub type MoviePicturifyResult<T> = Result<T, MoviePicturifyError>;
 #[derive(Debug, Error)]

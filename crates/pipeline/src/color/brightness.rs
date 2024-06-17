@@ -25,7 +25,11 @@ impl BrightnessPipeline {
 const BRIGHTNESS_PROCESSOR_NAME: &str = "Brightness";
 
 impl Pipeline for BrightnessPipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
+    fn run(
+        &self,
+        image: FastImage,
+        pipeline_progress: Option<PipelineProgress>,
+    ) -> PipelinePicturifyResult<FastImage> {
         let mut pipeline_progress = pipeline_progress.unwrap_or_default();
 
         pipeline_progress.new_individual(BRIGHTNESS_PROCESSOR_NAME.to_string());

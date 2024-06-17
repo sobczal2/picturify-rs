@@ -23,7 +23,11 @@ impl RotateFlexibleProcessor {
 }
 
 impl Processor for RotateFlexibleProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        image: FastImage,
+        progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         let (width, height) = image.size().into();
         let size = Size::new(width, height);
         let new_size = size.rotate(self.options.angle);

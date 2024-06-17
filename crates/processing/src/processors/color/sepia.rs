@@ -20,7 +20,11 @@ impl SepiaProcessor {
 }
 
 impl Processor for SepiaProcessor {
-    fn process(&self, mut image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        mut image: FastImage,
+        progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         if self.options.use_fast_approximation {
             image.par_apply_fn_to_image_pixel(
                 |pixel, _coord| {

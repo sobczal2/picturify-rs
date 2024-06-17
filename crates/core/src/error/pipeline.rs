@@ -1,5 +1,5 @@
-use thiserror::Error;
 use crate::error::processing::ProcessingPicturifyError;
+use thiserror::Error;
 
 pub type PipelinePicturifyResult<T> = Result<T, PipelinePicturifyError>;
 

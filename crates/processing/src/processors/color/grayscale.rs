@@ -52,7 +52,11 @@ impl GrayscaleProcessor {
 }
 
 impl Processor for GrayscaleProcessor {
-    fn process(&self, mut image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        mut image: FastImage,
+        progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         if self.options.use_fast_approximation {
             let function = match self.options.strategy {
                 GrayscaleStrategy::Average => {

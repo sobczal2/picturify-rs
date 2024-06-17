@@ -29,7 +29,11 @@ impl SepiaPipeline {
 const SEPIA_PROCESSOR_NAME: &str = "Sepia";
 
 impl Pipeline for SepiaPipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
+    fn run(
+        &self,
+        image: FastImage,
+        pipeline_progress: Option<PipelineProgress>,
+    ) -> PipelinePicturifyResult<FastImage> {
         let mut pipeline_progress = pipeline_progress.unwrap_or_default();
 
         pipeline_progress.new_individual(SEPIA_PROCESSOR_NAME.to_string());
@@ -51,7 +55,7 @@ impl Pipeline for SepiaPipeline {
         let final_image =
             processor.process(image, pipeline_progress.get_current_individual_progress())?;
         pipeline_progress.increment_combined();
-        
+
         Ok(final_image)
     }
 }

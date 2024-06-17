@@ -2,10 +2,10 @@ use clap::error::ErrorKind;
 use std::process::ExitCode;
 use thiserror::Error;
 
-use picturify_core::error::PicturifyError;
-use picturify_core::{log_error, log_info};
 use picturify_core::error::movie::MoviePicturifyError;
 use picturify_core::error::pipeline::PipelinePicturifyError;
+use picturify_core::error::PicturifyError;
+use picturify_core::{log_error, log_info};
 
 pub type CliPicturifyResult<T> = Result<T, CliPicturifyError>;
 

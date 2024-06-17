@@ -68,7 +68,11 @@ impl RotateFixedProcessor {
 }
 
 impl Processor for RotateFixedProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        image: FastImage,
+        progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         let new_size = self.options.strategy.get_new_size(image.size());
 
         let mut new_image = FastImage::empty(new_size);

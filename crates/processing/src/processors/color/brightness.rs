@@ -21,7 +21,11 @@ impl BrightnessProcessor {
 }
 
 impl Processor for BrightnessProcessor {
-    fn process(&self, mut image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        mut image: FastImage,
+        progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         image.par_apply_fn_to_pixel(
             |mut pixel: Hsla, _coord| {
                 pixel.lightness = (pixel.lightness * self.options.factor).clamp(0.0, 1.0);

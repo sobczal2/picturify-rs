@@ -34,7 +34,11 @@ impl GaussianBlurPipeline {
 const GAUSSIAN_BLUR_PROCESSOR_NAME: &str = "GaussianBlur";
 
 impl Pipeline for GaussianBlurPipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
+    fn run(
+        &self,
+        image: FastImage,
+        pipeline_progress: Option<PipelineProgress>,
+    ) -> PipelinePicturifyResult<FastImage> {
         let processor = GaussianBlurProcessor::new(GaussianBlurProcessorOptions {
             radius: self.options.radius,
             sigma: self.options.sigma,

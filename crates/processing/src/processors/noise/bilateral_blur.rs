@@ -26,7 +26,11 @@ impl BilateralBlurProcessor {
 
 // TODO fix this
 impl Processor for BilateralBlurProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        image: FastImage,
+        progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         let (width, height): (usize, usize) = image.size().into();
 
         let spatial_kernel =

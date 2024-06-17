@@ -30,7 +30,11 @@ impl RotatePipeline {
 const ROTATE_PROCESSOR_NAME: &str = "Rotate";
 
 impl Pipeline for RotatePipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
+    fn run(
+        &self,
+        image: FastImage,
+        pipeline_progress: Option<PipelineProgress>,
+    ) -> PipelinePicturifyResult<FastImage> {
         match RotateFixedStrategy::try_from(self.options.angle) {
             Ok(strategy) => self.run_fixed(image, pipeline_progress, strategy),
             Err(_) => self.run_flexible(image, pipeline_progress),
@@ -55,7 +59,7 @@ impl RotatePipeline {
         let final_image =
             processor.process(image, pipeline_progress.get_current_individual_progress())?;
         pipeline_progress.increment_combined();
-        
+
         Ok(final_image)
     }
 
@@ -76,7 +80,7 @@ impl RotatePipeline {
         let final_image =
             processor.process(image, pipeline_progress.get_current_individual_progress())?;
         pipeline_progress.increment_combined();
-        
+
         Ok(final_image)
     }
 }

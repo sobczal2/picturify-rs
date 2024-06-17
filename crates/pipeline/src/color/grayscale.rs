@@ -26,7 +26,11 @@ impl GrayscalePipeline {
 const GRAYSCALE_PROCESSOR_NAME: &str = "Grayscale";
 
 impl Pipeline for GrayscalePipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
+    fn run(
+        &self,
+        image: FastImage,
+        pipeline_progress: Option<PipelineProgress>,
+    ) -> PipelinePicturifyResult<FastImage> {
         let mut pipeline_progress = pipeline_progress.unwrap_or_default();
 
         pipeline_progress.new_individual(GRAYSCALE_PROCESSOR_NAME.to_string());
@@ -39,7 +43,7 @@ impl Pipeline for GrayscalePipeline {
         let final_image =
             processor.process(image, pipeline_progress.get_current_individual_progress())?;
         pipeline_progress.increment_combined();
-        
+
         Ok(final_image)
     }
 }

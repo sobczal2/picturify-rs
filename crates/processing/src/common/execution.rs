@@ -3,5 +3,6 @@ use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
 pub trait Processor {
-    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage>;
+    fn process(&self, image: FastImage, progress: Progress)
+        -> ProcessingPicturifyResult<FastImage>;
 }

@@ -24,7 +24,11 @@ impl MeanBlurProcessor {
 }
 
 impl Processor for MeanBlurProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        image: FastImage,
+        progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         let radius = self.options.radius;
 
         let processor = ConvolutionRgbProcessor::new(ConvolutionRgbProcessorOptions {

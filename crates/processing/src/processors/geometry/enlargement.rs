@@ -73,7 +73,11 @@ impl EnlargementProcessor {
 }
 
 impl Processor for EnlargementProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        image: FastImage,
+        progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         let new_size = image.size().increase_by(
             self.options.border.left + self.options.border.right,
             self.options.border.top + self.options.border.bottom,

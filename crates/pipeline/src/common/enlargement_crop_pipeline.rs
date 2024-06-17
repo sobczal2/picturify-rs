@@ -31,7 +31,11 @@ const ENLARGEMENT_PROCESSOR_NAME: &str = "Enlargement";
 const CROP_PROCESSOR_NAME: &str = "Crop";
 
 impl Pipeline for EnlargementCropPipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
+    fn run(
+        &self,
+        image: FastImage,
+        pipeline_progress: Option<PipelineProgress>,
+    ) -> PipelinePicturifyResult<FastImage> {
         match self.options.fast {
             true => self.run_fast(image, pipeline_progress),
             false => self.run_slow(image, pipeline_progress),
@@ -40,7 +44,11 @@ impl Pipeline for EnlargementCropPipeline {
 }
 
 impl EnlargementCropPipeline {
-    fn run_fast(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
+    fn run_fast(
+        &self,
+        image: FastImage,
+        pipeline_progress: Option<PipelineProgress>,
+    ) -> PipelinePicturifyResult<FastImage> {
         let mut pipeline_progress = pipeline_progress.unwrap_or_default();
 
         pipeline_progress.new_individual(self.options.processor_name.clone());
@@ -55,7 +63,11 @@ impl EnlargementCropPipeline {
         Ok(result)
     }
 
-    fn run_slow(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
+    fn run_slow(
+        &self,
+        image: FastImage,
+        pipeline_progress: Option<PipelineProgress>,
+    ) -> PipelinePicturifyResult<FastImage> {
         let mut pipeline_progress = pipeline_progress.unwrap_or_default();
 
         pipeline_progress.new_individual(ENLARGEMENT_PROCESSOR_NAME.to_string());
@@ -80,7 +92,7 @@ impl EnlargementCropPipeline {
         let image =
             crop_processor.process(image, pipeline_progress.get_current_individual_progress())?;
         pipeline_progress.increment_combined();
-        
+
         Ok(image)
     }
 }

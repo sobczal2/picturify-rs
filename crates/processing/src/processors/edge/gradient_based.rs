@@ -27,7 +27,11 @@ impl GradientBasedProcessor {
 }
 
 impl Processor for GradientBasedProcessor {
-    fn process(&self, mut image: FastImage, mut progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        mut image: FastImage,
+        mut progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         let (width, height): (usize, usize) = image.size().into();
         let kernel_radius = self.options.xy_kernels.radius();
 

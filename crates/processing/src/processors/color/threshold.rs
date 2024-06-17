@@ -22,7 +22,11 @@ impl ThresholdProcessor {
 }
 
 impl Processor for ThresholdProcessor {
-    fn process(&self, mut image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        mut image: FastImage,
+        progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         image.par_apply_fn_to_image_pixel(
             |pixel, _coord| {
                 pixel.0[0] = if pixel.0[0] > self.options.red_threshold {

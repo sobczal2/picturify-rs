@@ -25,7 +25,11 @@ impl KuwaharaProcessor {
 }
 
 impl Processor for KuwaharaProcessor {
-    fn process(&self, mut image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        mut image: FastImage,
+        progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         let (width, height) = image.size().into();
 
         let radius = self.options.radius;

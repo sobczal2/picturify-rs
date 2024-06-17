@@ -23,7 +23,11 @@ impl SharpenProcessor {
 }
 
 impl Processor for SharpenProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        image: FastImage,
+        progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         let processor = ConvolutionRgbProcessor::new(ConvolutionRgbProcessorOptions {
             kernel: ConvolutionKernel::new_sharpen(),
             use_fast_approximation: self.options.use_fast_approximation,

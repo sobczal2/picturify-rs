@@ -33,7 +33,11 @@ impl MeanBlurPipeline {
 const MEAN_BLUR_PROCESSOR_NAME: &str = "MeanBlur";
 
 impl Pipeline for MeanBlurPipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
+    fn run(
+        &self,
+        image: FastImage,
+        pipeline_progress: Option<PipelineProgress>,
+    ) -> PipelinePicturifyResult<FastImage> {
         let processor = MeanBlurProcessor::new(MeanBlurProcessorOptions {
             radius: self.options.radius,
             use_fast_approximation: self.options.fast,

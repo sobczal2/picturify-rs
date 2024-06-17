@@ -35,7 +35,11 @@ impl BilateralBlurPipeline {
 const BILATERAL_BLUR_PROCESSOR_NAME: &str = "BilateralBlur";
 
 impl Pipeline for BilateralBlurPipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
+    fn run(
+        &self,
+        image: FastImage,
+        pipeline_progress: Option<PipelineProgress>,
+    ) -> PipelinePicturifyResult<FastImage> {
         let processor = BilateralBlurProcessor::new(BilateralBlurProcessorOptions {
             radius: self.options.radius,
             sigma_spatial: self.options.sigma_spatial,

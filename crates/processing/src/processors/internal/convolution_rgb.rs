@@ -23,7 +23,11 @@ impl ConvolutionRgbProcessor {
 }
 
 impl Processor for ConvolutionRgbProcessor {
-    fn process(&self, image: FastImage, mut progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        image: FastImage,
+        mut progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         let (width, height): (usize, usize) = image.size().into();
 
         let mut new_image = image.clone();

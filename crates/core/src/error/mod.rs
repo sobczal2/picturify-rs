@@ -1,8 +1,8 @@
 use thiserror::Error;
 
-pub mod processing;
-pub mod pipeline;
 pub mod movie;
+pub mod pipeline;
+pub mod processing;
 
 pub type PicturifyResult<T> = Result<T, PicturifyError>;
 

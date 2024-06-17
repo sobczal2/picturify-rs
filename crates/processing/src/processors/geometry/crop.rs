@@ -52,7 +52,11 @@ impl CropProcessor {
 }
 
 impl Processor for CropProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        image: FastImage,
+        progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         let mut new_image = FastImage::empty(self.options.crop_border.into());
 
         new_image.par_apply_fn_to_image_pixel(

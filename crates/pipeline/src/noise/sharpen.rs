@@ -30,7 +30,11 @@ impl SharpenPipeline {
 const SHARPEN_PROCESSOR_NAME: &str = "Sharpen";
 
 impl Pipeline for SharpenPipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
+    fn run(
+        &self,
+        image: FastImage,
+        pipeline_progress: Option<PipelineProgress>,
+    ) -> PipelinePicturifyResult<FastImage> {
         let processor = SharpenProcessor::new(SharpenProcessorOptions {
             use_fast_approximation: self.options.fast,
         });

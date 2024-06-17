@@ -21,13 +21,19 @@ pub struct GradientBasedRgbProcessor {
 }
 
 impl GradientBasedRgbProcessor {
-    pub fn new(options: GradientBasedRgbProcessorOptions) -> Result<Self, ProcessingPicturifyError> {
+    pub fn new(
+        options: GradientBasedRgbProcessorOptions,
+    ) -> Result<Self, ProcessingPicturifyError> {
         Ok(Self { options })
     }
 }
 
 impl Processor for GradientBasedRgbProcessor {
-    fn process(&self, mut image: FastImage, mut progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        mut image: FastImage,
+        mut progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         let (width, height): (usize, usize) = image.size().into();
         let kernel_radius = self.options.xy_kernels.radius();
 

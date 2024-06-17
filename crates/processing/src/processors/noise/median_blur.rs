@@ -22,7 +22,11 @@ impl MedianBlurProcessor {
 }
 
 impl Processor for MedianBlurProcessor {
-    fn process(&self, image: FastImage, mut progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        image: FastImage,
+        mut progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         let (width, height): (usize, usize) = image.size().into();
         let radius = self.options.radius;
 

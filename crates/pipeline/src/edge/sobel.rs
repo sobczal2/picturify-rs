@@ -35,7 +35,11 @@ impl SobelPipeline {
 const SOBEL_PROCESSOR_NAME: &str = "Sobel";
 
 impl Pipeline for SobelPipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
+    fn run(
+        &self,
+        image: FastImage,
+        pipeline_progress: Option<PipelineProgress>,
+    ) -> PipelinePicturifyResult<FastImage> {
         let processor: Box<dyn Processor> = match self.options.rgb {
             true => Box::new(SobelRgbProcessor::new(SobelRgbProcessorOptions {
                 use_fast_approximation: self.options.fast,

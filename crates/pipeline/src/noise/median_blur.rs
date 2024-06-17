@@ -33,7 +33,11 @@ impl MedianBlurPipeline {
 const MEDIAN_BLUR_PROCESSOR_NAME: &str = "MedianBlur";
 
 impl Pipeline for MedianBlurPipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
+    fn run(
+        &self,
+        image: FastImage,
+        pipeline_progress: Option<PipelineProgress>,
+    ) -> PipelinePicturifyResult<FastImage> {
         let processor = MedianBlurProcessor::new(MedianBlurProcessorOptions {
             radius: self.options.radius,
         });

@@ -46,7 +46,11 @@ impl ScaleProcessor {
 }
 
 impl Processor for ScaleProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        image: FastImage,
+        progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         let new_size = self.options.size;
         let strategy = self.options.strategy;
 

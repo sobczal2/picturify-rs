@@ -78,7 +78,11 @@ impl RemappingProcessor {
 }
 
 impl Processor for RemappingProcessor {
-    fn process(&self, mut image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        mut image: FastImage,
+        progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         image.par_apply_fn_to_lin_srgba(
             |pixel, _coord| self.options.function.apply_to_pixel(pixel),
             Some(progress),

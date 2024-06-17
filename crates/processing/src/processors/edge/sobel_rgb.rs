@@ -22,7 +22,11 @@ impl SobelRgbProcessor {
 }
 
 impl Processor for SobelRgbProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        image: FastImage,
+        progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         let inner_processor_options = GradientBasedRgbProcessorOptions {
             use_fast_approximation: self.options.use_fast_approximation,
             xy_kernels: SobelKernels::create().unwrap(),

@@ -21,7 +21,11 @@ impl GammaProcessor {
 }
 
 impl Processor for GammaProcessor {
-    fn process(&self, image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        image: FastImage,
+        progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         if self.options.use_fast_approximation {
             self.process_fast(image, progress)
         } else {
@@ -31,7 +35,11 @@ impl Processor for GammaProcessor {
 }
 
 impl GammaProcessor {
-    fn process_fast(&self, mut image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process_fast(
+        &self,
+        mut image: FastImage,
+        progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         image.par_apply_fn_to_image_pixel(
             |pixel, _coord| {
                 let red = pixel.red_f32();
@@ -51,7 +59,11 @@ impl GammaProcessor {
         Ok(image)
     }
 
-    fn process_slow(&self, mut image: FastImage, progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process_slow(
+        &self,
+        mut image: FastImage,
+        progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         image.par_apply_fn_to_lin_srgba(
             |mut pixel, _coord| {
                 let red = pixel.red;

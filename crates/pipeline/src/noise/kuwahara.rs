@@ -33,7 +33,11 @@ impl KuwaharaPipeline {
 const KUWAHARA_PROCESSOR_NAME: &str = "Kuwahara";
 
 impl Pipeline for KuwaharaPipeline {
-    fn run(&self, image: FastImage, pipeline_progress: Option<PipelineProgress>) -> PipelinePicturifyResult<FastImage> {
+    fn run(
+        &self,
+        image: FastImage,
+        pipeline_progress: Option<PipelineProgress>,
+    ) -> PipelinePicturifyResult<FastImage> {
         let processor = KuwaharaProcessor::new(KuwaharaProcessorOptions {
             radius: self.options.radius,
         });
