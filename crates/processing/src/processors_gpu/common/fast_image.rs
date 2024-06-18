@@ -18,8 +18,8 @@ impl CFastImage {
 
         let u8_vec = image.to_rgba_vec();
         let mut f_vec = Vec::with_capacity(u8_vec.len());
-        for i in 0..u8_vec.len() {
-            f_vec.push(u8_vec[i] as f32 / 255.0);
+        for item in u8_vec {
+            f_vec.push(item as f32 / 255.0);
         }
 
         let data = f_vec.as_mut_ptr();
@@ -28,11 +28,12 @@ impl CFastImage {
 
         Self::new(data, size)
     }
-
+    /// # Safety
+    /// Used in the C FFI
     pub unsafe fn to_fast_image(&self) -> FastImage {
         let mut u8_vec = vec![0; (self.size.width * self.size.height) as usize * 4];
-        for i in 0..u8_vec.len() {
-            u8_vec[i] = ((*self.data.offset(i as isize)) * 255.0) as u8;
+        for (i, item) in u8_vec.iter_mut().enumerate() {
+            *item = ((*self.data.add(i)) * 255.0) as u8;
         }
 
         FastImage::from_rgba_vec(

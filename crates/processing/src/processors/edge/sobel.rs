@@ -4,7 +4,7 @@ use picturify_core::threading::progress::Progress;
 
 use crate::common::kernels::sobel::SobelKernels;
 use crate::common::processors::CpuProcessor;
-use crate::processors::edge::gradient_based::{
+use crate::processors::internal::gradient_based::{
     GradientBasedProcessor, GradientBasedProcessorOptions,
 };
 

@@ -6,53 +6,44 @@ use crate::pipeline::Pipeline;
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::pipeline::PipelinePicturifyResult;
 use picturify_core::palette::Srgba;
-use picturify_processing::common::processors::CpuProcessor;
-use picturify_processing::processors::edge::prewitt::{PrewittProcessor, PrewittProcessorOptions};
-use picturify_processing::processors::edge::prewitt_rgb::{
-    PrewittRgbProcessor, PrewittRgbProcessorOptions,
-};
+use picturify_processing::processors::edge::emboss::{EmbossProcessor, EmbossProcessorOptions};
 use picturify_processing::processors::geometry::crop::{CropBorder, CropProcessorOptions};
 use picturify_processing::processors::geometry::enlargement::{
     EnlargementBorder, EnlargementProcessorOptions, EnlargementStrategy,
 };
 
-pub struct PrewittPipelineOptions {
+pub struct EmbossPipelineOptions {
     pub fast: bool,
-    pub rgb: bool,
 }
 
-pub struct PrewittPipeline {
-    options: PrewittPipelineOptions,
+pub struct EmbossPipeline {
+    options: EmbossPipelineOptions,
 }
 
-impl PrewittPipeline {
-    pub fn new(options: PrewittPipelineOptions) -> Self {
+impl EmbossPipeline {
+    pub fn new(options: EmbossPipelineOptions) -> Self {
         Self { options }
     }
 }
 
-const PREWITT_PROCESSOR_NAME: &str = "Prewitt";
+const EMBOSS_PROCESSOR_NAME: &str = "Emboss";
 
-impl Pipeline for PrewittPipeline {
+impl Pipeline for EmbossPipeline {
     fn run(
         &self,
         image: FastImage,
         pipeline_progress: Option<PipelineProgress>,
     ) -> PipelinePicturifyResult<FastImage> {
-        let processor: Box<dyn CpuProcessor> = match self.options.rgb {
-            true => Box::new(PrewittRgbProcessor::new(PrewittRgbProcessorOptions {
-                use_fast_approximation: self.options.fast,
-            })),
-            false => Box::new(PrewittProcessor::new(PrewittProcessorOptions {
-                use_fast_approximation: self.options.fast,
-            })),
-        };
+        let processor = EmbossProcessor::new(EmbossProcessorOptions {
+            use_fast_approximation: self.options.fast,
+        });
+
         let (width, height) = image.size().into();
 
         let pipeline = EnlargementCropPipeline::new(EnlargementCropPipelineOptions {
             fast: self.options.fast,
-            processor_name: PREWITT_PROCESSOR_NAME.to_string(),
-            processor,
+            processor_name: EMBOSS_PROCESSOR_NAME.to_string(),
+            processor: Box::new(processor),
             enlargement_processor_options: EnlargementProcessorOptions {
                 strategy: EnlargementStrategy::Constant(Srgba::new(0.0, 0.0, 0.0, 1.0)),
                 border: EnlargementBorder::from_all(1),

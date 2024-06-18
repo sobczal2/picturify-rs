@@ -2,9 +2,9 @@ use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::pipeline::PipelinePicturifyResult;
 #[cfg(feature = "gpu")]
 use picturify_core::log_warn;
+use picturify_processing::common::processors::CpuProcessor;
 #[cfg(feature = "gpu")]
 use picturify_processing::common::processors::GpuProcessor;
-use picturify_processing::common::processors::CpuProcessor;
 use picturify_processing::processors::color::sepia::{SepiaProcessor, SepiaProcessorOptions};
 #[cfg(feature = "gpu")]
 use picturify_processing::processors_gpu::color::sepia::{

@@ -6,6 +6,7 @@ use crate::commands::image::color::negative::NegativeCommand;
 use crate::commands::image::color::quantization::QuantizationCommand;
 use crate::commands::image::color::sepia::SepiaCommand;
 use crate::commands::image::common::passthrough::PassthroughCommand;
+use crate::commands::image::edge::emboss::EmbossCommand;
 use crate::commands::image::edge::prewitt::PrewittCommand;
 use crate::commands::image::edge::sobel::SobelCommand;
 use crate::commands::image::geometry::crop::CropCommand;
@@ -46,6 +47,7 @@ impl Command for ImageCommand {
                 // edge
                 SobelCommand::get(),
                 PrewittCommand::get(),
+                EmbossCommand::get(),
                 // geometry
                 RotateCommand::get(),
                 CropCommand::get(),

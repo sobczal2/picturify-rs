@@ -49,7 +49,7 @@ fn negative_processor_benchmark(c: &mut Criterion) {
                     let processor = NegativeProcessor::new(NegativeProcessorOptions {
                         use_fast_approximation: options.use_fast_approximation,
                     });
-                    processor.process(image, Progress::new());
+                    processor.process(image, Progress::new()).unwrap();
                 });
             },
         );

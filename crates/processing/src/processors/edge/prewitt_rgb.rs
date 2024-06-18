@@ -1,6 +1,6 @@
 use crate::common::kernels::prewitt::PrewittKernels;
 use crate::common::processors::CpuProcessor;
-use crate::processors::edge::gradient_based_rgb::{
+use crate::processors::internal::gradient_based_rgb::{
     GradientBasedRgbProcessor, GradientBasedRgbProcessorOptions,
 };
 use picturify_core::core::fast_image::FastImage;

@@ -110,6 +110,15 @@ impl ConvolutionKernel {
         ConvolutionKernel::new(values).unwrap()
     }
 
+    pub fn new_emboss() -> Self {
+        ConvolutionKernel::new(vec![
+            vec![-2.0, -1.0, 0.0],
+            vec![-1.0, 1.0, 1.0],
+            vec![0.0, 1.0, 2.0],
+        ])
+        .unwrap()
+    }
+
     #[inline(always)]
     pub fn size(&self) -> Size {
         (self.width, self.height).into()

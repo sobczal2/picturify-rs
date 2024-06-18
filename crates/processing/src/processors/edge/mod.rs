@@ -1,5 +1,4 @@
-mod gradient_based;
-mod gradient_based_rgb;
+pub mod emboss;
 pub mod prewitt;
 pub mod prewitt_rgb;
 pub mod sobel;
