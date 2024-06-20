@@ -1,15 +1,22 @@
+use std::time::Instant;
+use log::LevelFilter;
+use simplelog::{ColorChoice, Config, TerminalMode, TermLogger};
 use picturify_core::core::fast_image::FastImage;
-use picturify_core::core::io::WriteToFile;
-use picturify_core::geometry::size::Size;
+use picturify_core::core::io::{ReadFromFile, WriteToFile};
+use picturify_core::threading::progress::Progress;
+use picturify_processing::common::processors::CpuProcessor;
+use picturify_processing::processors::edge::canny::{CannyEdgeDetectionType, CannyProcessor, CannyProcessorOptions};
 
 fn main() {
-    let image = FastImage::empty(Size::new(100, 100));
-    image
-        .write_to_file(
-            "/home/sobczal/Devel/rust/picturify-rs/tests/cli-e2e/assets/sample_100x100.png",
-        )
-        .unwrap()
-    // run_image();
+    TermLogger::init(
+        LevelFilter::Debug,
+        Config::default(),
+        TerminalMode::Mixed,
+        ColorChoice::Auto,
+    )
+        .expect("Failed to initialize logger");
+    
+    run_image();
     // run_movie();
 }
 
@@ -51,20 +58,22 @@ fn run_movie() {
 
 #[allow(dead_code)]
 fn run_image() {
-    // let core = *FastImage::read_from_file("/home/sobczal/Downloads/large.jpg").unwrap();
-    //
-    // let processor = CropProcessor::new().with_options(CropProcessorOptions {
-    //     x: 100,
-    //     y: 100,
-    //     width: 2000,
-    //     height: 2000,
-    // });
-    //
-    // let start = Instant::now();
-    // let core = processor.process(core, Arc::new(RwLock::new(Progress::new())));
-    // let duration = start.elapsed();
-    // println!("Time elapsed in grayscale is: {:?}", duration);
-    // core
-    //     .write_to_file("/home/sobczal/Downloads/output.png")
-    //     .unwrap();
+    let image = FastImage::read_from_file("/home/sobczal/Downloads/valve.png").unwrap();
+    
+    let processor = CannyProcessor::new(CannyProcessorOptions {
+        sigma: 1.0,
+        radius: 2,
+        edge_detection_type: CannyEdgeDetectionType::Sobel,
+        low_threshold: 0.1f32,
+        high_threshold: 0.1f32,
+    });
+        
+    
+    let start = Instant::now();
+    let image = processor.process(image, Progress::new()).unwrap();
+    let duration = start.elapsed();
+    println!("Time elapsed in grayscale is: {:?}", duration);
+    image
+        .write_to_file("/home/sobczal/Downloads/output.png")
+        .unwrap();
 }

@@ -10,3 +10,5 @@ picturify-core.workspace = true
 picturify-processing.workspace = true
 picturify-pipeline.workspace = true
 picturify-movie.workspace = true
+simplelog.workspace = true
+log.workspace = true
