@@ -3,6 +3,7 @@ use clap::Arg;
 
 use crate::commands::common::args::common::PicturifyArg;
 use crate::commands::common::command::Command;
+use crate::commands::common::completions::CompletionsCommand;
 use crate::commands::common::image::ImageCommand;
 use crate::commands::common::movie::MovieCommand;
 use crate::common::logging::LogLevelValueParser;
@@ -76,7 +77,11 @@ impl Command for PicturifyCommand {
                 picturify_movie::metadata::NAME,
                 picturify_movie::metadata::VERSION,
             ))
-            .subcommands(vec![ImageCommand::create(), MovieCommand::create()])
+            .subcommands(vec![
+                ImageCommand::create(),
+                MovieCommand::create(),
+                CompletionsCommand::create(),
+            ])
             .arg(PicturifyVerbosityArg::create(DEFAULT_ARGS.verbosity))
             .arg(PicturifyCpuCountArg::create(DEFAULT_ARGS.cpu_count))
     }

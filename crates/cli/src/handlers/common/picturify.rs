@@ -10,6 +10,7 @@ use crate::commands::common::picturify::{PicturifyCommand, PicturifyCpuCountArg}
 use crate::common::logging::log_help;
 use crate::common::threading::CpuCount;
 use crate::error::{CliPicturifyError, CliPicturifyResult, MapToCliPicturifyResult};
+use crate::handlers::common::completions::CompletionsCommandHandler;
 use crate::handlers::common::handler::CommandHandler;
 use crate::handlers::common::image::ImageCommandHandler;
 use crate::handlers::common::movie::MovieCommandHandler;
@@ -31,6 +32,9 @@ impl CommandHandler for PicturifyCommandHandler {
             }
             Some(("movie", args)) => {
                 MovieCommandHandler::handle(&MovieCommandHandler, args.clone())
+            }
+            Some(("completions", args)) => {
+                CompletionsCommandHandler::handle(&CompletionsCommandHandler, args.clone())
             }
             Some(_) => {
                 log_help(&mut PicturifyCommand::create());
