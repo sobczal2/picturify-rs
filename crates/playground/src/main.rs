@@ -6,6 +6,7 @@ use picturify_core::core::io::{ReadFromFile, WriteToFile};
 use picturify_core::threading::progress::Progress;
 use picturify_processing::common::processors::CpuProcessor;
 use picturify_processing::processors::edge::canny::{CannyEdgeDetectionType, CannyProcessor, CannyProcessorOptions};
+use picturify_processing::processors::geometry::scale::{ScaleProcessor, ScaleProcessorOptions, ScaleStrategy};
 
 fn main() {
     TermLogger::init(
@@ -58,14 +59,21 @@ fn run_movie() {
 
 #[allow(dead_code)]
 fn run_image() {
-    let image = FastImage::read_from_file("/home/sobczal/Downloads/valve.png").unwrap();
+    let image = FastImage::read_from_file("/home/sobczal/Downloads/alien2.png").unwrap();
     
+    // let processor = ScaleProcessor::new(ScaleProcessorOptions {
+    //     size: (750, 1000).into(),
+    //     strategy: ScaleStrategy::NearestNeighbor
+    // });
+    // 
+    // let image = processor.process(image, Progress::new()).unwrap();
+    // 
     let processor = CannyProcessor::new(CannyProcessorOptions {
-        sigma: 1.0,
+        sigma: 1.0f32,
         radius: 2,
         edge_detection_type: CannyEdgeDetectionType::Sobel,
-        low_threshold: 0.1f32,
-        high_threshold: 0.1f32,
+        low_threshold: 0.03f32,
+        high_threshold: 0.07f32,
     });
         
     

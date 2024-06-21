@@ -1,4 +1,5 @@
 use image::Rgba;
+use crate::pixel::colors::Colors;
 
 use crate::pixel::traits::{RgbaF32Pixel, RgbaU8Pixel};
 
@@ -69,5 +70,43 @@ impl RgbaF32Pixel for Rgba<u8> {
     #[inline(always)]
     fn set_alpha_f32(&mut self, value: f32) {
         self.0[3] = (value * 255.0) as u8;
+    }
+}
+
+impl Colors for Rgba<u8> {
+    fn black() -> Self {
+        Rgba([0, 0, 0, 255])
+    }
+
+    fn white() -> Self {
+        Rgba([255, 255, 255, 255])
+    }
+
+    fn red() -> Self {
+        Rgba([255, 0, 0, 255])
+    }
+
+    fn green() -> Self {
+        Rgba([0, 255, 0, 255])
+    }
+
+    fn blue() -> Self {
+        Rgba([0, 0, 255, 255])
+    }
+
+    fn yellow() -> Self {
+        Rgba([255, 255, 0, 255])
+    }
+
+    fn cyan() -> Self {
+        Rgba([0, 255, 255, 255])
+    }
+
+    fn magenta() -> Self {
+        Rgba([255, 0, 255, 255])
+    }
+
+    fn transparent() -> Self {
+        Rgba([0, 0, 0, 0])
     }
 }
