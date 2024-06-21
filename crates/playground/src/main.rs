@@ -12,6 +12,7 @@ use picturify_processing::processors::geometry::scale::{
 };
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
 use std::time::Instant;
+use picturify_processing::processors::noise::kuwahara::{KuwaharaProcessor, KuwaharaProcessorOptions};
 
 fn main() {
     TermLogger::init(
@@ -73,14 +74,18 @@ fn run_image() {
     //
     // let image = processor.process(image, Progress::new()).unwrap();
     //
-    let processor = CannyProcessor::new(CannyProcessorOptions {
-        sigma: 1.0f32,
-        radius: 2,
-        edge_detection_type: CannyEdgeDetectionType::Sobel,
-        low_threshold: 0.03f32,
-        high_threshold: 0.07f32,
-    });
+    // let processor = CannyProcessor::new(CannyProcessorOptions {
+    //     sigma: 1.0f32,
+    //     radius: 2,
+    //     edge_detection_type: CannyEdgeDetectionType::Sobel,
+    //     low_threshold: 0.03f32,
+    //     high_threshold: 0.07f32,
+    // });
 
+    let processor = KuwaharaProcessor::new(KuwaharaProcessorOptions {
+        radius: 7,
+    });
+    
     let start = Instant::now();
     let image = processor.process(image, Progress::new()).unwrap();
     let duration = start.elapsed();
