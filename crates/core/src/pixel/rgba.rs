@@ -1,5 +1,5 @@
-use image::Rgba;
 use crate::pixel::colors::Colors;
+use image::Rgba;
 
 use crate::pixel::traits::{RgbaF32Pixel, RgbaU8Pixel};
 

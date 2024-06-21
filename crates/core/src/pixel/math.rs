@@ -1,5 +1,5 @@
-use image::Rgba;
 use crate::pixel::traits::RgbaU8Pixel;
+use image::Rgba;
 
 pub trait PixelMath {
     fn add(&self, other: Self) -> Self;

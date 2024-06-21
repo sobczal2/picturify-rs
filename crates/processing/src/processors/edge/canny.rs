@@ -1,3 +1,9 @@
+use crate::common::kernels::prewitt::PrewittKernels;
+use crate::common::kernels::sobel::SobelKernels;
+use crate::common::processors::CpuProcessor;
+use crate::processors::noise::gaussian_blur::{
+    GaussianBlurProcessor, GaussianBlurProcessorOptions,
+};
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::geometry::coord::Coord;
@@ -6,10 +12,6 @@ use picturify_core::pixel::colors::Colors;
 use picturify_core::pixel::traits::RgbaF32Pixel;
 use picturify_core::rayon::prelude::*;
 use picturify_core::threading::progress::Progress;
-use crate::common::kernels::prewitt::PrewittKernels;
-use crate::common::kernels::sobel::SobelKernels;
-use crate::common::processors::CpuProcessor;
-use crate::processors::noise::gaussian_blur::{GaussianBlurProcessor, GaussianBlurProcessorOptions};
 
 pub enum CannyEdgeDetectionType {
     Sobel,
@@ -36,7 +38,11 @@ impl CannyProcessor {
 }
 
 impl CpuProcessor for CannyProcessor {
-    fn process(&self, image: FastImage, mut progress: Progress) -> ProcessingPicturifyResult<FastImage> {
+    fn process(
+        &self,
+        image: FastImage,
+        mut progress: Progress,
+    ) -> ProcessingPicturifyResult<FastImage> {
         progress.setup(5);
         let blurred_image = self.apply_gaussian_blur(image)?;
         progress.increment();
@@ -115,11 +121,16 @@ impl CannyProcessor {
         processor.process(image, Progress::new())
     }
 
-    fn apply_edge_detection(&self, image: FastImage) -> ProcessingPicturifyResult<ImageGradientResult> {
+    fn apply_edge_detection(
+        &self,
+        image: FastImage,
+    ) -> ProcessingPicturifyResult<ImageGradientResult> {
         let kernels = match self.options.edge_detection_type {
             CannyEdgeDetectionType::Sobel => SobelKernels::create(),
             CannyEdgeDetectionType::Prewitt => PrewittKernels::create(),
-            CannyEdgeDetectionType::Scharr => unimplemented!("Scharr kernels are not implemented yet"),
+            CannyEdgeDetectionType::Scharr => {
+                unimplemented!("Scharr kernels are not implemented yet")
+            }
         }?;
 
         let (width_usize, height_usize): (usize, usize) = image.size().into();
@@ -137,7 +148,11 @@ impl CannyProcessor {
             .for_each(|(index_1d, (gradient_magnitude, gradient_direction))| {
                 let pixel_coord = Coord::from_1d_index(index_1d, width_usize);
 
-                if pixel_coord.x() < kernel_radius || pixel_coord.x() >= width_i32 - kernel_radius || pixel_coord.y() < kernel_radius || pixel_coord.y() >= height_i32 - kernel_radius {
+                if pixel_coord.x() < kernel_radius
+                    || pixel_coord.x() >= width_i32 - kernel_radius
+                    || pixel_coord.y() < kernel_radius
+                    || pixel_coord.y() >= height_i32 - kernel_radius
+                {
                     return;
                 }
 
@@ -156,7 +171,6 @@ impl CannyProcessor {
                 magnitude_x /= 3.0;
                 magnitude_y /= 3.0;
 
-
                 let actual_magnitude = (magnitude_x.powi(2) + magnitude_y.powi(2)).sqrt();
                 *gradient_magnitude = actual_magnitude;
 
@@ -164,9 +178,13 @@ impl CannyProcessor {
                     angle if angle < -3.0 * std::f32::consts::FRAC_PI_4 => GradientDirection::North,
                     angle if angle < -std::f32::consts::FRAC_PI_4 => GradientDirection::NorthEast,
                     angle if angle < std::f32::consts::FRAC_PI_4 => GradientDirection::East,
-                    angle if angle < 3.0 * std::f32::consts::FRAC_PI_4 => GradientDirection::SouthEast,
+                    angle if angle < 3.0 * std::f32::consts::FRAC_PI_4 => {
+                        GradientDirection::SouthEast
+                    }
                     angle if angle < 5.0 * std::f32::consts::FRAC_PI_4 => GradientDirection::South,
-                    angle if angle < 7.0 * std::f32::consts::FRAC_PI_4 => GradientDirection::SouthWest,
+                    angle if angle < 7.0 * std::f32::consts::FRAC_PI_4 => {
+                        GradientDirection::SouthWest
+                    }
                     angle if angle < 9.0 * std::f32::consts::FRAC_PI_4 => GradientDirection::West,
                     _ => GradientDirection::NorthWest,
                 };
@@ -177,7 +195,10 @@ impl CannyProcessor {
         Ok(result)
     }
 
-    fn apply_non_maximum_supression(&self, gradient: ImageGradientResult) -> ProcessingPicturifyResult<IntensityResult> {
+    fn apply_non_maximum_supression(
+        &self,
+        gradient: ImageGradientResult,
+    ) -> ProcessingPicturifyResult<IntensityResult> {
         let width = gradient.width;
         let height = gradient.height;
 
@@ -195,7 +216,11 @@ impl CannyProcessor {
             .for_each(|(index_1d, magnitude)| {
                 let pixel_coord = Coord::from_1d_index(index_1d, width);
 
-                if pixel_coord.x() == 0 || pixel_coord.x() == width as i32 - 1 || pixel_coord.y() == 0 || pixel_coord.y() == height as i32 - 1 {
+                if pixel_coord.x() == 0
+                    || pixel_coord.x() == width as i32 - 1
+                    || pixel_coord.y() == 0
+                    || pixel_coord.y() == height as i32 - 1
+                {
                     return;
                 }
 
@@ -208,15 +233,21 @@ impl CannyProcessor {
                         let north_magnitude = gradient.gradient_magnitude[index_1d - width];
                         let south_magnitude = gradient.gradient_magnitude[index_1d + width];
 
-                        if current_magnitude < north_magnitude || current_magnitude < south_magnitude {
+                        if current_magnitude < north_magnitude
+                            || current_magnitude < south_magnitude
+                        {
                             *magnitude = 0.0;
                         }
                     }
                     GradientDirection::NorthEast | GradientDirection::SouthWest => {
-                        let north_east_magnitude = gradient.gradient_magnitude[index_1d - width + 1];
-                        let south_west_magnitude = gradient.gradient_magnitude[index_1d + width - 1];
+                        let north_east_magnitude =
+                            gradient.gradient_magnitude[index_1d - width + 1];
+                        let south_west_magnitude =
+                            gradient.gradient_magnitude[index_1d + width - 1];
 
-                        if current_magnitude < north_east_magnitude || current_magnitude < south_west_magnitude {
+                        if current_magnitude < north_east_magnitude
+                            || current_magnitude < south_west_magnitude
+                        {
                             *magnitude = 0.0;
                         }
                     }
@@ -224,15 +255,20 @@ impl CannyProcessor {
                         let east_magnitude = gradient.gradient_magnitude[index_1d + 1];
                         let west_magnitude = gradient.gradient_magnitude[index_1d - 1];
 
-                        if current_magnitude < east_magnitude || current_magnitude < west_magnitude {
+                        if current_magnitude < east_magnitude || current_magnitude < west_magnitude
+                        {
                             *magnitude = 0.0;
                         }
                     }
                     GradientDirection::NorthWest | GradientDirection::SouthEast => {
-                        let north_west_magnitude = gradient.gradient_magnitude[index_1d - width - 1];
-                        let south_east_magnitude = gradient.gradient_magnitude[index_1d + width + 1];
+                        let north_west_magnitude =
+                            gradient.gradient_magnitude[index_1d - width - 1];
+                        let south_east_magnitude =
+                            gradient.gradient_magnitude[index_1d + width + 1];
 
-                        if current_magnitude < north_west_magnitude || current_magnitude < south_east_magnitude {
+                        if current_magnitude < north_west_magnitude
+                            || current_magnitude < south_east_magnitude
+                        {
                             *magnitude = 0.0;
                         }
                     }
@@ -242,7 +278,10 @@ impl CannyProcessor {
         Ok(result)
     }
 
-    fn apply_double_threshold(&self, gradient: IntensityResult) -> ProcessingPicturifyResult<DoubleThresholdResult> {
+    fn apply_double_threshold(
+        &self,
+        gradient: IntensityResult,
+    ) -> ProcessingPicturifyResult<DoubleThresholdResult> {
         let width = gradient.width;
         let height = gradient.height;
 
@@ -270,7 +309,10 @@ impl CannyProcessor {
         Ok(result)
     }
 
-    fn apply_hysteresis(&self, threshold: DoubleThresholdResult) -> ProcessingPicturifyResult<FastImage> {
+    fn apply_hysteresis(
+        &self,
+        threshold: DoubleThresholdResult,
+    ) -> ProcessingPicturifyResult<FastImage> {
         let width = threshold.width;
         let height = threshold.height;
         let mut output_image = FastImage::empty((width, height).into());
@@ -290,15 +332,19 @@ impl CannyProcessor {
             processed_pixels: &mut Vec<PixelThresholdValue>,
             visited_pixels: &mut Vec<bool>,
         ) {
-            
             if visited_pixels[(y * width as isize + x) as usize] {
                 return;
             }
-            
+
             let directions = [
-                (-1, -1), (0, -1), (1, -1),
-                (-1, 0), (1, 0),
-                (-1, 1), (0, 1), (1, 1),
+                (-1, -1),
+                (0, -1),
+                (1, -1),
+                (-1, 0),
+                (1, 0),
+                (-1, 1),
+                (0, 1),
+                (1, 1),
             ];
 
             let index = |x: isize, y: isize| (y * width as isize + x) as usize;
@@ -311,7 +357,15 @@ impl CannyProcessor {
                     if input_pixels[idx] == PixelThresholdValue::Low {
                         processed_pixels[idx] = PixelThresholdValue::High;
                         visited_pixels[idx] = true;
-                        follow_edges(nx, ny, width, height, input_pixels, processed_pixels, visited_pixels);
+                        follow_edges(
+                            nx,
+                            ny,
+                            width,
+                            height,
+                            input_pixels,
+                            processed_pixels,
+                            visited_pixels,
+                        );
                     }
                 }
             }
@@ -322,7 +376,15 @@ impl CannyProcessor {
             for x in 0..width {
                 let idx = y * width + x;
                 if input_pixels[idx] == PixelThresholdValue::High {
-                    follow_edges(x as isize, y as isize, width, height, &input_pixels, &mut processed_pixels, &mut visited_pixels);
+                    follow_edges(
+                        x as isize,
+                        y as isize,
+                        width,
+                        height,
+                        &input_pixels,
+                        &mut processed_pixels,
+                        &mut visited_pixels,
+                    );
                 }
             }
         }
@@ -332,9 +394,15 @@ impl CannyProcessor {
             for x in 0..width {
                 let idx = y * width + x;
                 match processed_pixels[idx] {
-                    PixelThresholdValue::None => output_image.set_image_pixel((x, y).into(), Rgba::black()),
-                    PixelThresholdValue::Low => output_image.set_image_pixel((x, y).into(), Rgba::black()),
-                    PixelThresholdValue::High => output_image.set_image_pixel((x, y).into(), Rgba::white()),
+                    PixelThresholdValue::None => {
+                        output_image.set_image_pixel((x, y).into(), Rgba::black())
+                    }
+                    PixelThresholdValue::Low => {
+                        output_image.set_image_pixel((x, y).into(), Rgba::black())
+                    }
+                    PixelThresholdValue::High => {
+                        output_image.set_image_pixel((x, y).into(), Rgba::white())
+                    }
                 }
             }
         }

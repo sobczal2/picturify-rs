@@ -1,12 +1,17 @@
-use std::time::Instant;
+#![allow(unused_imports)]
 use log::LevelFilter;
-use simplelog::{ColorChoice, Config, TerminalMode, TermLogger};
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::core::io::{ReadFromFile, WriteToFile};
 use picturify_core::threading::progress::Progress;
 use picturify_processing::common::processors::CpuProcessor;
-use picturify_processing::processors::edge::canny::{CannyEdgeDetectionType, CannyProcessor, CannyProcessorOptions};
-use picturify_processing::processors::geometry::scale::{ScaleProcessor, ScaleProcessorOptions, ScaleStrategy};
+use picturify_processing::processors::edge::canny::{
+    CannyEdgeDetectionType, CannyProcessor, CannyProcessorOptions,
+};
+use picturify_processing::processors::geometry::scale::{
+    ScaleProcessor, ScaleProcessorOptions, ScaleStrategy,
+};
+use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
+use std::time::Instant;
 
 fn main() {
     TermLogger::init(
@@ -15,8 +20,8 @@ fn main() {
         TerminalMode::Mixed,
         ColorChoice::Auto,
     )
-        .expect("Failed to initialize logger");
-    
+    .expect("Failed to initialize logger");
+
     run_image();
     // run_movie();
 }
@@ -60,14 +65,14 @@ fn run_movie() {
 #[allow(dead_code)]
 fn run_image() {
     let image = FastImage::read_from_file("/home/sobczal/Downloads/alien2.png").unwrap();
-    
+
     // let processor = ScaleProcessor::new(ScaleProcessorOptions {
     //     size: (750, 1000).into(),
     //     strategy: ScaleStrategy::NearestNeighbor
     // });
-    // 
+    //
     // let image = processor.process(image, Progress::new()).unwrap();
-    // 
+    //
     let processor = CannyProcessor::new(CannyProcessorOptions {
         sigma: 1.0f32,
         radius: 2,
@@ -75,8 +80,7 @@ fn run_image() {
         low_threshold: 0.03f32,
         high_threshold: 0.07f32,
     });
-        
-    
+
     let start = Instant::now();
     let image = processor.process(image, Progress::new()).unwrap();
     let duration = start.elapsed();
