@@ -1,5 +1,6 @@
 use clap::builder::PossibleValue;
 use clap::ValueEnum;
+use serde::{Deserialize, Serialize};
 
 use picturify_core::core::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
 use picturify_core::core::fast_image::FastImage;
@@ -11,6 +12,7 @@ use picturify_core::threading::progress::Progress;
 
 use crate::common::processors::CpuProcessor;
 
+#[derive(Serialize, Deserialize)]
 #[derive(Clone, Copy)]
 pub enum GrayscaleStrategy {
     Average,
@@ -52,6 +54,9 @@ impl GrayscaleProcessor {
 }
 
 impl CpuProcessor for GrayscaleProcessor {
+    fn name(&self) -> &'static str {
+        "grayscale"
+    }
     fn process(
         &self,
         mut image: FastImage,

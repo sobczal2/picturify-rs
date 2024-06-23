@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use crate::common::kernels::prewitt::PrewittKernels;
 use crate::common::processors::CpuProcessor;
 use crate::processors::internal::gradient_based::{
@@ -7,6 +8,7 @@ use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
+#[derive(Serialize, Deserialize)]
 pub struct PrewittProcessorOptions {
     pub use_fast_approximation: bool,
 }
@@ -22,6 +24,9 @@ impl PrewittProcessor {
 }
 
 impl CpuProcessor for PrewittProcessor {
+    fn name(&self) -> &'static str {
+        "prewitt"
+    }
     fn process(
         &self,
         image: FastImage,

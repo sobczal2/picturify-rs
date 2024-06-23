@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use picturify_core::core::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
@@ -5,6 +6,7 @@ use picturify_core::threading::progress::Progress;
 
 use crate::common::processors::CpuProcessor;
 
+#[derive(Serialize, Deserialize)]
 pub struct SepiaProcessorOptions {
     pub use_fast_approximation: bool,
 }
@@ -20,6 +22,9 @@ impl SepiaProcessor {
 }
 
 impl CpuProcessor for SepiaProcessor {
+    fn name(&self) -> &'static str {
+        "sepia"
+    }
     fn process(
         &self,
         mut image: FastImage,

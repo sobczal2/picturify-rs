@@ -20,6 +20,9 @@ impl AddProcessor {
 }
 
 impl CpuProcessor for AddProcessor {
+    fn name(&self) -> &'static str {
+        "add"
+    }
     fn process(
         &self,
         mut image: FastImage,

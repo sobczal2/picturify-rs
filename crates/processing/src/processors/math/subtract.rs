@@ -20,6 +20,9 @@ impl SubtractProcessor {
 }
 
 impl CpuProcessor for SubtractProcessor {
+    fn name(&self) -> &'static str {
+        "subtract"
+    }
     fn process(
         &self,
         mut image: FastImage,

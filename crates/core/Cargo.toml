@@ -13,3 +13,4 @@ rayon.workspace = true
 thiserror.workspace = true
 log.workspace = true
 clap.workspace = true
+serde.workspace = true

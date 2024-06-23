@@ -1,4 +1,5 @@
 use std::ops::Range;
+use serde::{Deserialize, Serialize};
 
 use picturify_core::core::apply_fn_to_pixels::{ApplyFnToPalettePixels, Offset};
 use picturify_core::core::fast_image::FastImage;
@@ -10,6 +11,7 @@ use picturify_core::threading::progress::Progress;
 
 use crate::common::processors::CpuProcessor;
 
+#[derive(Serialize, Deserialize, Clone)]
 pub struct KuwaharaProcessorOptions {
     pub radius: usize,
 }
@@ -25,6 +27,9 @@ impl KuwaharaProcessor {
 }
 
 impl CpuProcessor for KuwaharaProcessor {
+    fn name(&self) -> &'static str {
+        "kuwahara"
+    }
     fn process(
         &self,
         mut image: FastImage,
@@ -91,11 +96,11 @@ impl CpuProcessor for KuwaharaProcessor {
                     quadrant_3_variance,
                     quadrant_4_variance,
                 ]
-                .iter()
-                .enumerate()
-                .min_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
-                .unwrap()
-                .0;
+                    .iter()
+                    .enumerate()
+                    .min_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
+                    .unwrap()
+                    .0;
 
                 let (range_x, range_y) = match min_quadrant {
                     0 => quadrant1_ranges,

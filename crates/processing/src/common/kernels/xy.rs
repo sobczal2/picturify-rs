@@ -1,7 +1,8 @@
+use serde::{Deserialize, Serialize};
 use crate::common::kernels::convolution::ConvolutionKernel;
 use picturify_core::geometry::coord::Coord;
 
-#[derive(Clone)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct XyKernels {
     x: ConvolutionKernel,
     y: ConvolutionKernel,

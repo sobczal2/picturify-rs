@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
 use crate::geometry::angle::Angle;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Debug, Copy, Clone, Eq, PartialEq)]
 pub struct Size {
     width: usize,
     height: usize,

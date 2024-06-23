@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use crate::common::kernels::prewitt::PrewittKernels;
 use crate::common::kernels::sobel::SobelKernels;
 use crate::common::processors::CpuProcessor;
@@ -13,12 +14,14 @@ use picturify_core::pixel::traits::RgbaF32Pixel;
 use picturify_core::rayon::prelude::*;
 use picturify_core::threading::progress::Progress;
 
+#[derive(Serialize, Deserialize)]
 pub enum CannyEdgeDetectionType {
     Sobel,
     Prewitt,
     Scharr,
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct CannyProcessorOptions {
     pub sigma: f32,
     pub radius: usize,
@@ -38,6 +41,9 @@ impl CannyProcessor {
 }
 
 impl CpuProcessor for CannyProcessor {
+    fn name(&self) -> &'static str {
+        "canny"
+    }
     fn process(
         &self,
         image: FastImage,

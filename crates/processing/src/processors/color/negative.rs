@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use picturify_core::core::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
@@ -5,6 +6,7 @@ use picturify_core::threading::progress::Progress;
 
 use crate::common::processors::CpuProcessor;
 
+#[derive(Serialize, Deserialize)]
 pub struct NegativeProcessorOptions {
     pub use_fast_approximation: bool,
 }
@@ -20,6 +22,9 @@ impl NegativeProcessor {
 }
 
 impl CpuProcessor for NegativeProcessor {
+    fn name(&self) -> &'static str {
+        "negative"
+    }
     fn process(
         &self,
         mut image: FastImage,

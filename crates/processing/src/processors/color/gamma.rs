@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use crate::common::processors::CpuProcessor;
 use picturify_core::core::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
 use picturify_core::core::fast_image::FastImage;
@@ -5,6 +6,7 @@ use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::pixel::traits::RgbaF32Pixel;
 use picturify_core::threading::progress::Progress;
 
+#[derive(Serialize, Deserialize)]
 pub struct GammaProcessorOptions {
     pub gamma: f32,
     pub use_fast_approximation: bool,
@@ -21,6 +23,9 @@ impl GammaProcessor {
 }
 
 impl CpuProcessor for GammaProcessor {
+    fn name(&self) -> &'static str {
+        "gamma"
+    }
     fn process(
         &self,
         image: FastImage,

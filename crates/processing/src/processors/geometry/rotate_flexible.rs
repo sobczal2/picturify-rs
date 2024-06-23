@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use picturify_core::core::apply_fn_to_pixels::ApplyFnToImagePixels;
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
@@ -8,6 +9,7 @@ use picturify_core::threading::progress::Progress;
 
 use crate::common::processors::CpuProcessor;
 
+#[derive(Serialize, Deserialize, Copy, Clone)]
 pub struct RotateFlexibleProcessorOptions {
     pub angle: Angle,
 }
@@ -23,6 +25,9 @@ impl RotateFlexibleProcessor {
 }
 
 impl CpuProcessor for RotateFlexibleProcessor {
+    fn name(&self) -> &'static str {
+        "rotate-flexible"
+    }
     fn process(
         &self,
         image: FastImage,

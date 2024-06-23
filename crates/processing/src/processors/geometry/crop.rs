@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use picturify_core::core::apply_fn_to_pixels::ApplyFnToImagePixels;
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
@@ -7,7 +8,7 @@ use picturify_core::threading::progress::Progress;
 
 use crate::common::processors::CpuProcessor;
 
-#[derive(Copy, Clone)]
+#[derive(Serialize, Deserialize, Copy, Clone)]
 pub struct CropBorder {
     pub width: usize,
     pub height: usize,
@@ -36,7 +37,7 @@ impl From<CropBorder> for Size {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Serialize, Deserialize, Copy, Clone)]
 pub struct CropProcessorOptions {
     pub crop_border: CropBorder,
 }
@@ -52,6 +53,9 @@ impl CropProcessor {
 }
 
 impl CpuProcessor for CropProcessor {
+    fn name(&self) -> &'static str {
+        "crop"
+    }
     fn process(
         &self,
         image: FastImage,

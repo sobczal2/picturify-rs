@@ -78,6 +78,9 @@ impl RemappingProcessor {
 }
 
 impl CpuProcessor for RemappingProcessor {
+    fn name(&self) -> &'static str {
+        "remapping"
+    }
     fn process(
         &self,
         mut image: FastImage,

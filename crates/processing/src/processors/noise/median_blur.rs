@@ -1,4 +1,5 @@
 use std::collections::VecDeque;
+use serde::{Deserialize, Serialize};
 
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
@@ -7,6 +8,7 @@ use picturify_core::threading::progress::{Progress, ProgressIteratorExt};
 
 use crate::common::processors::CpuProcessor;
 
+#[derive(Serialize, Deserialize, Clone)]
 pub struct MedianBlurProcessorOptions {
     pub radius: usize,
 }
@@ -22,6 +24,9 @@ impl MedianBlurProcessor {
 }
 
 impl CpuProcessor for MedianBlurProcessor {
+    fn name(&self) -> &'static str {
+        "median-blur"
+    }
     fn process(
         &self,
         image: FastImage,

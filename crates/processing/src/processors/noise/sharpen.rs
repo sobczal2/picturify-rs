@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
@@ -8,6 +9,7 @@ use crate::processors::internal::convolution_rgb::{
     ConvolutionRgbProcessor, ConvolutionRgbProcessorOptions,
 };
 
+#[derive(Serialize, Deserialize, Clone)]
 pub struct SharpenProcessorOptions {
     pub use_fast_approximation: bool,
 }
@@ -23,6 +25,9 @@ impl SharpenProcessor {
 }
 
 impl CpuProcessor for SharpenProcessor {
+    fn name(&self) -> &'static str {
+        "sharpen"
+    }
     fn process(
         &self,
         image: FastImage,

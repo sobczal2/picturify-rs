@@ -18,6 +18,7 @@
       <sourceFolder url="file://$MODULE_DIR$/crates/cli/test_utils/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/crates/processing/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/crates/testing/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/crates/flow/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.idea/copilot/chatSessions" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>

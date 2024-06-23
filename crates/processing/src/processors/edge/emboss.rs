@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use crate::common::kernels::convolution::ConvolutionKernel;
 use crate::common::processors::CpuProcessor;
 use crate::processors::internal::convolution_rgb::{
@@ -7,6 +8,7 @@ use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
+#[derive(Serialize, Deserialize)]
 pub struct EmbossProcessorOptions {
     pub use_fast_approximation: bool,
 }
@@ -22,6 +24,9 @@ impl EmbossProcessor {
 }
 
 impl CpuProcessor for EmbossProcessor {
+    fn name(&self) -> &'static str {
+        "emboss"
+    }
     fn process(
         &self,
         image: FastImage,

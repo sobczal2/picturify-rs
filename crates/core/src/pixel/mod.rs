@@ -3,3 +3,4 @@ pub mod lin_srgba;
 pub mod math;
 pub mod rgba;
 pub mod traits;
+pub mod serialization;

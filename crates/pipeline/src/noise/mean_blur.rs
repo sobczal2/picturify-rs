@@ -48,7 +48,7 @@ impl Pipeline for MeanBlurPipeline {
             processor_name: MEAN_BLUR_PROCESSOR_NAME.to_string(),
             processor: Box::new(processor),
             enlargement_processor_options: EnlargementProcessorOptions {
-                strategy: EnlargementStrategy::Constant(Srgba::new(0.0, 0.0, 0.0, 1.0)),
+                strategy: EnlargementStrategy::Constant(Srgba::new(0.0, 0.0, 0.0, 1.0).into()),
                 border: EnlargementBorder::from_all(self.options.radius),
             },
             crop_processor_options: CropProcessorOptions {

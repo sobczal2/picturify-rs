@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use picturify_core::core::apply_fn_to_pixels::ApplyFnToPalettePixels;
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
@@ -6,6 +7,7 @@ use picturify_core::threading::progress::Progress;
 
 use crate::common::processors::CpuProcessor;
 
+#[derive(Serialize, Deserialize)]
 pub struct BrightnessProcessorOptions {
     pub factor: f32,
 }
@@ -21,6 +23,9 @@ impl BrightnessProcessor {
 }
 
 impl CpuProcessor for BrightnessProcessor {
+    fn name(&self) -> &'static str {
+        "brightness"
+    }
     fn process(
         &self,
         mut image: FastImage,

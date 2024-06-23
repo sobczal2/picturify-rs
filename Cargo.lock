@@ -1059,7 +1059,15 @@ dependencies = [
  "log",
  "palette",
  "rayon",
+ "serde",
  "thiserror",
+]
+
+[[package]]
+name = "picturify-flow"
+version = "0.1.0-alpha"
+dependencies = [
+ "picturify-processing",
 ]
 
 [[package]]
@@ -1101,6 +1109,7 @@ dependencies = [
  "cmake",
  "log",
  "picturify-core",
+ "serde",
 ]
 
 [[package]]

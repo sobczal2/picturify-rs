@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use picturify_core::core::apply_fn_to_pixels::ApplyFnToImagePixels;
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::{ProcessingPicturifyError, ProcessingPicturifyResult};
@@ -8,7 +9,7 @@ use picturify_core::threading::progress::Progress;
 
 use crate::common::processors::CpuProcessor;
 
-#[derive(Copy, Clone)]
+#[derive(Serialize, Deserialize, Copy, Clone)]
 pub enum RotateFixedStrategy {
     Deg90,
     Deg180,
@@ -52,7 +53,7 @@ impl TryFrom<Angle> for RotateFixedStrategy {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Serialize, Deserialize, Copy, Clone)]
 pub struct RoteteFixedProcessorOptions {
     pub strategy: RotateFixedStrategy,
 }
@@ -68,6 +69,9 @@ impl RotateFixedProcessor {
 }
 
 impl CpuProcessor for RotateFixedProcessor {
+    fn name(&self) -> &'static str {
+        "rotate-fixed"
+    }
     fn process(
         &self,
         image: FastImage,

@@ -1,10 +1,11 @@
 use std::f32::consts::PI;
 use std::ops::Neg;
 use std::str::FromStr;
+use serde::{Deserialize, Serialize};
 
 use crate::error::PicturifyError;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Serialize, Deserialize, Debug, Copy, Clone)]
 pub enum Angle {
     Radians(f32),
     Degrees(f32),

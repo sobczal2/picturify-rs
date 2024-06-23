@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
@@ -8,6 +9,7 @@ use crate::processors::internal::convolution_rgb::{
     ConvolutionRgbProcessor, ConvolutionRgbProcessorOptions,
 };
 
+#[derive(Serialize, Deserialize, Clone)]
 pub struct GaussianBlurProcessorOptions {
     pub radius: usize,
     pub sigma: f32,
@@ -25,6 +27,9 @@ impl GaussianBlurProcessor {
 }
 
 impl CpuProcessor for GaussianBlurProcessor {
+    fn name(&self) -> &'static str {
+        "gaussian-blur"
+    }
     fn process(
         &self,
         image: FastImage,

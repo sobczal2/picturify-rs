@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use picturify_core::core::apply_fn_to_pixels::{ApplyFnToImagePixels, Offset};
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
@@ -7,6 +8,7 @@ use crate::common::functions::gaussian_1d;
 use crate::common::kernels::convolution::ConvolutionKernel;
 use crate::common::processors::CpuProcessor;
 
+#[derive(Serialize, Deserialize, Clone)]
 pub struct BilateralBlurProcessorOptions {
     pub radius: usize,
     pub sigma_spatial: f32,
@@ -26,6 +28,9 @@ impl BilateralBlurProcessor {
 
 // TODO fix this
 impl CpuProcessor for BilateralBlurProcessor {
+    fn name(&self) -> &'static str {
+        "bilateral-blur"
+    }
     fn process(
         &self,
         image: FastImage,

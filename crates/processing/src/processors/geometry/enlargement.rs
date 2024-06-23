@@ -1,19 +1,20 @@
+use serde::{Deserialize, Serialize};
 use picturify_core::core::apply_fn_to_pixels::ApplyFnToPalettePixels;
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::geometry::coord::Coord;
 use picturify_core::geometry::size::Size;
-use picturify_core::palette::Srgba;
+use picturify_core::pixel::serialization::SerializablePixel;
 use picturify_core::threading::progress::Progress;
 
 use crate::common::processors::CpuProcessor;
 
-#[derive(Copy, Clone)]
+#[derive(Serialize, Deserialize, Copy, Clone)]
 pub enum EnlargementStrategy {
-    Constant(Srgba),
+    Constant(SerializablePixel),
 }
 
-#[derive(Copy, Clone)]
+#[derive(Serialize, Deserialize, Copy, Clone)]
 pub struct EnlargementBorder {
     pub top: usize,
     pub right: usize,
@@ -73,6 +74,9 @@ impl EnlargementProcessor {
 }
 
 impl CpuProcessor for EnlargementProcessor {
+    fn name(&self) -> &'static str {
+        "enlargement"
+    }
     fn process(
         &self,
         image: FastImage,
@@ -93,7 +97,7 @@ impl CpuProcessor for EnlargementProcessor {
                         if self.options.border.is_inside(coord, new_size) {
                             image.get_srgba_pixel(coord - shift)
                         } else {
-                            pixel
+                            pixel.into()
                         }
                     },
                     Some(progress),

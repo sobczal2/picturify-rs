@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use crate::common::processors::CpuProcessor;
 use picturify_core::core::apply_fn_to_pixels::ApplyFnToImagePixels;
 use picturify_core::core::fast_image::FastImage;
@@ -7,7 +8,7 @@ use picturify_core::geometry::size::Size;
 use picturify_core::image::Rgba;
 use picturify_core::threading::progress::Progress;
 
-#[derive(Clone, Copy)]
+#[derive(Serialize, Deserialize, Debug, Copy, Clone)]
 pub enum ScaleStrategy {
     NearestNeighbor,
     Bilinear,
@@ -29,7 +30,7 @@ impl ScaleStrategy {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Serialize, Deserialize, Debug, Copy, Clone)]
 pub struct ScaleProcessorOptions {
     pub size: Size,
     pub strategy: ScaleStrategy,
@@ -46,6 +47,9 @@ impl ScaleProcessor {
 }
 
 impl CpuProcessor for ScaleProcessor {
+    fn name(&self) -> &'static str {
+        "scale"
+    }
     fn process(
         &self,
         image: FastImage,

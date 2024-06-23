@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use picturify_core::core::apply_fn_to_pixels::{ApplyFnToImagePixels, ApplyFnToPalettePixels};
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
@@ -6,6 +7,7 @@ use picturify_core::threading::progress::Progress;
 
 use crate::common::processors::CpuProcessor;
 
+#[derive(Serialize, Deserialize)]
 pub struct QuantizationProcessorOptions {
     pub levels: u8,
     pub use_fast_approximation: bool,
@@ -22,6 +24,9 @@ impl QuantizationProcessor {
 }
 
 impl CpuProcessor for QuantizationProcessor {
+    fn name(&self) -> &'static str {
+        "quantization"
+    }
     fn process(
         &self,
         image: FastImage,

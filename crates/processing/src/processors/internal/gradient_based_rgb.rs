@@ -10,7 +10,9 @@ use picturify_core::pixel::traits::RgbaF32Pixel;
 use picturify_core::rayon::prelude::*;
 use picturify_core::threading::progress::{Progress, ProgressIteratorExt};
 use std::sync::{Arc, Mutex};
+use serde::{Deserialize, Serialize};
 
+#[derive(Serialize, Deserialize, Clone)]
 pub struct GradientBasedRgbProcessorOptions {
     pub use_fast_approximation: bool,
     pub xy_kernels: XyKernels,
@@ -29,6 +31,9 @@ impl GradientBasedRgbProcessor {
 }
 
 impl CpuProcessor for GradientBasedRgbProcessor {
+    fn name(&self) -> &'static str {
+        "gradient-based-rgb"
+    }
     fn process(
         &self,
         mut image: FastImage,

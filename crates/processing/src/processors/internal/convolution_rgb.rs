@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use picturify_core::conversions::image_palette_bridge::lin_srgba_to_rgba;
 use picturify_core::core::apply_fn_to_pixels::{ApplyFnToImagePixels, Offset};
 use picturify_core::core::fast_image::FastImage;
@@ -7,6 +8,7 @@ use picturify_core::threading::progress::Progress;
 use crate::common::kernels::convolution::ConvolutionKernel;
 use crate::common::processors::CpuProcessor;
 
+#[derive(Serialize, Deserialize, Clone)]
 pub struct ConvolutionRgbProcessorOptions {
     pub kernel: ConvolutionKernel,
     pub use_fast_approximation: bool,
@@ -23,6 +25,9 @@ impl ConvolutionRgbProcessor {
 }
 
 impl CpuProcessor for ConvolutionRgbProcessor {
+    fn name(&self) -> &'static str {
+        "convolution-rgb"
+    }
     fn process(
         &self,
         image: FastImage,

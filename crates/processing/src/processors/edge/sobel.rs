@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
@@ -8,6 +9,7 @@ use crate::processors::internal::gradient_based::{
     GradientBasedProcessor, GradientBasedProcessorOptions,
 };
 
+#[derive(Serialize, Deserialize)]
 pub struct SobelProcessorOptions {
     pub use_fast_approximation: bool,
 }
@@ -23,6 +25,9 @@ impl SobelProcessor {
 }
 
 impl CpuProcessor for SobelProcessor {
+    fn name(&self) -> &'static str {
+        "sobel"
+    }
     fn process(
         &self,
         image: FastImage,

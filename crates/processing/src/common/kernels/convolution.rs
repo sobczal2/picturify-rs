@@ -7,8 +7,9 @@ use picturify_core::geometry::size::Size;
 use picturify_core::image::Rgba;
 use picturify_core::palette::LinSrgba;
 use std::fmt::Display;
+use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct ConvolutionKernel {
     values: Vec<f32>,
     width: usize,

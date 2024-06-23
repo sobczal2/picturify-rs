@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use crate::common::kernels::sobel::SobelKernels;
 use crate::common::processors::CpuProcessor;
 use crate::processors::internal::gradient_based_rgb::{
@@ -7,6 +8,7 @@ use picturify_core::core::fast_image::FastImage;
 use picturify_core::error::processing::ProcessingPicturifyResult;
 use picturify_core::threading::progress::Progress;
 
+#[derive(Serialize, Deserialize)]
 pub struct SobelRgbProcessorOptions {
     pub use_fast_approximation: bool,
 }
@@ -22,6 +24,9 @@ impl SobelRgbProcessor {
 }
 
 impl CpuProcessor for SobelRgbProcessor {
+    fn name(&self) -> &'static str {
+        "sobel-rgb"
+    }
     fn process(
         &self,
         image: FastImage,
